@@ -4,7 +4,7 @@ import Adafruit_GPIO.SPI as SPI
 import Adafruit_SSD1306
 from PIL import Image, ImageDraw, ImageFont
 
-# Pin configuration:
+#pin configuration:
 RST = None  # For I2C, RST is not used
 
 # Initialize display (128x32 OLED via I2C)
