@@ -92,8 +92,8 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(M2_ENC_B), m2_updateEncoder, CHANGE);
 
   // Start motors
-  driveMotorA(false, 100);
-  driveMotorB(false, 100);
+  // driveMotorA(true, 150);
+  // driveMotorB(false, 150);
 }
 
 // === Loop ===

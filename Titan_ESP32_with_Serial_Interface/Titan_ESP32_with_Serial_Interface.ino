@@ -1,5 +1,7 @@
 #include <Arduino.h>
 
+#define PI 3.14159265f
+
 // === Motor Pins ===
 #define PWM1 4
 #define IN1 16
@@ -19,13 +21,13 @@
 #define PWM_RES_BITS 8
 #define DUTY_MAX     255
 
-#define WHEEL_RADIUS 0.033  // meters
-#define BASE_WIDTH   0.16   // distance between wheels (meters)
-#define TICKS_PER_REV 360   // encoder resolution
+#define WHEEL_RADIUS 0.0325  // meters
+#define BASE_WIDTH   0.18   // distance between wheels (meters)
+#define TICKS_PER_REV 1000   // encoder resolution
 #define GEAR_RATIO 1.0
 
 // === PID parameters ===
-float kp = 0.8, ki = 0.2, kd = 0.05;
+float kp = 0.2, ki = 0.0, kd = 0.00;
 
 // === State ===
 volatile long m1_ticks = 0;
@@ -80,7 +82,7 @@ void driveMotorA(float pwm) {
 }
 
 void driveMotorB(float pwm) {
-  bool forward = pwm >= 0;
+  bool forward = pwm <= 0;
   digitalWrite(INB1, forward ? HIGH : LOW);
   digitalWrite(INB2, forward ? LOW : HIGH);
   ledcWrite(PWM2, abs((int)pwm));
@@ -118,19 +120,25 @@ void setup() {
 
 void loop() {
   unsigned long now = millis();
-  float dt = (now - last_time) / 1000.0;
-  if (dt < 0.01) return; // skip if too soon
+  float dt = (now - last_time);
+  if (dt < 40) return; // skip if too soon
+//  Serial.printf("Loop dt : %0.2f \n", dt);/
 
   // Compute current speed (rad/s)
   long ticks_l = m1_ticks;
   long ticks_r = m2_ticks;
+//  Serial.printf("Ticks L: %ld | Ticks R: %ld\n", m1_ticks, m2_ticks);/
   m1_ticks = m2_ticks = 0;
 
-  float w_l = (2 * PI * ticks_l / TICKS_PER_REV) / dt;
-  float w_r = (2 * PI * ticks_r / TICKS_PER_REV) / dt;
+  float w_l = (2.0 * PI * (float)ticks_l / (float)TICKS_PER_REV) / (dt / 1000);
+  float w_r = (2.0 * PI * (float)ticks_r / (float)TICKS_PER_REV) / (dt / 1000);
+//  float w_r = (2 * PI * ticks_r / TICKS_PER_REV) // dt;
 
   float v_l = w_l * WHEEL_RADIUS;
   float v_r = w_r * WHEEL_RADIUS;
+
+//  Serial.printf("w_l: %.4f rad/s | w_r: %.4f rad/s | v_l: %.4f m/s | v_r: %.4/f m/s\n", w_l, w_r, v_l, v_r);
+
 
   // === PID Control ===
   float error_l = target_l - v_l;
@@ -149,6 +157,7 @@ void loop() {
   pwm_r_cmd += correction_r * DUTY_MAX;
   pwm_r_cmd = constrain(pwm_r_cmd, -DUTY_MAX, DUTY_MAX);
 
+//  Serial.printf("Motor PWM_L: %.2f, PWM_R %.2f \n", pwm_l_cmd, pwm_r_cmd);/
   driveMotorA(pwm_l_cmd);
   driveMotorB(pwm_r_cmd);
 
@@ -165,8 +174,10 @@ void loop() {
   theta += dtheta;
 
   // === Serial Output ===
-  Serial.printf("CMD_VEL: %.2f %.2f | ACT_VEL: %.2f %.2f | POS: x=%.2f y=%.2f θ=%.2f\n",
-                target_l, target_r, v_l, v_r, x, y, theta);
+//  Serial.printf("CMD_VEL: %.2f %.2f | ACT_VEL: %.2f %.2f | PO/
+  Serial.printf("CMD_VEL: %.2f %.2f | ACT_VEL: %.2f %.2f\n", target_l, target_r, v_l, v_r);//
+  Serial.printf("POS: x=%.2f y=%.2f θ=%.2f\n", x, y, theta);
+
 
   // === Serial Input (from Pi) ===
   if (Serial.available()) {
