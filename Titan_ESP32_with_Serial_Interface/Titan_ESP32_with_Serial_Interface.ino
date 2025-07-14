@@ -175,8 +175,8 @@ void loop() {
 
   // === Serial Output ===
 //  Serial.printf("CMD_VEL: %.2f %.2f | ACT_VEL: %.2f %.2f | PO/
-  Serial.printf("CMD_VEL: %.2f %.2f | ACT_VEL: %.2f %.2f\n", target_l, target_r, v_l, v_r);//
-  Serial.printf("POS: x=%.2f y=%.2f θ=%.2f\n", x, y, theta);
+//  Serial.printf("CMD_VEL: %.2f %.2f | ACT_VEL: %.2f %.2f\n", target_l, target_r, v_l, v_r);
+  Serial.printf("POS: x=%.2f y=%.2f theta=%.2f\n", x, y, theta);
 
 
   // === Serial Input (from Pi) ===
