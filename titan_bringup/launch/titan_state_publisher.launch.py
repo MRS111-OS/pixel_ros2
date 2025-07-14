@@ -38,7 +38,7 @@ def generate_launch_description():
     print('urdf_file_name : {}'.format(urdf_file_name))
 
     urdf = os.path.join(
-        get_package_share_directory('turtlebot3_description'),
+        get_package_share_directory('titan_description'),
         'urdf',
         urdf_file_name)
 
@@ -57,6 +57,10 @@ def generate_launch_description():
     # print (robot_desc) # Printing urdf information.
 
     return LaunchDescription([
+        DeclareLaunchArgument(
+            'namespace',
+            default_value='',
+            description='Robot namespace'),
         DeclareLaunchArgument(
             'use_sim_time',
             default_value='false',

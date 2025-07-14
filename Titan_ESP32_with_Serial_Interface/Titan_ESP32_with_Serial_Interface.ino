@@ -165,9 +165,9 @@ void loop() {
   float v = (v_r + v_l) / 2.0;
   float w = (v_r - v_l) / BASE_WIDTH;
 
-  float dx = v * cos(theta) * dt;
-  float dy = v * sin(theta) * dt;
-  float dtheta = w * dt;
+  float dx = v * cos(theta) * (dt/1000);
+  float dy = v * sin(theta) * (dt/1000);
+  float dtheta = w * dt/1000;
 
   x += dx;
   y += dy;

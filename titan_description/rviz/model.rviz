@@ -71,6 +71,7 @@ Visualization Manager:
       Topic:
         Depth: 5
         Durability Policy: Volatile
+        Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Best Effort
         Value: /scan
@@ -109,7 +110,33 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        caster_back_link:
+        camera_depth_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_depth_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_rgb_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_rgb_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        caster_back_left_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        caster_back_right_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -128,6 +155,9 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+      Mass Properties:
+        Inertia: false
+        Mass: false
       Name: RobotModel
       TF Prefix: ""
       Update Interval: 0
@@ -144,11 +174,21 @@ Visualization Manager:
           Value: true
         base_scan:
           Value: true
-        caster_back_link:
+        camera_depth_frame:
+          Value: true
+        camera_depth_optical_frame:
+          Value: true
+        camera_link:
+          Value: true
+        camera_rgb_frame:
+          Value: true
+        camera_rgb_optical_frame:
+          Value: true
+        caster_back_left_link:
+          Value: true
+        caster_back_right_link:
           Value: true
         imu_link:
-          Value: true
-        odom:
           Value: true
         wheel_left_link:
           Value: true
@@ -160,19 +200,27 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        odom:
-          base_footprint:
-            base_link:
-              base_scan:
-                {}
-              caster_back_link:
-                {}
-              imu_link:
-                {}
-              wheel_left_link:
-                {}
-              wheel_right_link:
-                {}
+        base_footprint:
+          base_link:
+            base_scan:
+              {}
+            camera_link:
+              camera_depth_frame:
+                camera_depth_optical_frame:
+                  {}
+              camera_rgb_frame:
+                camera_rgb_optical_frame:
+                  {}
+            caster_back_left_link:
+              {}
+            caster_back_right_link:
+              {}
+            imu_link:
+              {}
+            wheel_left_link:
+              {}
+            wheel_right_link:
+              {}
       Update Interval: 0
       Value: true
     - Angle Tolerance: 0.10000000149011612
@@ -209,6 +257,7 @@ Visualization Manager:
       Topic:
         Depth: 5
         Durability Policy: Volatile
+        Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /odom
@@ -216,7 +265,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: odom
+    Fixed Frame: base_link
     Frame Rate: 30
   Name: root
   Tools:
@@ -247,7 +296,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 7.944110870361328
+      Distance: 3.445708990097046
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -262,10 +311,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.5697963237762451
+      Pitch: 0.41979748010635376
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.1454057693481445
+      Yaw: 3.9554100036621094
     Saved: ~
 Window Geometry:
   Displays:
