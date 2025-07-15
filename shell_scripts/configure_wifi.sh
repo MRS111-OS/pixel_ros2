@@ -8,13 +8,13 @@ log() {
 
 # Define Wi-Fi networks and passwords
 declare -A WIFI_NETWORKS
-WIFI_NETWORKS["AMR-Private-Network"]="Admin@123"
-WIFI_NETWORKS["TEPL-AMR"]="$c@rpiu5"
+WIFI_NETWORKS["Oplify-5G"]="Aioplify@25
+WIFI_NETWORKS["ciscosb-robo"]="qwerty123"
 
 # Define priorities
 declare -A WIFI_PRIORITIES
-WIFI_PRIORITIES["AMR-Private-Network"]=10
-WIFI_PRIORITIES["TEPL-AMR"]=0
+WIFI_PRIORITIES["Oplify-5G"]=10
+WIFI_PRIORITIES["ciscosb-robo"]=0
 
 log "Starting Wi-Fi configuration..."
 
