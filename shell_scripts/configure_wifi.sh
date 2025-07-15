@@ -10,11 +10,13 @@ log() {
 declare -A WIFI_NETWORKS
 WIFI_NETWORKS["Oplify-5G"]="Aioplify@25
 WIFI_NETWORKS["ciscosb-robo"]="qwerty123"
+WIFI_NETWORKS["Reynash"]="hellobye"
 
 # Define priorities
 declare -A WIFI_PRIORITIES
 WIFI_PRIORITIES["Oplify-5G"]=10
 WIFI_PRIORITIES["ciscosb-robo"]=0
+WIFI_PRIORITIES["Reynash"]=5
 
 log "Starting Wi-Fi configuration..."
 
