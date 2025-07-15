@@ -27,7 +27,7 @@
 #define GEAR_RATIO 1.0
 
 // === PID parameters ===
-float kp = 0.2, ki = 0.0, kd = 0.00;
+float kp = 0.3, ki = 0.0, kd = 0.00;
 
 // === State ===
 volatile long m1_ticks = 0;
