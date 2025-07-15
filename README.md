@@ -1,3 +1,101 @@
-# titan_robot
-This repo contains the code for Titan ROS kit.
 
+# 🤖 Titan Robot
+
+This repository contains the ROS 2 packages and configurations for the Titan Robot, including robot bringup, SLAM-based mapping, and localization using slam_toolbox and nav2.
+
+
+# 🛠️ Workspace Setup
+
+1. Create the ROS 2 workspace and source folder:
+
+```bash
+  mkdir -p ~/titan_ws/src
+  cd ~/titan_ws/src
+```
+
+2. Clone the Titan Robot repository:
+```bash
+  git clone https://github.com/MRS111-OS/titan_robot.git
+```
+
+3. Build the workspace:
+```bash
+  cd ~/titan_ws
+  colcon build
+```
+
+4. Source the workspace:
+```bash
+  source install/setup.bash
+```
+
+# 🚀 Robot Bringup
+
+To start the robot with all required nodes:
+```bash
+  ros2 launch titan_bringup titan_bringup.launch.py
+```
+
+This will launch:
+
+- Robot URDF
+
+- RViz2
+
+- Joint State Publisher
+
+- LIDAR driver
+
+- ESP32 communication node
+
+# 📽️ Mapping Using SLAM
+
+1. Launch the Nav2 bringup:
+```bash
+  ros2 launch nav2_bringup navigation_launch.py
+```
+
+2. In a new terminal, launch SLAM Toolbox in async mapping mode:
+```bash
+  ros2 launch slam_toolbox online_async_launch.py
+```
+
+3. In another terminal, control the robot with teleop:
+```bash
+  ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+
+4. Save the map using RViz2:
+
+- In Rviz2, Go to Panels > Add New Panel > Choose SlamToolboxPlugin
+- Enter your map name beside save map and serialize map
+- Click Save Map and Serialize Map
+
+# 📍 Localization with Saved Map
+
+1. Stop the SLAM Toolbox launch file.
+
+2. Edit the SLAM config for localization:
+```bash
+  cd ~/titan_ws/src/titan_robot/slam_toolbox/config
+```
+
+3. Modify mapper_params_online_async.yaml:
+- Comment out:
+```bash
+  # mode: mapping
+```
+- Uncomment and set:
+``` bash
+  mode: localization
+  map_file_name: "/absolute/path/to/your/map.yaml"
+  map_start_at_dock: true
+```
+
+4. Launch SLAM Toolbox in localization mode:
+```bash
+  ros2 launch slam_toolbox online_async_launch.py
+```
+5. In RViz2:
+- Click the 2D Goal Pose tool
+- Click a point on the map to send the robot to that goal
