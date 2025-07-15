@@ -17,7 +17,7 @@
 #define M2_ENC_B 25
 
 // === Constants ===
-#define PWM_FREQ     1000
+#define PWM_FREQ     10000
 #define PWM_RES_BITS 8
 #define DUTY_MAX     255
 
