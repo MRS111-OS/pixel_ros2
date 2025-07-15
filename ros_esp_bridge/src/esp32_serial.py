@@ -15,7 +15,7 @@ class SerialBridgeNode(Node):
         super().__init__('serial_bridge_node')
 
         # Serial port setup
-        self.ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0.1)
+        self.ser = serial.Serial('/dev/esp32', 115200, timeout=0.1)
 
         # ROS2 interfaces
         self.cmd_vel_sub = self.create_subscription(Twist, 'cmd_vel', self.cmd_vel_callback, 10)
@@ -45,7 +45,7 @@ class SerialBridgeNode(Node):
                 line = self.ser.readline().decode(errors='ignore').strip()
                 if not line:
                     continue
-                self.get_logger().info(f"Received: {line}")
+                self.get_logger().debug(f"Received: {line}")
 
                 match = pos_re.match(line)
                 if match:
