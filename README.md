@@ -1,4 +1,3 @@
-
 # 🤖 Titan Robot
 
 This repository contains the ROS 2 packages and configurations for the Titan Robot, including robot bringup, SLAM-based mapping, and localization using slam_toolbox and nav2.
@@ -99,3 +98,22 @@ This will launch:
 5. In RViz2:
 - Click the 2D Goal Pose tool
 - Click a point on the map to send the robot to that goal
+
+# 🔎 Scan Network Devices
+
+To find the IP addresses of devices (such as your robot) on your local network, use `nmap`:
+
+1. **Install nmap** (if needed):
+   ```bash
+   sudo apt update
+   sudo apt install nmap
+   ```
+
+2. **Scan your network** (replace subnet if needed):
+   ```bash
+   sudo nmap -sn 192.168.127.0/25
+   ```
+
+   This will list all active devices in the range. Look for your robot's IP in the output.
+
+> Tip: You may need `sudo` for full results.
