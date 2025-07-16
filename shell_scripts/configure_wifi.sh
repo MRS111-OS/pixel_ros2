@@ -14,9 +14,9 @@ WIFI_NETWORKS["Reynash"]="hellobye"
 
 # Define priorities
 declare -A WIFI_PRIORITIES
-WIFI_PRIORITIES["Oplify-5G"]=10
+WIFI_PRIORITIES["Oplify-5G"]=5
 WIFI_PRIORITIES["ciscosb-robo"]=0
-WIFI_PRIORITIES["Reynash"]=5
+WIFI_PRIORITIES["Reynash"]=10
 
 log "Starting Wi-Fi configuration..."
 
