@@ -112,7 +112,12 @@ To find the IP addresses of devices (such as your robot) on your local network, 
 2. **Scan your network** (replace subnet if needed):
    ```bash
    sudo nmap -sn 192.168.127.0/25
+   OR
+   sudo nmap -sn 192.168.127.0/24
    ```
+
+   You should pick IP address corresponding to 
+   MAC ADDRESS: D8:3A:DD:46:FC:C3
 
    This will list all active devices in the range. Look for your robot's IP in the output.
 
