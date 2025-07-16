@@ -8,7 +8,7 @@ log() {
 
 # Define Wi-Fi networks and passwords
 declare -A WIFI_NETWORKS
-WIFI_NETWORKS["Oplify-5G"]="Aioplify@25
+WIFI_NETWORKS["Oplify-5G"]="Aioplify@25"
 WIFI_NETWORKS["ciscosb-robo"]="qwerty123"
 WIFI_NETWORKS["Reynash"]="hellobye"
 
