@@ -2,123 +2,147 @@
 
 This repository contains the ROS 2 packages and configurations for the Titan Robot, including robot bringup, SLAM-based mapping, and localization using slam_toolbox and nav2.
 
+---
 
-# 🛠️ Workspace Setup
-
-1. Create the ROS 2 workspace and source folder:
+## Update system packages
 
 ```bash
-  mkdir -p ~/titan_ws/src
-  cd ~/titan_ws/src
+sudo apt update && sudo apt upgrade -y
 ```
 
-2. Clone the Titan Robot repository:
+## Install essential tools
+
 ```bash
-  git clone https://github.com/MRS111-OS/titan_robot.git
+sudo apt install -y \
+    curl \
+    wget \
+    htop \
+    net-tools \
+    openssh-server \
+    rsync \
+    tmux
 ```
 
-3. Build the workspace:
-```bash
-  cd ~/titan_ws
-  colcon build
-```
+---
 
-4. Source the workspace:
-```bash
-  source install/setup.bash
-```
+## 🛠️ Workspace Setup
 
-# 🚀 Robot Bringup
+1. **Create the ROS 2 workspace and source folder:**
+    ```bash
+    mkdir -p ~/titan_ws/src
+    cd ~/titan_ws/src
+    ```
+
+2. **Clone the Titan Robot repository:**
+    ```bash
+    git clone https://github.com/MRS111-OS/titan_robot.git
+    ```
+
+3. **Build the workspace:**
+    ```bash
+    cd ~/titan_ws
+    colcon build
+    ```
+
+4. **Source the workspace:**
+    ```bash
+    source install/setup.bash
+    ```
+
+---
+
+## 🚀 Robot Bringup
 
 To start the robot with all required nodes:
 ```bash
-  ros2 launch titan_bringup titan_bringup.launch.py
+ros2 launch titan_bringup titan_bringup.launch.py
 ```
 
 This will launch:
-
 - Robot URDF
-
 - RViz2
-
 - Joint State Publisher
-
 - LIDAR driver
-
 - ESP32 communication node
 
-# 📽️ Mapping Using SLAM
+---
 
-1. Launch the Nav2 bringup:
-```bash
-  ros2 launch nav2_bringup navigation_launch.py
-```
+## 📽️ Mapping Using SLAM
 
-2. In a new terminal, launch SLAM Toolbox in async mapping mode:
-```bash
-  ros2 launch slam_toolbox online_async_launch.py
-```
+1. **Launch the Nav2 bringup:**
+    ```bash
+    ros2 launch nav2_bringup navigation_launch.py
+    ```
 
-3. In another terminal, control the robot with teleop:
-```bash
-  ros2 run teleop_twist_keyboard teleop_twist_keyboard
-```
+2. **In a new terminal, launch SLAM Toolbox in async mapping mode:**
+    ```bash
+    ros2 launch slam_toolbox online_async_launch.py
+    ```
 
-4. Save the map using RViz2:
+3. **In another terminal, control the robot with teleop:**
+    ```bash
+    ros2 run teleop_twist_keyboard teleop_twist_keyboard
+    ```
 
-- In Rviz2, Go to Panels > Add New Panel > Choose SlamToolboxPlugin
-- Enter your map name beside save map and serialize map
-- Click Save Map and Serialize Map
+4. **Save the map using RViz2:**
+    - In Rviz2, go to Panels > Add New Panel > Choose SlamToolboxPlugin
+    - Enter your map name beside save map and serialize map
+    - Click Save Map and Serialize Map
 
-# 📍 Localization with Saved Map
+---
 
-1. Stop the SLAM Toolbox launch file.
+## 📍 Localization with Saved Map
 
-2. Edit the SLAM config for localization:
-```bash
-  cd ~/titan_ws/src/titan_robot/slam_toolbox/config
-```
+1. **Stop the SLAM Toolbox launch file.**
 
-3. Modify mapper_params_online_async.yaml:
-- Comment out:
-```bash
-  # mode: mapping
-```
-- Uncomment and set:
-``` bash
-  mode: localization
-  map_file_name: "/absolute/path/to/your/map.yaml"
-  map_start_at_dock: true
-```
+2. **Edit the SLAM config for localization:**
+    ```bash
+    cd ~/titan_ws/src/titan_robot/slam_toolbox/config
+    ```
 
-4. Launch SLAM Toolbox in localization mode:
-```bash
-  ros2 launch slam_toolbox online_async_launch.py
-```
-5. In RViz2:
-- Click the 2D Goal Pose tool
-- Click a point on the map to send the robot to that goal
+3. **Modify `mapper_params_online_async.yaml`:**
+    - Comment out:
+        ```yaml
+        # mode: mapping
+        ```
+    - Uncomment and set:
+        ```yaml
+        mode: localization
+        map_file_name: "/absolute/path/to/your/map.yaml"
+        map_start_at_dock: true
+        ```
 
-# 🔎 Scan Network Devices
+4. **Launch SLAM Toolbox in localization mode:**
+    ```bash
+    ros2 launch slam_toolbox online_async_launch.py
+    ```
+
+5. **In RViz2:**
+    - Click the 2D Goal Pose tool
+    - Click a point on the map to send the robot to that goal
+
+---
+
+## 🔎 Scan Network Devices
 
 To find the IP addresses of devices (such as your robot) on your local network, use `nmap`:
 
 1. **Install nmap** (if needed):
-   ```bash
-   sudo apt update
-   sudo apt install nmap
-   ```
+    ```bash
+    sudo apt update
+    sudo apt install nmap
+    ```
 
 2. **Scan your network** (replace subnet if needed):
-   ```bash
-   sudo nmap -sn 192.168.127.0/25
-   OR
-   sudo nmap -sn 192.168.127.0/24
-   ```
+    ```bash
+    sudo nmap -sn 192.168.127.0/25
+    # OR
+    sudo nmap -sn 192.168.127.0/24
+    ```
 
-   You should pick IP address corresponding to 
-   MAC ADDRESS: D8:3A:DD:46:FC:C3
+    You should pick the IP address corresponding to  
+    MAC ADDRESS: `D8:3A:DD:46:FC:C3`
 
-   This will list all active devices in the range. Look for your robot's IP in the output.
+    This will list all active devices in the range. Look for your robot's IP in the output.
 
-> Tip: You may need `sudo` for full results.
+> **Tip:** You may need `sudo` for full results.
