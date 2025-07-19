@@ -1,0 +1,2 @@
+pip3 install --break-system-packages RPi.GPIO
+pip3 install --break-system-packages Adafruit-SSD1306 smbus2 pillow
