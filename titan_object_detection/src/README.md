@@ -21,3 +21,6 @@ To start your object detection package:
 ```
 ros2 launch titan_object_detection object_detection.launch.py
 ```
+
+References:
+https://github.com/Surya-Murali/Real-Time-Object-Detection-With-OpenCV
