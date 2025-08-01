@@ -1,0 +1,17 @@
+[Unit]
+Description=Reverse SSH Tunnel for %i
+After=network.target
+
+[Service]
+User=%i
+ExecStart=/usr/bin/ssh \
+  -o "ServerAliveInterval=60" \
+  -o "ServerAliveCountMax=3" \
+  -o "StrictHostKeyChecking=accept-new" \
+  -i /home/%i/.ssh/proxyjumper_tahjzf6z \
+  -N -R /PC4:localhost:22 tahjzf6z2@api2.proxypilot.org
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
