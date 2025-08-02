@@ -32,12 +32,14 @@ def main():
     time.sleep(2.0)
     fps = FPS().start()
 
+    visible_objects = set()
+
     while True:
         frame = vs.read()
         frame = imutils.resize(frame, width=400)
         (h, w) = frame.shape[:2]
 
-        # Prepare input blob for the image
+        # Prepare input blob
         blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300, 300)),
                                      scalefactor=1/127.5,
                                      size=(300, 300),
@@ -46,22 +48,34 @@ def main():
         net.setInput(blob)
         detections = net.forward()
 
-        # Loop over the detections
+        current_frame_objects = set()
+
         for i in np.arange(0, detections.shape[2]):
             confidence = detections[0, 0, i, 2]
             if confidence > 0.75:
                 idx = int(detections[0, 0, i, 1])
+                class_name = CLASSES[idx]
+                current_frame_objects.add(class_name)
+
+                # Only print if this class was not seen in the last frame
+                if class_name not in visible_objects:
+                    label = "{}: {:.2f}%".format(class_name, confidence * 100)
+                    print("Object detected:", label)
+
+                # Draw bounding box
                 box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
                 (startX, startY, endX, endY) = box.astype("int")
-                label = "{}: {:.2f}%".format(CLASSES[idx], confidence * 100)
-                print("Object detected:", label)
+                label = "{}: {:.2f}%".format(class_name, confidence * 100)
 
                 cv2.rectangle(frame, (startX, startY), (endX, endY), COLORS[idx], 2)
                 y = startY - 15 if startY - 15 > 15 else startY + 15
                 cv2.putText(frame, label, (startX, y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
 
-        # Display the frame
+        # Update visible_objects for next frame
+        visible_objects = current_frame_objects
+
+        # Show frame
         cv2.imshow("Frame", frame)
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
@@ -69,14 +83,12 @@ def main():
 
         fps.update()
 
-    # Stop FPS counter and video stream
+    # Cleanup
     fps.stop()
     print("[INFO] Elapsed Time: {:.2f}".format(fps.elapsed()))
     print("[INFO] Approximate FPS: {:.2f}".format(fps.fps()))
-
     cv2.destroyAllWindows()
     vs.stop()
 
 if __name__ == "__main__":
     main()
-
