@@ -5,7 +5,12 @@ import imutils
 import numpy as np
 import argparse
 import time
+import pyttsx3
 from imutils.video import VideoStream, FPS
+
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
 
 def main():
     # Construct the argument parser
@@ -52,15 +57,17 @@ def main():
 
         for i in np.arange(0, detections.shape[2]):
             confidence = detections[0, 0, i, 2]
-            if confidence > 0.75:
+            if confidence > 0.8:
                 idx = int(detections[0, 0, i, 1])
                 class_name = CLASSES[idx]
                 current_frame_objects.add(class_name)
 
-                # Only print if this class was not seen in the last frame
+                # Only speak/print if not already seen
                 if class_name not in visible_objects:
                     label = "{}: {:.2f}%".format(class_name, confidence * 100)
                     print("Object detected:", label)
+                    speak_text = f"{class_name} detected with {confidence * 100:.0f} percent confidence"
+                    speak(speak_text)
 
                 # Draw bounding box
                 box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
@@ -72,7 +79,7 @@ def main():
                 cv2.putText(frame, label, (startX, y),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
 
-        # Update visible_objects for next frame
+        # Update for next frame
         visible_objects = current_frame_objects
 
         # Show frame
@@ -89,6 +96,11 @@ def main():
     print("[INFO] Approximate FPS: {:.2f}".format(fps.fps()))
     cv2.destroyAllWindows()
     vs.stop()
+
+# Initialize TTS engine globally
+engine = pyttsx3.init()
+engine.setProperty('rate', 150)  # Speed of speech
+engine.setProperty('volume', 0.9)  # Volume (0.0 to 1.0)
 
 if __name__ == "__main__":
     main()
