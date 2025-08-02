@@ -49,7 +49,7 @@ def main():
         # Loop over the detections
         for i in np.arange(0, detections.shape[2]):
             confidence = detections[0, 0, i, 2]
-            if confidence > args["confidence"]:
+            if confidence > 0.75:
                 idx = int(detections[0, 0, i, 1])
                 box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
                 (startX, startY, endX, endY) = box.astype("int")

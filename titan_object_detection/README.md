@@ -22,5 +22,11 @@ To start your object detection package:
 ros2 launch titan_object_detection object_detection.launch.py
 ```
 
+OR if you want to run through python3
+
+```
+python3 real_time_object_detection.py --prototxt MobileNetSSD_deploy.prototxt.txt --model MobileNetSSD_deploy.caffemodel
+```
+
 References:
 https://github.com/Surya-Murali/Real-Time-Object-Detection-With-OpenCV
