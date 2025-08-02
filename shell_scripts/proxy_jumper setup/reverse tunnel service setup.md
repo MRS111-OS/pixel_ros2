@@ -17,7 +17,7 @@ Copy the SSH private key to the `.ssh` folder:
 mkdir -p ~/.ssh
 
 # Copy the proxy jumper key to your .ssh directory
-cp /Volumes/Code/MomentumRobotics/titan_robot/shell_scripts/proxyjumper_tahjzf6z ~/.ssh/
+cp proxyjumper_tahjzf6z ~/.ssh/
 
 # Set correct permissions for the SSH key
 chmod 600 ~/.ssh/proxyjumper_tahjzf6z
@@ -29,7 +29,7 @@ Copy the existing service file to systemd directory:
 
 ```bash
 # Copy the service file to systemd directory
-sudo cp /Volumes/Code/MomentumRobotics/titan_robot/shell_scripts/reverse_tunnel.service /etc/systemd/system/
+sudo cp reverse_tunnel.service /etc/systemd/system/
 
 # Make the service file executable
 sudo chmod 644 /etc/systemd/system/reverse_tunnel.service
