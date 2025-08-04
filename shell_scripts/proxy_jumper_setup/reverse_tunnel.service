@@ -9,7 +9,7 @@ ExecStart=/usr/bin/ssh \
   -o "ServerAliveCountMax=3" \
   -o "StrictHostKeyChecking=accept-new" \
   -i /home/%i/.ssh/proxyjumper_tahjzf6z \
-  -N -R /PC4:localhost:22 tahjzf6z2@api2.proxypilot.org
+  -N -R /IPC1:localhost:22 tahjzf6z@api2.proxypilot.org
 Restart=always
 RestartSec=10
 
