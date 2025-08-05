@@ -1,225 +1,211 @@
-# Reverse Tunnel Service Setup
 
-This guide provides step-by-step instructions for setting up a reverse SSH tunnel service using systemctl.
+# 🛰️ Remote RDP Access via SSH Tunnel with Proxy Jumper
 
-## Prerequisites
+This document outlines the complete working setup to access a remote Ubuntu machine's desktop (via `xrdp`) through an SSH reverse tunnel using a **jump server**. It supports both same-network and remote access cases.
 
-- SSH access to both local and remote machines
-- Root or sudo privileges on the local machine
-- SSH key pair for authentication
+---
 
-## Step 1: Copy SSH Keys
+## ✅ Part A: Configure the Host (Ubuntu RDP Server)
 
-Copy the SSH private key to the `.ssh` folder:
+### 1. Install xrdp
 
 ```bash
-# Create .ssh directory if it doesn't exist
-mkdir -p ~/.ssh
-
-# Copy the proxy jumper key to your .ssh directory
-cp proxyjumper_tahjzf6z ~/.ssh/
-
-# Set correct permissions for the SSH key
-chmod 600 ~/.ssh/proxyjumper_tahjzf6z
+sudo apt update
+sudo apt install xrdp
 ```
 
-## Step 2: Copy and Install the Service File
-
-Copy the existing service file to systemd directory:
+### 2. Enable and start xrdp
 
 ```bash
-# Copy the service file to systemd directory
-sudo cp reverse_tunnel.service /etc/systemd/system/
-
-# Make the service file executable
-sudo chmod 644 /etc/systemd/system/reverse_tunnel.service
+sudo systemctl enable xrdp
+sudo systemctl start xrdp
 ```
 
-The service file contains the following configuration:
-```ini
-[Unit]
-Description=Reverse SSH Tunnel for %i
-After=network.target
-
-[Service]
-User=%i
-ExecStart=/usr/bin/ssh \
-  -o "ServerAliveInterval=60" \
-  -o "ServerAliveCountMax=3" \
-  -o "StrictHostKeyChecking=accept-new" \
-  -i /home/%i/.ssh/proxyjumper_tahjzf6z \
-  -N -R /PC4:localhost:22 tahjzf6z2@api2.proxypilot.org
-Restart=always
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-```
-
-**Configuration Details:**
-- Uses template service with `%i` for username
-- SSH Key: `proxyjumper_tahjzf6z`
-- Remote User: `tahjzf6z2@api2.proxypilot.org`
-- Tunnel: Forwards local SSH (port 22) to remote socket `/PC4`
-- Auto-restart: Service restarts automatically if it fails
-
-## Step 3: Enable and Start the Service
+### 3. Allow port 3389 in the firewall
 
 ```bash
-# Get your current username
-USERNAME=$(whoami)
+sudo ufw allow 3389/tcp
+```
 
-# Reload systemd to recognize the new service
+### 4. Verify RDP is listening
+
+```bash
+sudo ss -tuln | grep 3389
+```
+
+Expected output:
+
+```
+LISTEN 0 128 *:3389 *:*
+```
+
+---
+
+## ✅ Part B: Optional Local LAN Access
+
+If both client and server are on the **same network**:
+
+- Open any RDP client (e.g., Microsoft Remote Desktop)
+- Connect to:
+
+  ```
+  <remote_machine_ip>:3389
+  ```
+
+---
+
+## ✅ Part C: Remote Access via Proxy Jumper
+
+### 🔁 Architecture
+
+```
+[Client Mac/PC] --> [Proxy Server] --> [Remote Ubuntu Machine with xrdp]
+```
+
+---
+
+### 1. Prepare Files on Host (Remote Ubuntu Machine)
+
+Copy the files:
+
+```bash
+cp proxyjumper_key reverse_ssh.conf start_reverse_ssh.sh ~/.ssh/
+chmod 700 ~/.ssh/proxyjumper_key ~/.ssh/reverse_ssh.conf ~/.ssh/start_reverse_ssh.sh
+chown $USER:$USER ~/.ssh/proxyjumper_key ~/.ssh/reverse_ssh.conf ~/.ssh/start_reverse_ssh.sh
+```
+
+#### Example content of `reverse_ssh.conf`:
+
+```conf
+PROXY_USER=tahjzf6z
+PROXY_HOST=api2.proxypilot.org
+IDENTIFIER=NUC1_22
+```
+
+---
+
+### 2. Install Reverse Tunnel as a Systemd Service
+
+#### Step 1: Place service file
+
+```bash
+sudo cp reverse_tunnel@.service /etc/systemd/system/reverse_tunnel@.service
+```
+
+#### Step 2: Reload and enable systemd service
+
+```bash
 sudo systemctl daemon-reload
-
-# Enable the service for your user (replace $USERNAME with your actual username)
-sudo systemctl enable reverse_tunnel@$USERNAME.service
-
-# Start the service immediately
-sudo systemctl start reverse_tunnel@$USERNAME.service
+sudo systemctl enable reverse_tunnel@$(whoami).service
+sudo systemctl start reverse_tunnel@$(whoami).service
 ```
 
-## Step 4: Check Service Status
+✅ This will:
+
+- Automatically use the current username
+- Run the script from `~/.ssh/start_reverse_ssh.sh`
+- Auto-restart if the tunnel drops
+
+---
+
+### 3. Log File and Monitoring
+
+The log file is located at:
 
 ```bash
-# Check if the service is running
-sudo systemctl status reverse_tunnel@$(whoami).service
-
-# View real-time service logs
-sudo journalctl -u reverse_tunnel@$(whoami).service -f
-
-# Check if the service is enabled
-sudo systemctl is-enabled reverse_tunnel@$(whoami).service
-
-# Check if the service is active
-sudo systemctl is-active reverse_tunnel@$(whoami).service
+~/reverse_tunnel_debug.log
 ```
 
-## Step 5: Service Management Commands
+To view logs:
 
 ```bash
-# Restart the service
-sudo systemctl restart reverse_tunnel@$(whoami).service
+tail -f ~/reverse_tunnel_debug.log
+```
 
-# Stop the service
+📝 The log rotates automatically when it exceeds 1MB. You'll see:
+
+- Service started timestamp
+- `ssh` debug logs
+- Periodic keepalive messages every 5 minutes
+- Shutdown timestamp
+
+---
+
+### 4. At Client Side (Mac/Windows)
+
+Run the following from your local machine:
+
+```bash
+ssh -v -o ProxyCommand="ssh -i ~/.ssh/proxyjumper_key tahjzf6z@api2.proxypilot.org -W /NUC1_22" \
+    -L 3390:localhost:3389 user@localhost
+```
+
+🧠 This forwards:
+
+```
+localhost:3390 (your Mac/PC) → remote:3389 (RDP port)
+```
+
+---
+
+### 5. Connect using Microsoft Remote Desktop
+
+Use **Microsoft Remote Desktop** (or any RDP client):
+
+- **PC name**: `127.0.0.1:3390`
+- **Username**: your Ubuntu username
+- **Password**: your Ubuntu login password
+
+If needed, enable XFCE:
+
+```bash
+echo "startxfce4" > ~/.xsession
+```
+
+---
+
+## 🧪 Summary of Key Commands
+
+| Task                          | Command                                         |
+|-------------------------------|-------------------------------------------------|
+| Enable xrdp                   | `sudo systemctl enable xrdp`                   |
+| Start RDP                     | `sudo systemctl start xrdp`                    |
+| Check port 3389               | `sudo ss -tuln | grep 3389`                    |
+| Copy and set permissions      | `chmod 700 ~/.ssh/*`                           |
+| Enable reverse tunnel service | `sudo systemctl enable reverse_tunnel@user`    |
+| Start reverse tunnel service  | `sudo systemctl start reverse_tunnel@user`     |
+| View tunnel logs              | `tail -f ~/reverse_tunnel_debug.log`           |
+
+---
+
+## ✅ Uninstall Instructions
+
+To stop and disable the service:
+
+```bash
 sudo systemctl stop reverse_tunnel@$(whoami).service
-
-# Disable the service (prevent auto-start on boot)
 sudo systemctl disable reverse_tunnel@$(whoami).service
-
-# View detailed service logs
-sudo journalctl -u reverse_tunnel@$(whoami).service --since "1 hour ago"
 ```
 
-## Troubleshooting
-
-### Common Issues and Solutions:
-
-1. **Permission denied for SSH key:**
-   ```bash
-   chmod 600 ~/.ssh/proxyjumper_tahjzf6z
-   ```
-
-2. **Service fails to start:**
-   ```bash
-   # Check logs for errors
-   sudo journalctl -u reverse_tunnel@$(whoami).service -n 20
-   ```
-
-3. **Connection refused:**
-   - Verify remote host is reachable
-   - Check if remote socket is available
-   - Ensure SSH service is running on remote host
-
-4. **Service stops unexpectedly:**
-   - Check network connectivity
-   - Verify SSH key authentication works manually:
-   ```bash
-   ssh -i ~/.ssh/proxyjumper_tahjzf6z tahjzf6z2@api2.proxypilot.org
-   ```
-
-### Test the Tunnel Manually:
-
-Before setting up the service, test the tunnel manually:
+To remove the service completely:
 
 ```bash
-ssh -o "ServerAliveInterval=60" \
-    -o "ServerAliveCountMax=3" \
-    -o "StrictHostKeyChecking=accept-new" \
-    -i ~/.ssh/proxyjumper_tahjzf6z \
-    -N -R /PC4:localhost:22 tahjzf6z2@api2.proxypilot.org
-```
-
-### Example Configuration:
-
-The current setup forwards local SSH (port 22) to remote socket `/PC4`:
-
-```ini
-[Unit]
-Description=Reverse SSH Tunnel for %i
-After=network.target
-
-[Service]
-User=%i
-ExecStart=/usr/bin/ssh \
-  -o "ServerAliveInterval=60" \
-  -o "ServerAliveCountMax=3" \
-  -o "StrictHostKeyChecking=accept-new" \
-  -i /home/%i/.ssh/proxyjumper_tahjzf6z \
-  -N -R /PC4:localhost:22 tahjzf6z2@api2.proxypilot.org
-Restart=always
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-```
-
-## Security Considerations
-
-1. Use key-based authentication instead of passwords
-2. Restrict SSH key permissions (chmod 600)
-3. Consider using SSH config file for better organization
-4. Monitor service logs regularly
-5. Use strong SSH keys (RSA 2048-bit minimum or Ed25519)
-
-## Advanced Configuration
-
-### Using SSH Config File:
-
-Create `~/.ssh/config`:
-
-```
-Host reverse-tunnel
-    HostName api2.proxypilot.org
-    User tahjzf6z2
-    IdentityFile ~/.ssh/proxyjumper_tahjzf6z
-    ServerAliveInterval 60
-    ServerAliveCountMax 3
-    StrictHostKeyChecking accept-new
-```
-
-Then modify the service ExecStart:
-
-```ini
-ExecStart=/usr/bin/ssh -N -R /PC4:localhost:22 reverse-tunnel
-```
-
-## Quick Setup (All-in-One)
-
-For users who want to run all commands at once:
-
-```bash
-# Run all setup commands at once
-USERNAME=$(whoami)
-mkdir -p ~/.ssh
-cp /Volumes/Code/MomentumRobotics/titan_robot/shell_scripts/proxyjumper_tahjzf6z ~/.ssh/
-chmod 600 ~/.ssh/proxyjumper_tahjzf6z
-sudo cp /Volumes/Code/MomentumRobotics/titan_robot/shell_scripts/reverse_tunnel.service /etc/systemd/system/
-sudo chmod 644 /etc/systemd/system/reverse_tunnel.service
+sudo rm /etc/systemd/system/reverse_tunnel@.service
 sudo systemctl daemon-reload
-sudo systemctl enable reverse_tunnel@$USERNAME.service
-sudo systemctl start reverse_tunnel@$USERNAME.service
-sudo systemctl status reverse_tunnel@$USERNAME.service
 ```
 
-This setup ensures your reverse tunnel service will automatically start on boot and restart if it fails, providing a reliable connection to your remote system.
+---
+
+## 🛠 Troubleshooting
+
+| Problem                        | Solution                                          |
+|-------------------------------|---------------------------------------------------|
+| Blue screen after login       | Ensure desktop env + `.xsession` with `startxfce4`|
+| Tunnel doesn’t stay up        | Check config, key permissions, server reachability|
+| No output in log              | Ensure script is executable, logging is enabled   |
+| Port 3390 not listening       | Keep SSH tunnel terminal open                     |
+
+---
+
+**Author**: Deepak Yadav  
+**Use Case**: Secure remote RDP access to Ubuntu systems using dynamic reverse SSH tunnels via a proxy server.
