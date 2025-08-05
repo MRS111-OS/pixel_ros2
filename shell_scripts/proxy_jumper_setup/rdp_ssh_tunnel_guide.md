@@ -1,10 +1,11 @@
-# Remote RDP Access via SSH Tunnel with Proxy Jumper
 
-This document outlines the complete working setup to access a remote Ubuntu machine's desktop (via `xrdp`) through an SSH tunnel using a **jump server**. It supports both same-network and remote access cases.
+# 🛰️ Remote RDP Access via SSH Tunnel with Proxy Jumper
+
+This document outlines the complete working setup to access a remote Ubuntu machine's desktop (via `xrdp`) through an SSH reverse tunnel using a **jump server**. It supports both same-network and remote access cases.
 
 ---
 
-## ✅ Part A: Configure the Host (RDP Server) – Ubuntu Machine
+## ✅ Part A: Configure the Host (Ubuntu RDP Server)
 
 ### 1. Install xrdp
 
@@ -26,7 +27,7 @@ sudo systemctl start xrdp
 sudo ufw allow 3389/tcp
 ```
 
-### 4. Check if RDP is listening
+### 4. Verify RDP is listening
 
 ```bash
 sudo ss -tuln | grep 3389
@@ -40,128 +41,171 @@ LISTEN 0 128 *:3389 *:*
 
 ---
 
-## ✅ Part B: Local LAN Access (Optional)
+## ✅ Part B: Optional Local LAN Access
 
-If both client and server are in the same network:
+If both client and server are on the **same network**:
 
-- Use any RDP client (e.g., Microsoft Remote Desktop)
+- Open any RDP client (e.g., Microsoft Remote Desktop)
 - Connect to:
+
   ```
   <remote_machine_ip>:3389
   ```
-- Login with Ubuntu username and password.
 
 ---
 
 ## ✅ Part C: Remote Access via Proxy Jumper
 
-### 🧠 Architecture
+### 🔁 Architecture
 
 ```
-[Client Mac] --SSH--> [Proxy Server] --SSH--> [Remote Ubuntu with xrdp]
+[Client Mac/PC] --> [Proxy Server] --> [Remote Ubuntu Machine with xrdp]
 ```
 
 ---
 
-### 1. Set up persistent reverse tunnel on the Host (optional)
+### 1. Prepare Files on Host (Remote Ubuntu Machine)
 
-Create a systemd service `/etc/systemd/system/ssh-tunnel@.service` on the remote Ubuntu machine:
+Copy the files:
 
-```ini
-[Unit]
-Description=Reverse SSH Tunnel for %i
-After=network.target
-
-[Service]
-User=%i
-ExecStart=/usr/bin/ssh -o "ServerAliveInterval=60" -o "ServerAliveCountMax=3" -o "StrictHostKeyChecking=accept-new" \
-  -i /home/%i/.ssh/proxyjumper_tahjzf6z \
-  -N -R /PC31:localhost:22 tahjzf6z2@api2.proxypilot.org
-Restart=always
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
+```bash
+cp proxyjumper_key reverse_ssh.conf start_reverse_ssh.sh ~/.ssh/
+chmod 700 ~/.ssh/proxyjumper_key ~/.ssh/reverse_ssh.conf ~/.ssh/start_reverse_ssh.sh
+chown $USER:$USER ~/.ssh/proxyjumper_key ~/.ssh/reverse_ssh.conf ~/.ssh/start_reverse_ssh.sh
 ```
 
-Enable it:
+#### Example content of `reverse_ssh.conf`:
+
+```conf
+PROXY_USER=tahjzf6z
+PROXY_HOST=api2.proxypilot.org
+IDENTIFIER=NUC1_22
+```
+
+---
+
+### 2. Install Reverse Tunnel as a Systemd Service
+
+#### Step 1: Place service file
+
+```bash
+sudo cp reverse_tunnel@.service /etc/systemd/system/reverse_tunnel@.service
+```
+
+#### Step 2: Reload and enable systemd service
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable ssh-tunnel@user
-sudo systemctl start ssh-tunnel@user
+sudo systemctl enable reverse_tunnel@$(whoami).service
+sudo systemctl start reverse_tunnel@$(whoami).service
 ```
+
+✅ This will:
+
+- Automatically use the current username
+- Run the script from `~/.ssh/start_reverse_ssh.sh`
+- Auto-restart if the tunnel drops
 
 ---
 
-### 2. At Client Side (Mac), create SSH tunnel using proxy
+### 3. Log File and Monitoring
+
+The log file is located at:
 
 ```bash
-ssh -v -o ProxyCommand="ssh -i ~/.ssh/proxyjumper_tahjzf6z tahjzf6z2@api2.proxypilot.org -W/PC31" \
-    -L 3390:localhost:3389 user@user-NUC12WSH-B
+~/reverse_tunnel_debug.log
 ```
 
-This forwards:
-
-```
-localhost:3390 (your Mac) → remote:3389 (xrdp port)
-```
-
-Keep this terminal open while connecting via RDP.
-
----
-
-### 3. Verify local port is listening (on your Mac)
+To view logs:
 
 ```bash
-lsof -i :3390
+tail -f ~/reverse_tunnel_debug.log
 ```
 
-Expected output shows `ssh` listening on `localhost:3390`.
+📝 The log rotates automatically when it exceeds 1MB. You'll see:
+
+- Service started timestamp
+- `ssh` debug logs
+- Periodic keepalive messages every 5 minutes
+- Shutdown timestamp
 
 ---
 
-### 4. Connect using RDP client
+### 4. At Client Side (Mac/Windows)
 
-Use **Microsoft Remote Desktop** on your Mac:
+Run the following from your local machine:
+
+```bash
+ssh -v -o ProxyCommand="ssh -i ~/.ssh/proxyjumper_key tahjzf6z@api2.proxypilot.org -W /NUC1_22" \
+    -L 3390:localhost:3389 user@localhost
+```
+
+🧠 This forwards:
+
+```
+localhost:3390 (your Mac/PC) → remote:3389 (RDP port)
+```
+
+---
+
+### 5. Connect using Microsoft Remote Desktop
+
+Use **Microsoft Remote Desktop** (or any RDP client):
 
 - **PC name**: `127.0.0.1:3390`
-- **Username**: Ubuntu machine username
-- **Password**: Ubuntu login password
-- **Session**: XFCE or default desktop (configured via `.xsession`)
+- **Username**: your Ubuntu username
+- **Password**: your Ubuntu login password
 
-> If needed:
->
-> ```bash
-> echo "startxfce4" > ~/.xsession
-> ```
+If needed, enable XFCE:
 
----
-
-## ✅ Common Troubleshooting
-
-| Problem                 | Solution                                      |
-| ----------------------- | --------------------------------------------- |
-| Blue screen after login | Ensure desktop environment + `.xsession` file |
-| Port 3390 not listening | Check SSH tunnel syntax, keep terminal open   |
-| RDP login fails         | Verify correct user/pass on remote machine    |
-| Jump server fails       | Check key permissions and host reachability   |
+```bash
+echo "startxfce4" > ~/.xsession
+```
 
 ---
 
-## 🧪 Summary of Important Commands
+## 🧪 Summary of Key Commands
 
-| Task                       | Command                                     |             |
-| -------------------------- | ------------------------------------------- | ----------- |
-| Install xrdp               | `sudo apt install xrdp`                     |             |
-| Start xrdp                 | `sudo systemctl start xrdp`                 |             |
-| Check RDP port on server   | \`sudo ss -tuln                             | grep 3389\` |
-| Check tunnel port on Mac   | `lsof -i :3390`                             |             |
-| SSH tunnel via jump server | See long `ssh -v -o ProxyCommand=...` above |             |
-| Connect via RDP (on Mac)   | `127.0.0.1:3390` in Microsoft RDP           |             |
+| Task                          | Command                                         |
+|-------------------------------|-------------------------------------------------|
+| Enable xrdp                   | `sudo systemctl enable xrdp`                   |
+| Start RDP                     | `sudo systemctl start xrdp`                    |
+| Check port 3389               | `sudo ss -tuln | grep 3389`                    |
+| Copy and set permissions      | `chmod 700 ~/.ssh/*`                           |
+| Enable reverse tunnel service | `sudo systemctl enable reverse_tunnel@user`    |
+| Start reverse tunnel service  | `sudo systemctl start reverse_tunnel@user`     |
+| View tunnel logs              | `tail -f ~/reverse_tunnel_debug.log`           |
 
 ---
 
-**Author**: Deepak Yadav\
-**Use Case**: Accessing Ubuntu desktops from a remote location securely via proxy + RDP tunneling.
+## ✅ Uninstall Instructions
 
+To stop and disable the service:
+
+```bash
+sudo systemctl stop reverse_tunnel@$(whoami).service
+sudo systemctl disable reverse_tunnel@$(whoami).service
+```
+
+To remove the service completely:
+
+```bash
+sudo rm /etc/systemd/system/reverse_tunnel@.service
+sudo systemctl daemon-reload
+```
+
+---
+
+## 🛠 Troubleshooting
+
+| Problem                        | Solution                                          |
+|-------------------------------|---------------------------------------------------|
+| Blue screen after login       | Ensure desktop env + `.xsession` with `startxfce4`|
+| Tunnel doesn’t stay up        | Check config, key permissions, server reachability|
+| No output in log              | Ensure script is executable, logging is enabled   |
+| Port 3390 not listening       | Keep SSH tunnel terminal open                     |
+
+---
+
+**Author**: Deepak Yadav  
+**Use Case**: Secure remote RDP access to Ubuntu systems using dynamic reverse SSH tunnels via a proxy server.
