@@ -1,20 +1,20 @@
 #include <Arduino.h>
 
-// === Motor A pins ===
-#define PWM1 4
-#define IN1 16
-#define IN2 17
+// === Motor Pins ===
 
-// === Motor B pins ===
-#define PWM2 5
+#define ENABLE 36
+#define PWM1 3
+#define IN1 4
+#define IN2 5
+#define PWM2 14
 #define INB1 18
-#define INB2 19
+#define INB2 21
 
-// === Encoder pins ===
-#define M1_ENC_A 27
-#define M1_ENC_B 14
-#define M2_ENC_A 26
-#define M2_ENC_B 25
+// === Encoder Pins ===
+#define M1_ENC_A 17
+#define M1_ENC_B 38
+#define M2_ENC_A 12
+#define M2_ENC_B 13
 
 // === Encoder state tracking ===
 volatile long m1_ticks = 0;
@@ -65,6 +65,8 @@ void setup() {
   delay(500);
   Serial.println("ESP32 Motor + Quadrature Encoder ISR");
 
+  pinMode(ENABLE, OUTPUT);
+
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
   pinMode(INB1, OUTPUT);
@@ -92,8 +94,9 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(M2_ENC_B), m2_updateEncoder, CHANGE);
 
   // Start motors
-  // driveMotorA(true, 150);
-  // driveMotorB(false, 150);
+  digitalWrite(ENABLE, HIGH);
+  driveMotorA(true, 150);
+  driveMotorB(false, 150);
 }
 
 // === Loop ===
@@ -104,7 +107,10 @@ void loop() {
 
   long current_m1 = m1_ticks;
   long current_m2 = m2_ticks;
-
+  uint8_t m2a = digitalRead(M2_ENC_A);
+  uint8_t m2b = digitalRead(M2_ENC_B);
+  Serial.printf("encoder pins read: M2A: %hhu M2B: %hhu \n",
+                m2a, m2b);
   Serial.printf("M1: %ld ticks (Δ: %ld)\tM2: %ld ticks (Δ: %ld)\n",
                 current_m1, current_m1 - last_m1,
                 current_m2, current_m2 - last_m2);

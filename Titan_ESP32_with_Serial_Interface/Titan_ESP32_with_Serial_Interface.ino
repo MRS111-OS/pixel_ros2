@@ -3,6 +3,8 @@
 #define PI 3.14159265f
 
 // === Motor Pins ===
+#define ENABLE 36
+
 #define PWM1 3
 #define IN1 4
 #define IN2 5
@@ -110,6 +112,10 @@ void setup() {
   pinMode(M2_ENC_A, INPUT_PULLUP);
   pinMode(M2_ENC_B, INPUT_PULLUP);
 
+  //EnableMotors
+  pinMode(ENABLE, OUTPUT);
+  digitalWrite(ENABLE, HIGH);
+
   attachInterrupt(digitalPinToInterrupt(M1_ENC_A), updateEnc1, CHANGE);
   attachInterrupt(digitalPinToInterrupt(M1_ENC_B), updateEnc1, CHANGE);
   attachInterrupt(digitalPinToInterrupt(M2_ENC_A), updateEnc2, CHANGE);
@@ -127,7 +133,7 @@ void loop() {
   // Compute current speed (rad/s)
   long ticks_l = m1_ticks;
   long ticks_r = m2_ticks;
-//  Serial.printf("Ticks L: %ld | Ticks R: %ld\n", m1_ticks, m2_ticks);/
+ Serial.printf("Ticks L: %ld | Ticks R: %ld\n", m1_ticks, m2_ticks);
   m1_ticks = m2_ticks = 0;
 
   float w_l = (2.0 * PI * (float)ticks_l / (float)TICKS_PER_REV) / (dt / 1000);
