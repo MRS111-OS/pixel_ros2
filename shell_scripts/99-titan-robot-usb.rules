@@ -1,2 +1,2 @@
-SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="0001", SYMLINK+="esp32", GROUP="dialout", MODE="0666"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", ATTRS{serial}=="8C:BF:EA:86:4B:24", SYMLINK+="esp32", GROUP="dialout", MODE="0666"
 SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="64d2d82b0664ef11865fdaa9c169b110", SYMLINK+="slidar", GROUP="dialout", MODE="0666"

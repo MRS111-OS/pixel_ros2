@@ -3,18 +3,18 @@
 #define PI 3.14159265f
 
 // === Motor Pins ===
-#define PWM1 4
-#define IN1 16
-#define IN2 17
-#define PWM2 5
+#define PWM1 3
+#define IN1 4
+#define IN2 5
+#define PWM2 14
 #define INB1 18
-#define INB2 19
+#define INB2 21
 
 // === Encoder Pins ===
-#define M1_ENC_A 27
-#define M1_ENC_B 14
-#define M2_ENC_A 26
-#define M2_ENC_B 25
+#define M1_ENC_A 17
+#define M1_ENC_B 38
+#define M2_ENC_A 12
+#define M2_ENC_B 13
 
 // === Constants ===
 #define PWM_FREQ     10000
