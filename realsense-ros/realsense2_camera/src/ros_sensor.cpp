@@ -1,4 +1,4 @@
-// Copyright 2023 RealSense, Inc. All Rights Reserved.
+// Copyright 2023 Intel Corporation. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,22 +17,6 @@
 
 using namespace realsense2_camera;
 using namespace rs2;
-
-#define SAFE_SET_OPTION(opt, val)                                    \
-    if (this->supports(opt))                                          \
-    {                                                                \
-        try                                                          \
-        {                                                            \
-            this->set_option(opt, val);                               \
-        }                                                            \
-        catch(std::exception& e)                                     \
-        {                                                            \
-            ROS_WARN_STREAM("Failed to set option: " << rs2_option_to_string(opt) << " to val: " << val << " error: " << e.what());   \
-        }                                                            \
-    }                                                                \
-    
-    
-        
 
 void RosSensor::setupErrorCallback()
 {
@@ -108,9 +92,9 @@ void RosSensor::setParameters(bool is_rosbag_file)
 
     // From FW version 5.14.x.x, if HDR is enabled, updating UVC controls like exposure, gain , etc are restricted.
     // So, during init of the node, forcefully disabling the HDR upfront and update it with new values.
-    if((!is_rosbag_file))
+    if((!is_rosbag_file) && supports(RS2_OPTION_HDR_ENABLED))
     {
-        SAFE_SET_OPTION(RS2_OPTION_HDR_ENABLED, false);
+        set_option(RS2_OPTION_HDR_ENABLED, false);
     }
 
     _params.registerDynamicOptions(*this, module_name);
@@ -164,7 +148,7 @@ void RosSensor::UpdateSequenceIdCallback()
                                                 [&](bool* enable_back_hdr) {
                                                     if (enable_back_hdr && *enable_back_hdr)
                                                     {
-                                                        SAFE_SET_OPTION(RS2_OPTION_HDR_ENABLED, true);
+                                                        set_option(RS2_OPTION_HDR_ENABLED, true);
                                                     }
                                                 });
 
@@ -172,7 +156,7 @@ void RosSensor::UpdateSequenceIdCallback()
     {
         // From FW version 5.14.x.x, if HDR is enabled, updating UVC controls like exposure, gain , etc are restricted.
         // So, disable it before updating. It will be reverted back by the deleter 'deleter_to_revert_hdr'.
-        SAFE_SET_OPTION(RS2_OPTION_HDR_ENABLED, false);
+        set_option(RS2_OPTION_HDR_ENABLED, false);
 
         int original_seq_id = static_cast<int>(get_option(RS2_OPTION_SEQUENCE_ID));   // To Set back to default.
 
@@ -181,8 +165,7 @@ void RosSensor::UpdateSequenceIdCallback()
         unsigned int seq_size = get_option(RS2_OPTION_SEQUENCE_SIZE);
         for (unsigned int seq_id = 1; seq_id <= seq_size; seq_id++ )
         {
-            SAFE_SET_OPTION(RS2_OPTION_SEQUENCE_ID, seq_id);
-
+            set_option(RS2_OPTION_SEQUENCE_ID, seq_id);
             for (rs2_option& option : options)
             {
                 std::stringstream param_name_str;
@@ -192,12 +175,11 @@ void RosSensor::UpdateSequenceIdCallback()
                 if (option_value != user_set_option_value)
                 {
                     ROS_INFO_STREAM("Set " << rs2_option_to_string(option) << "." << seq_id << " to " << user_set_option_value);
-                    SAFE_SET_OPTION(option, user_set_option_value);
+                    set_option(option, user_set_option_value);
                 }
             }
         }
-
-        SAFE_SET_OPTION(RS2_OPTION_SEQUENCE_ID, original_seq_id);
+        set_option(RS2_OPTION_SEQUENCE_ID, original_seq_id);   // Set back to default.
     }
 
     // Set callback to update ros parameters to gain and exposure matching the selected sequence_id:
@@ -208,7 +190,7 @@ void RosSensor::UpdateSequenceIdCallback()
         _params.getParameters()->setParam<int>(option_name, option_value, 
             [this](const rclcpp::Parameter& parameter)
             {
-                SAFE_SET_OPTION(RS2_OPTION_SEQUENCE_ID, parameter.get_value<int>());
+                set_option(RS2_OPTION_SEQUENCE_ID, parameter.get_value<int>());
                 std::vector<std::function<void()> > funcs;
                 funcs.push_back([this](){set_sensor_parameter_to_ros<int>(RS2_OPTION_GAIN);});
                 funcs.push_back([this](){set_sensor_parameter_to_ros<int>(RS2_OPTION_EXPOSURE);});

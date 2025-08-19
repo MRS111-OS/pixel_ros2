@@ -1,4 +1,4 @@
-// Copyright 2023 RealSense, Inc. All Rights Reserved.
+// Copyright 2023 Intel Corporation. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -481,7 +481,6 @@ void RealSenseNodeFactory::startDevice()
         case RS455_PID:
         case RS457_PID:
         case RS555_PID:
-        case RS436_PID:
         case RS_USB2_PID:
             _realSenseNode = std::unique_ptr<BaseRealSenseNode>(new BaseRealSenseNode(*this, _device, _parameters, this->get_node_options().use_intra_process_comms()));
             break;

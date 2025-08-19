@@ -15,11 +15,13 @@ def generate_launch_description():
     desc_share = FindPackageShare(package=desc_pkg).find(desc_pkg)
     esp_share = FindPackageShare(package='ros_esp_bridge').find('ros_esp_bridge')
     lidar_share = FindPackageShare(package='sllidar_ros2').find('sllidar_ros2')
+    laser_filter_share = FindPackageShare(package='laser_filters').find('laser_filters')
 
     rviz_launch_path = os.path.join(pkg_share, 'launch', 'rviz2.launch.py')
     state_launch_path = os.path.join(pkg_share, 'launch', 'titan_state_publisher.launch.py')
     esp_launch_path = os.path.join(esp_share, 'launch', 'esp_serial.launch.py')
     lidar_launch_path = os.path.join(lidar_share, 'launch', 'sllidar_c1_launch.py')
+    laser_filter_launch_path = os.path.join(laser_filter_share, 'examples', 'angular_filter_example.launch.py')
 
     # URDF/Xacro path
     urdf_file = os.path.join(desc_share, 'urdf', 'turtlebot3_burger.urdf')
@@ -55,10 +57,15 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(lidar_launch_path)
     )
 
+    laser_filter_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(laser_filter_launch_path)
+    )
+
     return launch.LaunchDescription([
         joint_state_publisher_gui_node,
         rviz_launch,
         turtlebot_state_launch,
         esp_launch,
-        lidar_launch
+        lidar_launch,
+        laser_filter_launch
     ])
