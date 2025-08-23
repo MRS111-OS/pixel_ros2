@@ -33,13 +33,14 @@ sudo apt install -y \
 
 1. **Create the ROS 2 workspace and source folder:**
     ```bash
-    mkdir -p ~/titan_ws/src
-    cd ~/titan_ws/src
+    mkdir -p ~/titan_ws
+    cd ~/titan_ws
     ```
 
 2. **Clone the Titan Robot repository:**
     ```bash
     git clone -b v2 https://github.com/MRS111-OS/titan_robot.git
+    mv titan_robot/ src
     ```
 
 3. **Install Dependencies:**
