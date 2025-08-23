@@ -45,7 +45,6 @@ sudo apt install -y \
 
 3. **Install Dependencies:**
     ```bash
-    cd ..
     sudo rosdep init
     rosdep update
     rosdep install --from-paths src --ignore-src -y
