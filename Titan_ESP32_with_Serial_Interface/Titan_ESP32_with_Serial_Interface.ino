@@ -185,8 +185,8 @@ void loop() {
     float linear, angular;
     if (sscanf(cmd.c_str(), "%f %f", &linear, &angular) == 2) {
       // Convert to wheel targets
-      target_l = linear - (angular * BASE_WIDTH / 2.0);
-      target_r = linear + (angular * BASE_WIDTH / 2.0);
+      target_l = linear + (angular * BASE_WIDTH / 2.0);
+      target_r = linear - (angular * BASE_WIDTH / 2.0);
     }
   }
 
