@@ -18,6 +18,8 @@
 #define M2_ENC_A 12
 #define M2_ENC_B 13
 
+#define POWER_OUTPUT 25
+
 // === Constants ===
 #define PWM_FREQ     10000
 #define PWM_RES_BITS 8
@@ -100,6 +102,7 @@ void setup() {
   pinMode(IN2, OUTPUT);
   pinMode(INB1, OUTPUT);
   pinMode(INB2, OUTPUT);
+  pinMode(POWER_OUTPUT, OUTPUT);
 
   ledcAttach(PWM1, PWM_FREQ, PWM_RES_BITS);
   ledcAttach(PWM2, PWM_FREQ, PWM_RES_BITS);
@@ -115,6 +118,7 @@ void setup() {
   //EnableMotors
   pinMode(ENABLE, OUTPUT);
   digitalWrite(ENABLE, HIGH);
+  digitalWrite(POWER_OUTPUT, HIGH);
 
   attachInterrupt(digitalPinToInterrupt(M1_ENC_A), updateEnc1, CHANGE);
   attachInterrupt(digitalPinToInterrupt(M1_ENC_B), updateEnc1, CHANGE);
