@@ -53,7 +53,7 @@ sudo apt install -y \
 4. **Build the workspace:**
     ```bash
     cd ~/titan_ws
-    colcon build --symlink-install
+    colcon build --symlink-install --parallel-workers 3
     ```
 
 5. **Source the workspace:**
