@@ -21,7 +21,7 @@ sudo apt install -y \
     openssh-server \
     rsync \
     tmux \
-    sudo apt install python3-rosdep \
+    python3-rosdep \
     ros-humble-turtlebot4-simulator \
     ros-humble-irobot-create-nodes
 
