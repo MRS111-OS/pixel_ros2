@@ -20,7 +20,11 @@ sudo apt install -y \
     net-tools \
     openssh-server \
     rsync \
-    tmux
+    tmux \
+    sudo apt install python3-rosdep \
+    ros-humble-turtlebot4-simulator \
+    ros-humble-irobot-create-nodes
+
 ```
 
 ---
@@ -35,16 +39,24 @@ sudo apt install -y \
 
 2. **Clone the Titan Robot repository:**
     ```bash
-    git clone https://github.com/MRS111-OS/titan_robot.git
+    git clone -b v2 https://github.com/MRS111-OS/titan_robot.git
     ```
 
-3. **Build the workspace:**
+3. **Install Dependencies:**
+    ```bash
+    cd ..
+    sudo rosdep init
+    rosdep update
+    rosdep install --from-paths src --ignore-src -y
+    ```
+
+4. **Build the workspace:**
     ```bash
     cd ~/titan_ws
-    colcon build
+    colcon build --symlink-install
     ```
 
-4. **Source the workspace:**
+5. **Source the workspace:**
     ```bash
     source install/setup.bash
     ```
@@ -122,6 +134,13 @@ This will launch:
     - Click a point on the map to send the robot to that goal
 
 ---
+
+## 🚀 Robot Bringup
+
+To start the robot with all required nodes:
+```bash
+ros2 launch turtlebot4_ignition_bringup turtlebot4_ignition.launch.py 
+```
 
 ## 🔎 Scan Network Devices
 
