@@ -136,6 +136,8 @@ def launch_setup(context, params, param_name_suffix=''):
             output=_output,
             arguments=['--ros-args', '--log-level', LaunchConfiguration('log_level' + param_name_suffix)],
             emulate_tty=True,
+            respawn=True,
+            respawn_delay=2.0
             )
     ]
 
