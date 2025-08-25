@@ -3,18 +3,22 @@
 #define PI 3.14159265f
 
 // === Motor Pins ===
-#define PWM1 4
-#define IN1 16
-#define IN2 17
-#define PWM2 5
+#define ENABLE 36
+
+#define PWM1 3
+#define IN1 4
+#define IN2 5
+#define PWM2 14
 #define INB1 18
-#define INB2 19
+#define INB2 21
 
 // === Encoder Pins ===
-#define M1_ENC_A 27
-#define M1_ENC_B 14
-#define M2_ENC_A 26
-#define M2_ENC_B 25
+#define RIGHT_ENC_A 17
+#define RIGHT_ENC_B 38
+#define LEFT_ENC_A 12
+#define LEFT_ENC_B 13
+
+#define POWER_OUTPUT 25
 
 // === Constants ===
 #define PWM_FREQ     10000
@@ -30,12 +34,12 @@
 float kp = 0.3, ki = 0.0, kd = 0.00;
 
 // === State ===
-volatile long m1_ticks = 0;
-volatile long m2_ticks = 0;
-volatile uint8_t last_m1_enc = 0;
-volatile uint8_t last_m2_enc = 0;
+volatile long right_ticks = 0;
+volatile long left_ticks = 0;
+volatile uint8_t last_right_enc = 0;
+volatile uint8_t last_left_enc = 0;
 
-float m1_speed = 0, m2_speed = 0;
+float right_speed = 0, left_speed = 0;
 float target_l = 0, target_r = 0;
 float pwm_l_cmd = 0, pwm_r_cmd = 0;
 float integral_l = 0, integral_r = 0;
@@ -46,42 +50,42 @@ unsigned long last_time = 0;
 // === Odometry ===
 float x = 0, y = 0, theta = 0;
 
-void IRAM_ATTR updateEnc1() {
-  uint8_t MSB = digitalRead(M1_ENC_A);
-  uint8_t LSB = digitalRead(M1_ENC_B);
+void IRAM_ATTR updateEncRight() {
+  uint8_t MSB = digitalRead(RIGHT_ENC_A);
+  uint8_t LSB = digitalRead(RIGHT_ENC_B);
   uint8_t enc = (MSB << 1) | LSB;
-  uint8_t sum = (last_m1_enc << 2) | enc;
+  uint8_t sum = (last_right_enc << 2) | enc;
 
   if (sum == 0b0001 || sum == 0b0111 || sum == 0b1110 || sum == 0b1000)
-    m1_ticks++;
+    right_ticks++;
   else if (sum == 0b0010 || sum == 0b1011 || sum == 0b1101 || sum == 0b0100)
-    m1_ticks--;
+    right_ticks--;
 
-  last_m1_enc = enc;
+  last_right_enc = enc;
 }
 
-void IRAM_ATTR updateEnc2() {
-  uint8_t MSB = digitalRead(M2_ENC_A);
-  uint8_t LSB = digitalRead(M2_ENC_B);
+void IRAM_ATTR updateEncLeft() {
+  uint8_t MSB = digitalRead(LEFT_ENC_A);
+  uint8_t LSB = digitalRead(LEFT_ENC_B);
   uint8_t enc = (MSB << 1) | LSB;
-  uint8_t sum = (last_m2_enc << 2) | enc;
+  uint8_t sum = (last_left_enc << 2) | enc;
 
   if (sum == 0b0001 || sum == 0b0111 || sum == 0b1110 || sum == 0b1000)
-    m2_ticks++;
+    left_ticks++;
   else if (sum == 0b0010 || sum == 0b1011 || sum == 0b1101 || sum == 0b0100)
-    m2_ticks--;
+    left_ticks--;
 
-  last_m2_enc = enc;
+  last_left_enc = enc;
 }
 
-void driveMotorA(float pwm) {
+void driveMotorRight(float pwm) {
   bool forward = pwm >= 0;
   digitalWrite(IN1, forward ? HIGH : LOW);
   digitalWrite(IN2, forward ? LOW : HIGH);
   ledcWrite(PWM1, abs((int)pwm));
 }
 
-void driveMotorB(float pwm) {
+void driveMotorLeft(float pwm) {
   bool forward = pwm <= 0;
   digitalWrite(INB1, forward ? HIGH : LOW);
   digitalWrite(INB2, forward ? LOW : HIGH);
@@ -98,6 +102,7 @@ void setup() {
   pinMode(IN2, OUTPUT);
   pinMode(INB1, OUTPUT);
   pinMode(INB2, OUTPUT);
+  pinMode(POWER_OUTPUT, OUTPUT);
 
   ledcAttach(PWM1, PWM_FREQ, PWM_RES_BITS);
   ledcAttach(PWM2, PWM_FREQ, PWM_RES_BITS);
@@ -105,15 +110,20 @@ void setup() {
   ledcWrite(PWM2, 0);
 
   // Encoder Pins
-  pinMode(M1_ENC_A, INPUT_PULLUP);
-  pinMode(M1_ENC_B, INPUT_PULLUP);
-  pinMode(M2_ENC_A, INPUT_PULLUP);
-  pinMode(M2_ENC_B, INPUT_PULLUP);
+  pinMode(RIGHT_ENC_A, INPUT_PULLUP);
+  pinMode(RIGHT_ENC_B, INPUT_PULLUP);
+  pinMode(LEFT_ENC_A, INPUT_PULLUP);
+  pinMode(LEFT_ENC_B, INPUT_PULLUP);
 
-  attachInterrupt(digitalPinToInterrupt(M1_ENC_A), updateEnc1, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(M1_ENC_B), updateEnc1, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(M2_ENC_A), updateEnc2, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(M2_ENC_B), updateEnc2, CHANGE);
+  //EnableMotors
+  pinMode(ENABLE, OUTPUT);
+  digitalWrite(ENABLE, HIGH);
+  digitalWrite(POWER_OUTPUT, HIGH);
+
+  attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_A), updateEncRight, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(RIGHT_ENC_B), updateEncRight, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(LEFT_ENC_A), updateEncLeft, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(LEFT_ENC_B), updateEncLeft, CHANGE);
 
   last_time = millis();
 }
@@ -122,13 +132,13 @@ void loop() {
   unsigned long now = millis();
   float dt = (now - last_time);
   if (dt < 40) return; // skip if too soon
-//  Serial.printf("Loop dt : %0.2f \n", dt);/
+//  Serial.printf("Loop dt : %0.2f \n", dt);
 
   // Compute current speed (rad/s)
-  long ticks_l = m1_ticks;
-  long ticks_r = m2_ticks;
-//  Serial.printf("Ticks L: %ld | Ticks R: %ld\n", m1_ticks, m2_ticks);/
-  m1_ticks = m2_ticks = 0;
+  long ticks_l = left_ticks;
+  long ticks_r = right_ticks;
+  Serial.printf("Ticks L: %ld | Ticks R: %ld\n", left_ticks, right_ticks);
+  right_ticks = left_ticks = 0;
 
   float w_l = (2.0 * PI * (float)ticks_l / (float)TICKS_PER_REV) / (dt / 1000);
   float w_r = (2.0 * PI * (float)ticks_r / (float)TICKS_PER_REV) / (dt / 1000);
@@ -138,7 +148,6 @@ void loop() {
   float v_r = w_r * WHEEL_RADIUS;
 
 //  Serial.printf("w_l: %.4f rad/s | w_r: %.4f rad/s | v_l: %.4f m/s | v_r: %.4/f m/s\n", w_l, w_r, v_l, v_r);
-
 
   // === PID Control ===
   float error_l = target_l - v_l;
@@ -157,9 +166,9 @@ void loop() {
   pwm_r_cmd += correction_r * DUTY_MAX;
   pwm_r_cmd = constrain(pwm_r_cmd, -DUTY_MAX, DUTY_MAX);
 
-//  Serial.printf("Motor PWM_L: %.2f, PWM_R %.2f \n", pwm_l_cmd, pwm_r_cmd);/
-  driveMotorA(pwm_l_cmd);
-  driveMotorB(pwm_r_cmd);
+//  Serial.printf("Motor PWM_L: %.2f, PWM_R %.2f \n", pwm_l_cmd, pwm_r_cmd);
+  driveMotorRight(pwm_r_cmd);
+  driveMotorLeft(pwm_l_cmd);
 
   // === Odometry ===
   float v = (v_r + v_l) / 2.0;
@@ -178,15 +187,14 @@ void loop() {
 //  Serial.printf("CMD_VEL: %.2f %.2f | ACT_VEL: %.2f %.2f\n", target_l, target_r, v_l, v_r);
   Serial.printf("POS: x=%.2f y=%.2f theta=%.2f\n", x, y, theta);
 
-
   // === Serial Input (from Pi) ===
   if (Serial.available()) {
     String cmd = Serial.readStringUntil('\n');
     float linear, angular;
     if (sscanf(cmd.c_str(), "%f %f", &linear, &angular) == 2) {
       // Convert to wheel targets
-      target_l = linear + (angular * BASE_WIDTH / 2.0);
-      target_r = linear - (angular * BASE_WIDTH / 2.0);
+      target_l = linear - (angular * BASE_WIDTH / 2.0);
+      target_r = linear + (angular * BASE_WIDTH / 2.0);
     }
   }
 
