@@ -67,6 +67,7 @@ sudo apt install -y \
 
 To start the robot with all required nodes:
 ```bash
+export TURTLEBOT3_MODEL=waffle
 ros2 launch titan_bringup titan_bringup.launch.py
 ```
 
@@ -135,11 +136,11 @@ This will launch:
 
 ---
 
-## 🚀 Robot Bringup
+## 🚀 Robot Simulation
 
-To start the robot with all required nodes:
+To start the simulation with all required nodes:
 ```bash
-ros2 launch turtlebot4_ignition_bringup turtlebot4_ignition.launch.py 
+ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
 ```
 
 ## 🔎 Scan Network Devices
