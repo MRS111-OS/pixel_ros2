@@ -21,9 +21,9 @@ sudo apt install -y \
     openssh-server \
     rsync \
     tmux \
-    python3-rosdep \
-    ros-humble-turtlebot4-simulator \
-    ros-humble-irobot-create-nodes
+    python3 \
+    python3-pip \
+    python3-rosdep
 
 ```
 
