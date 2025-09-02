@@ -24,6 +24,8 @@ from launch_ros.actions import LoadComposableNodes
 from launch_ros.actions import Node
 from launch_ros.descriptions import ComposableNode, ParameterFile
 from nav2_common.launch import RewrittenYaml
+from launch_ros.actions import Node
+
 
 
 def generate_launch_description():
@@ -142,6 +144,13 @@ def generate_launch_description():
         ]
     )
 
+    static_map_to_odom = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='static_map_to_odom',
+        arguments=['0','0','0','0','0','0','map','odom']
+    )
+
     load_composable_nodes = LoadComposableNodes(
         condition=IfCondition(use_composition),
         target_container=container_name_full,
@@ -184,6 +193,9 @@ def generate_launch_description():
     ld.add_action(declare_container_name_cmd)
     ld.add_action(declare_use_respawn_cmd)
     ld.add_action(declare_log_level_cmd)
+
+    ld.add_action(static_map_to_odom)
+
 
     # Add the actions to launch all of the localiztion nodes
     ld.add_action(load_nodes)

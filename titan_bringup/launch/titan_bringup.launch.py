@@ -67,5 +67,5 @@ def generate_launch_description():
         turtlebot_state_launch,
         esp_launch,
         lidar_launch,
-        laser_filter_launch
+        #laser_filter_launch
     ])
