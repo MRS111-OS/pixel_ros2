@@ -16,11 +16,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -101,11 +96,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -126,11 +116,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -151,11 +136,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -346,11 +326,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -371,11 +346,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -396,11 +366,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -591,11 +556,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Wood</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/wood.jpg</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -616,11 +576,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Wood</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/wood.jpg</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -2446,11 +2401,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -2531,11 +2481,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -2556,11 +2501,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -2581,11 +2521,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -3016,11 +2951,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -3041,11 +2971,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -3066,11 +2991,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -3091,11 +3011,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -3116,11 +3031,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -3141,11 +3051,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -3806,11 +3711,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -3831,11 +3731,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -3856,11 +3751,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -4051,11 +3941,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -4076,11 +3961,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
@@ -4101,11 +3981,6 @@
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Bricks</name>
           </script>
-          <pbr>
-            <metal>
-              <albedo_map>materials/textures/bricks.png</albedo_map>
-            </metal>
-          </pbr>
           <ambient>1 1 1 1</ambient>
           <diffuse>1 1 1 1</diffuse>
           <specular>0.2 0.2 0.2 1</specular>
