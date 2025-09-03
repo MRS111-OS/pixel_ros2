@@ -38,6 +38,15 @@ sudo apt install ros-humble-rviz2 \
 
 ```
 
+## One time setup
+```bash
+echo 'export TURTLEBOT3_MODEL=burger' >> ~/.bashrc
+echo 'source /usr/share/gazebo/setup.sh' >> ~/.bashrc
+echo 'export GAZEBO_MODEL_PATH=~/titan_ws/src/titan_simulation/turtlebot3_gazebo/models:$GAZEBO_MODEL_PATH' >> ~/.bashrc
+echo 'source ~/titan_ws/install/setup.bash' >> ~/.bashrc
+
+```
+
 ---
 
 ## 🛠️ Workspace Setup
@@ -76,13 +85,6 @@ sudo apt install ros-humble-rviz2 \
 ## 🚀 Robot Bringup
 
 To start the robot with all required nodes:
-```bash
-echo 'export TURTLEBOT3_MODEL=burger' >> ~/.bashrc
-echo 'source /usr/share/gazebo/setup.sh' >> ~/.bashrc
-echo 'export GAZEBO_MODEL_PATH=~/titan_ws/src/titan_simulation/turtlebot3_gazebo/models:$GAZEBO_MODEL_PATH' >> ~/.bashrc
-echo 'source ~/titan_ws/install/setup.bash' >> ~/.bashrc
-
-```
 ```bash
 ros2 launch titan_bringup titan_bringup.launch.py
 ```
