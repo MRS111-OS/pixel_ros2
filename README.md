@@ -13,7 +13,7 @@ sudo apt update && sudo apt upgrade -y
 ## Install essential tools
 
 ```bash
-sudo apt install -y curl wget htop net-tools openssh-server rsync tmux python3 python3-pip python3-rosdep gazebo
+sudo apt install -y curl wget htop net-tools openssh-server rsync tmux python3 python3-pip python3-rosdep gazebo git
 
 ```
 
@@ -43,7 +43,7 @@ echo 'source ~/titan_ws/install/setup.bash' >> ~/.bashrc
 
 2. **Clone the Titan Robot repository:**
     ```bash
-    git clone https://github.com/MRS111-OS/titan_robot.git
+    git clone -b v2 https://github.com/MRS111-OS/titan_robot.git
     mv titan_robot/ src
     ```
 3. **Install Dependencies:**
