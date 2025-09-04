@@ -13,7 +13,7 @@ sudo apt update && sudo apt upgrade -y
 ## Install essential tools
 
 ```bash
-sudo apt install -y curl wget htop net-tools openssh-server rsync tmux python3 python3-pip python3-rosdep gazebo git python3-colcon-common-extensions
+sudo apt install -y curl wget htop net-tools openssh-server rsync tmux python3 python3-pip python3-rosdep gazebo git python3-colcon-common-extensions terminator
 
 
 ```
