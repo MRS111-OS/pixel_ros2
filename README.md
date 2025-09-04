@@ -13,28 +13,12 @@ sudo apt update && sudo apt upgrade -y
 ## Install essential tools
 
 ```bash
-sudo apt install -y \
-    curl \
-    wget \
-    htop \
-    net-tools \
-    openssh-server \
-    rsync \
-    tmux \ 
-    ros-humble-rviz2 \
-    python3 \
-    python3-pip \
-    python3-rosdep \
-    gazebo \  
+sudo apt install -y curl wget htop net-tools openssh-server rsync tmux python3 python3-pip python3-rosdep gazebo
 
 ```
 
 ```bash
-sudo apt install ros-humble-rviz2 \
-    ros-humble-slam-toolbox \
-    ros-humble-turtlebot3-gazebo \
-    ros-humble-joint-state-publisher-gui \
-    ros-humble-gazebo-ros-pkgs
+sudo apt install ros-humble-rviz2 ros-humble-slam-toolbox ros-humble-turtlebot3-gazebo ros-humble-joint-state-publisher-gui ros-humble-gazebo-ros-pkgs
 
 ```
 
