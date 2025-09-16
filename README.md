@@ -130,6 +130,11 @@ This will launch:
    ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py 
 ```
 
+In another terminal:
+```bash
+    ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+
 
 ---
 
