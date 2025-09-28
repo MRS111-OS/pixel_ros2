@@ -1,6 +1,7 @@
 <?xml version="1.0" ?>
 <sdf version="1.5">
-  <model name="turtlebot3_burger">
+  <model name="titan">
+    <static>false</static>
     <pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
 
     <link name="base_footprint"/>
@@ -30,10 +31,10 @@
       </collision>
 
       <visual name="base_visual">
-        <pose>-0.032 0 0 0 0 0</pose>
+        <pose>-0.032 0 0.015 0 0 0</pose>
         <geometry>
           <mesh>
-            <uri>file:///home/reynash/titan_ws/src/titan_simulation/models/titan_robot.stl</uri>
+            <uri>file:///home/reynash/titan_ws/src/titan_simulation/models/titan_base.stl</uri>
             <scale>0.001 0.001 0.001</scale>
           </mesh>
         </geometry>
@@ -176,7 +177,7 @@
     <link name="wheel_left_link">
 
       <inertial>
-        <pose>0 0.08 0.023 -1.57 0 0</pose>
+        <pose>0 0.08 0.032 0 0 1.57</pose>
         <inertia>
           <ixx>1.8158194e-03</ixx>
           <ixy>-9.3392e-12</ixy>
@@ -189,7 +190,7 @@
       </inertial>
 
       <collision name="wheel_left_collision">
-        <pose>0 0.08 0.023 -1.57 0 0</pose>
+        <pose>0 0.08 0.032 0 0 1.57</pose>
         <geometry>
           <cylinder>
             <radius>0.033</radius>
@@ -221,10 +222,10 @@
       </collision>
 
       <visual name="wheel_left_visual">
-        <pose>0 0.08 0.023 0 0 0</pose>
+        <pose>0 0.08 0.032 0 0 1.57</pose>
         <geometry>
           <mesh>
-            <uri>file:///home/reynash/titan_ws/src/titan_simulation/turtlebot3_common/meshes/wheels/left_tire.stl</uri>
+            <uri>file:///home/reynash/titan_ws/src/titan_simulation/models/left_wheel.stl</uri>
             <scale>0.001 0.001 0.001</scale>
           </mesh>
         </geometry>
@@ -238,7 +239,7 @@
     <link name="wheel_right_link">
 
       <inertial>
-        <pose>0.0 -0.08 0.023 -1.57 0 0</pose>
+        <pose>0.0 -0.08 0.032 0 0 -1.57</pose>
         <inertia>
           <ixx>1.8158194e-03</ixx>
           <ixy>-9.3392e-12</ixy>
@@ -251,7 +252,7 @@
       </inertial>
 
       <collision name="wheel_right_collision">
-        <pose>0.0 -0.08 0.023 -1.57 0 0</pose>
+        <pose>0.0 -0.08 0.032 0 0 -1.57</pose>
         <geometry>
           <cylinder>
             <radius>0.033</radius>
@@ -283,10 +284,10 @@
       </collision>
 
       <visual name="wheel_right_visual">
-        <pose>0.0 -0.08 0.023 0 0 0</pose>
+        <pose>0.0 -0.08 0.032 0 0 -1.57</pose>
         <geometry>
           <mesh>
-            <uri>file:///home/reynash/titan_ws/src/titan_simulation/turtlebot3_common/meshes/wheels/right_tire.stl</uri>
+            <uri>file:///home/reynash/titan_ws/src/titan_simulation/models/right_wheel.stl</uri>
             <scale>0.001 0.001 0.001</scale>
           </mesh>
         </geometry>
@@ -340,18 +341,18 @@
     <joint name="wheel_left_joint" type="revolute">
       <parent>base_link</parent>
       <child>wheel_left_link</child>
-      <pose>0.0 0.08 0.023 -1.57 0 0</pose>
+      <pose>0.0 0.08 0.032 -1.57 0 0</pose>
       <axis>
-        <xyz>0 1 0</xyz>
+        <xyz>0 0 1</xyz>
       </axis>
     </joint>
 
     <joint name="wheel_right_joint" type="revolute">
       <parent>base_link</parent>
       <child>wheel_right_link</child>
-      <pose>0.0 -0.08 0.023 -1.57 0 0</pose>
+      <pose>0.0 -0.08 0.032 -1.57 0 0</pose>
       <axis>
-        <xyz>0 1 0</xyz>
+        <xyz>0 0 1</xyz>
       </axis>
     </joint>
 
@@ -391,7 +392,7 @@
       <right_joint>wheel_right_joint</right_joint>
 
       <!-- kinematics -->
-      <wheel_separation>0.160</wheel_separation>
+      <wheel_separation>0.1675</wheel_separation>
       <wheel_diameter>0.066</wheel_diameter>
 
       <!-- limits -->

@@ -176,7 +176,7 @@
     <link name="wheel_left_link">
 
       <inertial>
-        <pose>0 0.08 0.01 0 0 0</pose>
+        <pose>0 0.08 0.001 -1.57 0 0</pose>
         <inertia>
           <ixx>1.8158194e-03</ixx>
           <ixy>-9.3392e-12</ixy>
@@ -189,7 +189,7 @@
       </inertial>
 
       <collision name="wheel_left_collision">
-        <pose>0 0.08 0.01 0 0 0</pose>
+        <pose>0 0.08 0.001 -1.57 0 0</pose>
         <geometry>
           <cylinder>
             <radius>0.033</radius>
@@ -221,7 +221,7 @@
       </collision>
 
       <visual name="wheel_left_visual">
-        <pose>0 0.08 0.01 0 0 0</pose>
+        <pose>0 0.08 0.001 0 0 0</pose>
         <geometry>
           <mesh>
             <uri>file:///home/reynash/titan_ws/src/titan_simulation/models/left_wheel.stl</uri>
@@ -238,7 +238,7 @@
     <link name="wheel_right_link">
 
       <inertial>
-        <pose>0.0 -0.08 0.01 0 0 0</pose>
+        <pose>0.0 -0.08 0.001 -1.57 0 0</pose>
         <inertia>
           <ixx>1.8158194e-03</ixx>
           <ixy>-9.3392e-12</ixy>
@@ -251,7 +251,7 @@
       </inertial>
 
       <collision name="wheel_right_collision">
-        <pose>0.0 -0.08 0.01 0 0 0</pose>
+        <pose>0.0 -0.08 0.001 -1.57 0 0</pose>
         <geometry>
           <cylinder>
             <radius>0.033</radius>
@@ -283,7 +283,7 @@
       </collision>
 
       <visual name="wheel_right_visual">
-        <pose>0.0 -0.08 0.01 0 0 0</pose>
+        <pose>0.0 -0.08 0.001 0 0 0</pose>
         <geometry>
           <mesh>
             <uri>file:///home/reynash/titan_ws/src/titan_simulation/models/right_wheel.stl</uri>
@@ -340,18 +340,18 @@
     <joint name="wheel_left_joint" type="revolute">
       <parent>base_link</parent>
       <child>wheel_left_link</child>
-      <pose>0.0 0.08 0.01 0 0 0</pose>
+      <pose>0.0 0.08 0.001 -1.57 0 0</pose>
       <axis>
-        <xyz>0 1 0</xyz>
+        <xyz>0 0 1</xyz>
       </axis>
     </joint>
 
     <joint name="wheel_right_joint" type="revolute">
       <parent>base_link</parent>
       <child>wheel_right_link</child>
-      <pose>0.0 -0.08 0.01 0 0 0</pose>
+      <pose>0.0 -0.08 0.001 -1.57 0 0</pose>
       <axis>
-        <xyz>0 1 0</xyz>
+        <xyz>0 0 1</xyz>
       </axis>
     </joint>
 
