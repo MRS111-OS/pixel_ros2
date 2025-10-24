@@ -8,13 +8,11 @@ log() {
 
 # Define Wi-Fi networks and passwords
 declare -A WIFI_NETWORKS
-WIFI_NETWORKS["Oplify-5G"]="Aioplify@25"
 WIFI_NETWORKS["titan-robo"]="momentum123"
 WIFI_NETWORKS["Reynash"]="hellobye"
 
 # Define priorities
 declare -A WIFI_PRIORITIES
-WIFI_PRIORITIES["Oplify-5G"]=5
 WIFI_PRIORITIES["titan-robo"]=0
 WIFI_PRIORITIES["Reynash"]=10
 

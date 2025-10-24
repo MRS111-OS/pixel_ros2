@@ -21,7 +21,7 @@ def generate_launch_description():
     state_launch_path = os.path.join(pkg_share, 'launch', 'titan_state_publisher.launch.py')
     esp_launch_path = os.path.join(esp_share, 'launch', 'esp_serial.launch.py')
     lidar_launch_path = os.path.join(lidar_share, 'launch', 'sllidar_c1_launch.py')
-    laser_filter_launch_path = os.path.join(lidar_filter_share, 'examples', 'angular_filter_example.launch.py')
+    laser_filter_launch_path = os.path.join(lidar_filter_share, 'examples', 'box_filter_example.launch.py')
 
     # URDF/Xacro path
     urdf_file = os.path.join(desc_share, 'urdf', 'turtlebot3_burger.urdf')
@@ -62,8 +62,8 @@ def generate_launch_description():
     )
 
     return launch.LaunchDescription([
-        joint_state_publisher_gui_node,
-        rviz_launch,
+#       joint_state_publisher_gui_node,
+#        rviz_launch,
         turtlebot_state_launch,
         esp_launch,
         lidar_launch,
