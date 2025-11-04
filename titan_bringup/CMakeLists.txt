@@ -25,6 +25,11 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(PROGRAMS
+  script/odom_to_base.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ################################################################################
 # Macro for ament package
 ################################################################################
