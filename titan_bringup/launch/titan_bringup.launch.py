@@ -41,6 +41,13 @@ def generate_launch_description():
         output='screen'
     )
 
+    odom_to_base_node = Node(
+        package='titan_bringup',
+        executable='odom_to_base.py',
+        name='odom_to_tf_broadcaster',
+        output='screen'
+    )
+
     rviz_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(rviz_launch_path)
     )
@@ -65,7 +72,8 @@ def generate_launch_description():
 #       joint_state_publisher_gui_node,
 #        rviz_launch,
         turtlebot_state_launch,
-        esp_launch,
+        odom_to_base_node,
+        #esp_launch,
         lidar_launch,
         laser_filter_launch
     ])

@@ -13,14 +13,9 @@ slam_toolbox:
     map_frame: map
     base_frame: base_footprint
     scan_topic: /scan_filtered
-<<<<<<< HEAD
     use_map_saver: true
     mode: mapping 
     #mode: localization
-=======
-    use_map_saver: false  # Disable map saving in localization
-    mode: mapping
->>>>>>> 17133a7 (bringup and shell script changes)
 
     # Map file configuration
     #map_file_name: /home/titan/titan_ws/map4
