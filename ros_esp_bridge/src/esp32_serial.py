@@ -135,7 +135,7 @@ class SerialBridgeNode(Node):
                             except ValueError:
                                 pass
                 else:
-                    time.sleep(0.01)
+                    time.sleep(0.001)
             except serial.SerialException as e:
                 self.get_logger().error(f"Serial exception: {e}")
                 consecutive_errors += 1
