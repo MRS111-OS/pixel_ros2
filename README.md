@@ -10,6 +10,13 @@ This repository contains the ROS 2 packages and configurations for the Titan Rob
 sudo apt update && sudo apt upgrade -y
 ```
 
+## Check Temperature and Free Memory
+```bash
+echo "CPU Temp: $(($(cat /sys/class/thermal/thermal_zone0/temp)/1000))°C"; \
+echo -n "RAM: "; free -h | awk '/Mem:/ {print $3 "/" $2}'; \
+echo -n "Storage: "; df -h / | awk 'NR==2 {print $3 "/" $2 " used"}'
+```
+
 ## Install essential tools
 
 ```bash
