@@ -1,8 +1,0 @@
-enable_color: true
-rgb_camera.color_profile: 424x240x6
-depth_module.color_profilee: 424x240x6
-enable_depth: true
-align_depth.enable: true
-enable_sync: true
-publish_tf: true
-tf_publish_rate: 1.0
