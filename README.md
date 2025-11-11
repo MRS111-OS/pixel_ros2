@@ -86,35 +86,31 @@ This will launch:
 
 ## 📽️ Mapping Using SLAM
 
-1. **Launch the Nav2 bringup:**
-    ```bash
-    ros2 launch nav2_bringup navigation_launch.py
-    ```
-
-2. **In a new terminal, launch SLAM Toolbox in async mapping mode:**
+1. **Launch SLAM Toolbox:**
     ```bash
     ros2 launch slam_toolbox online_async_launch.py
     ```
 
-3. **In another terminal, control the robot with teleop:**
+2. **In another terminal, control the robot with teleop:**
     ```bash
     ros2 run teleop_twist_keyboard teleop_twist_keyboard
     ```
 
-4. **Save the map using RViz2:**
+3. **Save the map using RViz2:**
     - In Rviz2, go to Panels > Add New Panel > Choose SlamToolboxPlugin
     - Enter your map name beside save map and serialize map
     - Click Save Map and Serialize Map
 
+Note: In rviz, choose Map display and select /map topic
 ---
 
-## 📍 Localization with Saved Map
+## 📍 Localization and Navigation with Saved Map
 
-1. **Stop the SLAM Toolbox launch file. Keep the navigation     launch file running**
+1. **Stop the SLAM Toolbox launch file.**
 
-2. **Run localization using nav2_bringup:**
+2. **Run nav2_bringup:**
     ```bash
-    ros2 launch nav2_bringup localization_launch.py map:=/path/to/your/map.yaml
+    ros2 launch nav2_bringup bringup_launch.py map:=/path/to/your/map.yaml
     ```
 
 3. **In Rviz2:**
@@ -122,6 +118,10 @@ This will launch:
     - Click the 2D Goal Pose tool
     - Click a point on the map to send the robot to that goal
 
+Note: You can view the following in Rviz:
+1. Map->/local_costmap
+2. Map->/global_costmap
+3. Path->/plan
 ---
 
 ## 🤖 Robot Simulation
@@ -155,8 +155,10 @@ To find the IP addresses of devices (such as your robot) on your local network, 
     sudo nmap -sn 192.168.127.0/24
     ```
 
+    Note: You can see your ip using ```ip addr```
+
     You should pick the IP address corresponding to  
-    MAC ADDRESS: `D8:3A:DD:46:FC:C3`
+    MAC ADDRESS: `88:A2:9E:1B:98:1C`
 
     This will list all active devices in the range. Look for your robot's IP in the output.
 
