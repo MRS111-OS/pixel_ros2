@@ -153,6 +153,50 @@ ros2 action send_goal /follow_waypoints nav2_msgs/action/FollowWaypoints "poses:
 ```
 ---
 
+## 📷 Camera Launching
+
+To launch only depth
+```bash
+ros2 launch realsense2_camera rs_launch.py enable_color:=false enable_infra1:=false enable_infra2:=false enable_depth:=true depth_module.depth_profile:=320x240x6
+
+```
+
+To launch with Infra
+```bash
+ros2 launch realsense2_camera rs_launch.py enable_color:=false enable_infra1:=true enable_infra2:=true enable_depth:=true depth_module.depth_profile:=320x240x6 infra1_profile:=320x240x6 infra2_profile:=320x240x6
+
+```
+
+To view feed:
+1. Go to rviz
+2. In display, add Image
+3. Choose topic ```/camera/camera/infra2/image_rect_raw``` or ```/camera/camera/infra1/image_rect_raw``` or ```/camera/camera/depth/image_rect_raw```
+
+Troubleshoot:
+1. The node begins when you see 
+```bash
+RealSense Node Is Up!
+```
+
+2. If you see 
+```bash
+The requested device with  is NOT found. Will Try again.
+```
+
+OR
+
+```bash
+No RealSense devices were found!
+```
+
+In this case:
+1) Either replug the camera
+2) Check ```lsusb```. You should see Intel Corp. Intel(R) RealSense(TM) Depth Camera 435i
+If camera is present in lsusb, ```rs-enumerate-devices```
+3) Worst case scenario, replug camera from RPI.
+
+---
+
 ## 🤖 Robot Simulation
 
 ```bash
@@ -193,3 +237,18 @@ To find the IP addresses of devices (such as your robot) on your local network, 
 
 > **Tip:** You may need `sudo` for full results.
 
+## Connecting to Wifi/Hotspot
+Ensure you have a device with
+Username: ```bvp-titan```
+Password: ```titan```
+
+If robot does not connect:
+```bash
+cd /home/titan/titan_ws/src/shell_scripts
+./configure_wifi.sh
+```
+
+And restart the robot using
+```bash
+sudo reboot
+```

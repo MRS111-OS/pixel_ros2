@@ -11,13 +11,14 @@ declare -A WIFI_NETWORKS
 WIFI_NETWORKS["titan-robo"]="momentum123"
 WIFI_NETWORKS["Reynash"]="hellobye"
 WIFI_NETWORKS["Airtel_Momentum"]="India@123"
-WIFI_NETWORKS["motorola edge 60 fusion"]="qwerty123"
+WIFI_NETWORKS["bvp-titan"]="titan"
+
 
 # Define priorities
 declare -A WIFI_PRIORITIES
 WIFI_PRIORITIES["titan-robo"]=0
 WIFI_PRIORITIES["Reynash"]=12
-WIFI_PRIORITIES["motorola edge 60 fusion"]=11
+WIFI_PRIORITIES["bvp-titan"]=11
 WIFI_PRIORITIES["Airtel_Momentum"]=10
 
 log "Starting Wi-Fi configuration..."
