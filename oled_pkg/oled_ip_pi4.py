@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import time
 import subprocess
 import Adafruit_GPIO.SPI as SPI

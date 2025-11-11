@@ -8,15 +8,17 @@ log() {
 
 # Define Wi-Fi networks and passwords
 declare -A WIFI_NETWORKS
-WIFI_NETWORKS["Oplify-5G"]="Aioplify@25"
 WIFI_NETWORKS["titan-robo"]="momentum123"
 WIFI_NETWORKS["Reynash"]="hellobye"
+WIFI_NETWORKS["Airtel_Momentum"]="India@123"
+WIFI_NETWORKS["motorola edge 60 fusion"]="qwerty123"
 
 # Define priorities
 declare -A WIFI_PRIORITIES
-WIFI_PRIORITIES["Oplify-5G"]=5
 WIFI_PRIORITIES["titan-robo"]=0
-WIFI_PRIORITIES["Reynash"]=10
+WIFI_PRIORITIES["Reynash"]=12
+WIFI_PRIORITIES["motorola edge 60 fusion"]=11
+WIFI_PRIORITIES["Airtel_Momentum"]=10
 
 log "Starting Wi-Fi configuration..."
 
