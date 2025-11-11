@@ -78,11 +78,10 @@
     </inertial>
   </link>
 
-  <joint name="${namespace}wheel_left_joint" type="continuous">
+  <joint name="${namespace}wheel_left_joint" type="fixed">
     <parent link="${namespace}base_link"/>
     <child link="${namespace}wheel_left_link"/>
     <origin xyz="0.0 0.08 0.023" rpy="-1.57 0 3.1416"/>
-    <axis xyz="0 0 1"/>
   </joint>
 
   <link name="${namespace}wheel_left_link">
@@ -108,11 +107,10 @@
     </inertial>
   </link>
 
-  <joint name="${namespace}wheel_right_joint" type="continuous">
+  <joint name="${namespace}wheel_right_joint" type="fixed">
     <parent link="${namespace}base_link"/>
     <child link="${namespace}wheel_right_link"/>
     <origin xyz="0.0 -0.080 0.023" rpy="-1.57 0 3.1416"/>
-    <axis xyz="0 0 1"/>
   </joint>
 
   <link name="${namespace}wheel_right_link">
