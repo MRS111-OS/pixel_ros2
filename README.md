@@ -32,6 +32,16 @@ echo 'source ~/titan_ws/install/setup.bash' >> ~/.bashrc
 
 ```
 
+## To check domain ID: (should show 5)
+```bash
+echo $ROS_DOMAIN_ID
+```
+
+To change domain ID of the terminal
+```bash
+export ROS_DOMAIN_ID=5
+```
+
 ---
 
 ## 🛠️ Workspace Setup
@@ -150,15 +160,15 @@ To find the IP addresses of devices (such as your robot) on your local network, 
 
 2. **Scan your network** (replace subnet if needed):
     ```bash
-    sudo nmap -sn 192.168.127.0/25
+    sudo nmap 192.168.127.0/25
     # OR
-    sudo nmap -sn 192.168.127.0/24
+    sudo nmap 192.168.127.0/24
     ```
 
     Note: You can see your ip using ```ip addr```
 
     You should pick the IP address corresponding to  
-    MAC ADDRESS: `88:A2:9E:1B:98:1C`
+    MAC ADDRESS: `2C:CF:67:0B:AD:12`
 
     This will list all active devices in the range. Look for your robot's IP in the output.
 
