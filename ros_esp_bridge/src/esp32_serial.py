@@ -21,24 +21,44 @@ class SerialBridgeNode(Node):
         baud = self.get_parameter('baud_rate').value
 
         self.ser = None
+
+        # create the lock before any serial writes (send_restart uses it)
+        self.lock = threading.Lock()
+
         self.connect_serial(port, baud)
+
+        # send RESTART to the device immediately after connecting
+        try:
+            self.send_restart()
+        except Exception as e:
+            self.get_logger().warn(f"Failed to send RESTART on startup: {e}")
 
         self.cmd_vel_sub = self.create_subscription(Twist, 'cmd_vel', self.cmd_vel_callback, 10)
         self.odom_pub = self.create_publisher(Odometry, 'odom', 10)
         self.tf_broadcaster = TransformBroadcaster(self)
 
         self.odom_msg = Odometry()
-        self.lock = threading.Lock()
+
         self.running = True
 
         self.lines_received = 0
-        self.odom_published = 0
 
         self.thread = threading.Thread(target=self.read_serial)
         self.thread.daemon = True
         self.thread.start()
 
         self.get_logger().info(f"Serial bridge node started on {port} at {baud} baud")
+        self.odom_transform = TransformStamped()
+        self.odom_transform.header.frame_id = "odom"
+        self.odom_transform.child_frame_id = "base_footprint"
+        self.odom_transform.transform.translation.x = 0.0
+        self.odom_transform.transform.translation.y = 0.0
+        self.odom_transform.transform.translation.z = 0.0
+        self.odom_transform.transform.rotation = Quaternion()
+        self.odom_transform.transform.rotation.x = 0.0
+        self.odom_transform.transform.rotation.y = 0.0
+        self.odom_transform.transform.rotation.z = 0.0
+        self.odom_transform.transform.rotation.w = 1.0
 
     def connect_serial(self, port, baud, retries=5):
         for attempt in range(retries):
@@ -101,12 +121,12 @@ class SerialBridgeNode(Node):
                         if match:
                             try:
                                 x, y, theta = map(float, match.groups())
-                                now = self.get_clock().now().to_msg()
 
-                                self.odom_msg.header.stamp = now
+                                self.odom_msg.header.stamp = self.get_clock().now().to_msg()
                                 self.odom_msg.header.frame_id = "odom"
-                                self.odom_msg.child_frame_id = "base_footprint"
+                                self.odom_msg.child_frame_id = "base_link"
 
+                                # Use accumulated position
                                 self.odom_msg.pose.pose.position.x = x
                                 self.odom_msg.pose.pose.position.y = y
                                 self.odom_msg.pose.pose.position.z = 0.0
@@ -114,22 +134,21 @@ class SerialBridgeNode(Node):
                                 q = self.yaw_to_quaternion(theta)
                                 self.odom_msg.pose.pose.orientation = q
 
+                                # Add twist (velocity) information
+                                self.odom_msg.twist.twist.linear.x = 0.0  # Use delta as velocity
+                                self.odom_msg.twist.twist.angular.z = 0.0  # Use delta as angular velocity
+
                                 self.odom_msg.pose.covariance[0] = 0.01
                                 self.odom_msg.pose.covariance[7] = 0.01
                                 self.odom_msg.pose.covariance[35] = 0.01
 
-                                self.odom_pub.publish(self.odom_msg)
-                                self.odom_published += 1
+                                self.odom_transform.header.stamp = self.odom_msg.header.stamp
+                                self.odom_transform.transform.translation.x = x
+                                self.odom_transform.transform.translation.y = y
+                                self.odom_transform.transform.rotation = q
 
-                                t = TransformStamped()
-                                t.header.stamp = now
-                                t.header.frame_id = "odom"
-                                t.child_frame_id = "base_footprint"
-                                t.transform.translation.x = x
-                                t.transform.translation.y = y
-                                t.transform.translation.z = 0.0
-                                t.transform.rotation = q
-                                self.tf_broadcaster.sendTransform(t)
+                                self.odom_pub.publish(self.odom_msg)
+                                self.tf_broadcaster.sendTransform(self.odom_transform)
 
                                 consecutive_errors = 0
 
@@ -166,6 +185,19 @@ class SerialBridgeNode(Node):
         q.z = math.sin(yaw / 2.0)
         q.w = math.cos(yaw / 2.0)
         return q
+
+    def send_restart(self):
+        """Send a 'RESTART' command over serial right after connecting."""
+        if not self.ser or not self.ser.is_open:
+            self.get_logger().warn("Serial port not open, cannot send RESTART")
+            return
+        try:
+            with self.lock:
+                self.ser.write(b"RESTART\n")
+                self.ser.flush()
+            self.get_logger().info("Sent RESTART to serial device")
+        except Exception as e:
+            self.get_logger().error(f"Failed to write RESTART to serial: {e}")
 
     def destroy_node(self):
         self.get_logger().info("Shutting down...")

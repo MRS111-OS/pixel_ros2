@@ -6,6 +6,8 @@ from launch_ros.substitutions import FindPackageShare
 from launch.actions import IncludeLaunchDescription, ExecuteProcess, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
+from launch.actions import TimerAction
+
 
 package_name = 'titan_bringup'
 desc_pkg = 'titan_description'
@@ -74,6 +76,12 @@ def generate_launch_description():
         turtlebot_state_launch,
         #odom_to_base_node,
         esp_launch,
-        lidar_launch,
-        laser_filter_launch
+        TimerAction(
+            period=5.0,  # 5 seconds delay after esp_launch before lidar_launch
+            actions=[lidar_launch]
+        ),
+        TimerAction(
+            period=8.0,  # Total delay 5 + 3 seconds after esp_launch before laser_filter_launch
+            actions=[laser_filter_launch]
+        ),
     ])
