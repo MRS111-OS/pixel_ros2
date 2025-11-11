@@ -24,8 +24,6 @@ from launch_ros.actions import LoadComposableNodes
 from launch_ros.actions import Node
 from launch_ros.descriptions import ComposableNode, ParameterFile
 from nav2_common.launch import RewrittenYaml
-from launch_ros.actions import Node
-
 
 
 def generate_launch_description():
@@ -194,11 +192,9 @@ def generate_launch_description():
     ld.add_action(declare_use_respawn_cmd)
     ld.add_action(declare_log_level_cmd)
 
-    ld.add_action(static_map_to_odom)
-
-
     # Add the actions to launch all of the localiztion nodes
     ld.add_action(load_nodes)
     ld.add_action(load_composable_nodes)
+    ld.add_action(static_map_to_odom)
 
     return ld
