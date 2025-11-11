@@ -10,38 +10,16 @@ This repository contains the ROS 2 packages and configurations for the Titan Rob
 sudo apt update && sudo apt upgrade -y
 ```
 
-## Check Temperature and Free Memory
-```bash
-echo "CPU Temp: $(($(cat /sys/class/thermal/thermal_zone0/temp)/1000))°C"; \
-echo -n "RAM: "; free -h | awk '/Mem:/ {print $3 "/" $2}'; \
-echo -n "Storage: "; df -h / | awk 'NR==2 {print $3 "/" $2 " used"}'
-```
-
 ## Install essential tools
 
 ```bash
-sudo apt install -y \
-    curl \
-    wget \
-    htop \
-    net-tools \
-    openssh-server \
-    rsync \
-    tmux \ 
-    ros-humble-rviz2 \
-    python3 \
-    python3-pip \
-    python3-rosdep \
-    gazebo \  
+sudo apt install -y curl wget htop net-tools openssh-server rsync tmux python3 python3-pip python3-rosdep gazebo git python3-colcon-common-extensions terminator
+
 
 ```
 
 ```bash
-sudo apt install ros-humble-rviz2 \
-    ros-humble-slam-toolbox \
-    ros-humble-turtlebot3-gazebo \
-    ros-humble-joint-state-publisher-gui \
-    ros-humble-gazebo-ros-pkgs
+sudo apt install ros-humble-rviz2 ros-humble-slam-toolbox ros-humble-turtlebot3-gazebo ros-humble-joint-state-publisher-gui ros-humble-gazebo-ros-pkgs
 
 ```
 
@@ -52,6 +30,16 @@ echo 'source /usr/share/gazebo/setup.sh' >> ~/.bashrc
 echo 'export GAZEBO_MODEL_PATH=~/titan_ws/src/titan_simulation/turtlebot3_gazebo/models:$GAZEBO_MODEL_PATH' >> ~/.bashrc
 echo 'source ~/titan_ws/install/setup.bash' >> ~/.bashrc
 
+```
+
+## To check domain ID: (should show 7)
+```bash
+echo $ROS_DOMAIN_ID
+```
+
+To change domain ID of the terminal
+```bash
+export ROS_DOMAIN_ID=7
 ```
 
 ---
@@ -66,7 +54,7 @@ echo 'source ~/titan_ws/install/setup.bash' >> ~/.bashrc
 
 2. **Clone the Titan Robot repository:**
     ```bash
-    git clone https://github.com/MRS111-OS/titan_robot.git
+    git clone -b v2 https://github.com/MRS111-OS/titan_robot.git
     mv titan_robot/ src
     ```
 3. **Install Dependencies:**
@@ -108,35 +96,31 @@ This will launch:
 
 ## 📽️ Mapping Using SLAM
 
-1. **Launch the Nav2 bringup:**
-    ```bash
-    ros2 launch nav2_bringup navigation_launch.py
-    ```
-
-2. **In a new terminal, launch SLAM Toolbox in async mapping mode:**
+1. **Launch SLAM Toolbox:**
     ```bash
     ros2 launch slam_toolbox online_async_launch.py
     ```
 
-3. **In another terminal, control the robot with teleop:**
+2. **In another terminal, control the robot with teleop:**
     ```bash
     ros2 run teleop_twist_keyboard teleop_twist_keyboard
     ```
 
-4. **Save the map using RViz2:**
+3. **Save the map using RViz2:**
     - In Rviz2, go to Panels > Add New Panel > Choose SlamToolboxPlugin
     - Enter your map name beside save map and serialize map
     - Click Save Map and Serialize Map
 
+Note: In rviz, choose Map display and select /map topic
 ---
 
-## 📍 Localization with Saved Map
+## 📍 Localization and Navigation with Saved Map
 
-1. **Stop the SLAM Toolbox launch file. Keep the navigation     launch file running**
+1. **Stop the SLAM Toolbox launch file.**
 
-2. **Run localization using nav2_bringup:**
+2. **Run nav2_bringup:**
     ```bash
-    ros2 launch nav2_bringup localization_launch.py map:=/path/to/your/map.yaml
+    ros2 launch nav2_bringup bringup_launch.py map:=/path/to/your/map.yaml
     ```
 
 3. **In Rviz2:**
@@ -144,12 +128,40 @@ This will launch:
     - Click the 2D Goal Pose tool
     - Click a point on the map to send the robot to that goal
 
+Note: You can view the following in Rviz:
+1. Map->/local_costmap
+2. Map->/global_costmap
+3. Path->/plan
+
+
+To send multiple waypoints: 
+```bash
+ros2 action send_goal /follow_waypoints nav2_msgs/action/FollowWaypoints "poses:
+  - header:
+      frame_id: map
+      stamp: {sec: 0, nanosec: 0}
+    pose:
+      position: {x: 1.0, y: 1.0}
+      orientation: {w: 1.0}
+  - header:
+      frame_id: map
+      stamp: {sec: 0, nanosec: 0}
+    pose:
+      position: {x: 2.0, y: 1.0}
+      orientation: {w: 1.0}
+"
+```
 ---
 
 ## 🤖 Robot Simulation
 
 ```bash
    ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py 
+```
+
+In another terminal:
+```bash
+    ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
 
@@ -172,9 +184,12 @@ To find the IP addresses of devices (such as your robot) on your local network, 
     sudo nmap -sn 192.168.127.0/24
     ```
 
+    Note: You can see your ip using ```ip addr```
+
     You should pick the IP address corresponding to  
-    MAC ADDRESS: `D8:3A:DD:46:FC:C3`
+    MAC ADDRESS: `88:A2:9E:1B:98:1C`
 
     This will list all active devices in the range. Look for your robot's IP in the output.
 
 > **Tip:** You may need `sudo` for full results.
+
