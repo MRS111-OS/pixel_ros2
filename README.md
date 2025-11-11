@@ -132,6 +132,34 @@ Note: You can view the following in Rviz:
 1. Map->/local_costmap
 2. Map->/global_costmap
 3. Path->/plan
+
+
+To send multiple waypoints: 
+```bash
+ros2 action send_goal /follow_waypoints nav2_msgs/action/FollowWaypoints "poses:
+  - header:
+      frame_id: map
+      stamp: {sec: 0, nanosec: 0}
+    pose:
+      position: {x: 1.0, y: 1.0}
+      orientation: {w: 1.0}
+  - header:
+      frame_id: map
+      stamp: {sec: 0, nanosec: 0}
+    pose:
+      position: {x: 2.0, y: 1.0}
+      orientation: {w: 1.0}
+"
+```
+
+## 📸 Object Detection
+
+ssh terminal to allow gui outside
+
+```bash
+ssh -X titan@192.168.1.15
+ros2 launch titan_object_detection object_detection.launch.py
+```
 ---
 
 ## 🤖 Robot Simulation
@@ -173,3 +201,19 @@ To find the IP addresses of devices (such as your robot) on your local network, 
     This will list all active devices in the range. Look for your robot's IP in the output.
 
 > **Tip:** You may need `sudo` for full results.
+
+## Connecting to Wifi/Hotspot
+Ensure you have a device with
+Username: ```bvp-titan```
+Password: ```titan```
+
+If robot does not connect:
+```bash
+cd /home/titan/titan_ws/src/shell_scripts
+./configure_wifi.sh
+```
+
+And restart the robot using
+```bash
+sudo reboot
+```
