@@ -100,7 +100,7 @@ class SerialBridgeNode(Node):
             self.get_logger().error(f"Failed to write to serial: {e}")
 
     def read_serial(self):
-        pos_re = re.compile(r'POS:\s*x\s*=\s*([-\d\.]+)\s*y\s*=\s*([-\d\.]+)\s*theta\s*=\s*([-\d\.]+)')
+        pos_re = re.compile(r'POS:\s*x\s*=\s*([-+]?\d+\.?\d*)\s+y\s*=\s*([-+]?\d+\.?\d*)\s+theta\s*=\s*([-+]?\d+\.?\d*)')
 
         consecutive_errors = 0
         max_consecutive_errors = 10
