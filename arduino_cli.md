@@ -54,18 +54,11 @@ If you don't see FQBN,
 1) For a generic board, FQBN=esp32:esp32:esp32
 2) For ESP32S3, FQBN=esp32:esp32:esp32s3
 
-Based on your board,
-```bash
-FQBN=esp32:esp32:esp32
-echo $FQBN
-# should print esp32:esp32:esp32  or  esp32:esp32:esp32s3
-```
-
 ## Compile the code
 
 ```bash
 cd /path/to/sketch/folder
-arduino-cli compile --fqbn $FQBN .
+arduino-cli compile -b esp32:esp32:esp32 ~/titan_ws/src/ESP32_Test
 ```
 
 Should show an output like
@@ -76,7 +69,15 @@ Global variables use 21544 bytes (6%) of dynamic memory, leaving 306136 bytes fo
 
 ## Upload the code
 
+```bash
+arduino-cli upload -b esp32:esp32:esp32 -p /dev/ttyUSB0 ~/titan_ws/src/ESP32_Test
+```
 
+## To monitor the code
+
+```bash
+arduino-cli monitor -p /dev/ttyUSB0 -c baudrate=115200
+```
 
 
 ## Troubleshooting
@@ -138,6 +139,6 @@ Stub flasher running.
 
 Then add explicit upload flags so esptool uses a safer baudrate (e.g., 115200 or 230400)
 ```bash
-arduino-cli upload -p /dev/ttyUSB0 --fqbn $FQBN --upload-property upload.speed=115200 .
+arduino-cli upload -b esp32:esp32:esp32 -p /dev/ttyUSB0 ~/titan_ws/src/ESP32_Test --upload-property upload.speed=115200 .
 ```
 
