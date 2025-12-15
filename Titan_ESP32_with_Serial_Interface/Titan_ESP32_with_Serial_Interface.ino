@@ -24,18 +24,20 @@
 
 #define WHEEL_RADIUS 0.0325 // meters
 #define BASE_WIDTH 0.18 // meters between wheels
-#define TICKS_PER_REV 1000
+#define TICKS_PER_REV 680
 #define GEAR_RATIO 1.0
 
 // === PID parameters ===
-float kp = 0.3, ki = 0.01, kd = 0.00;
+float kp = 0.5, ki = 0.01, kd = 0.00;
 
 // === State ===
 volatile long left_ticks = 0;
 volatile long right_ticks = 0;
 volatile uint8_t last_left_enc = 0;
 volatile uint8_t last_right_enc = 0;
- 
+volatile long total_left_ticks = 0;
+volatile long total_right_ticks = 0;
+
 
 float target_l = 0.0, target_r = 0.0;
 float pwm_l_cmd = 0, pwm_r_cmd = 0;
@@ -131,6 +133,8 @@ if (dt < 40) return; // ~25 Hz loop
 long ticks_l = left_ticks;
 long ticks_r = right_ticks;
 left_ticks = right_ticks = 0;
+total_left_ticks += ticks_l;
+total_right_ticks += ticks_r;
 
 // === Compute wheel angular velocity ===
 float w_l = (2.0 * PI * (float)ticks_l / (float)TICKS_PER_REV) / (dt / 1000);
@@ -172,6 +176,7 @@ y += dy;
 theta += dtheta;
 
 Serial.printf("POS: x=%.3f y=%.3f theta=%.3f\n", x, y, theta);
+//Serial.printf("TICKS: left=%ld right=%ld\n", total_left_ticks, total_right_ticks);
 //Serial.printf("Velocity: vl=%.3f/%.3f vr=%.3f/%.3f \n", target_l, v_l, target_r, v_r);
 //Serial.printf("Error: error_l=%.3f error_r=%.3f \n", error_l, error_r);
 //Serial.printf("PWM: pwm_l_cmd=%.3f pwm_r_cmd=%.3f \n", pwm_l_cmd, pwm_r_cmd);
@@ -191,8 +196,10 @@ theta = 0;
 else {
 float linear, angular;
 if (sscanf(cmd.c_str(), "%f %f", &linear, &angular) == 2) {
-target_l = linear - (angular * BASE_WIDTH / 2.0);
-target_r = linear + (angular * BASE_WIDTH / 2.0);
+float new_target_l = linear - (angular * BASE_WIDTH / 2.0);
+float new_target_r = linear + (angular * BASE_WIDTH / 2.0);
+target_l = new_target_l;
+target_r = new_target_r;
 }
 }
 }
