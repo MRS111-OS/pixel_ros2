@@ -26,8 +26,8 @@ slam_toolbox:
     transform_publish_period: 0.02
     
     # KEY CHANGES: Minimize map updates
-    map_update_interval: 1.0     # Very high interval (was 5.0)
-    resolution: 0.05
+    map_update_interval: 0.3
+    resolution: 0.06
     min_laser_range: 0.0
     max_laser_range: 20.0
     minimum_time_interval: 2.0    # Increase from 0.5
@@ -39,16 +39,16 @@ slam_toolbox:
     # KEY CHANGES: Minimize scan processing
     use_scan_matching: true
     use_scan_barycenter: true
-    minimum_travel_distance: 0.5   # Increase from 0.5
-    minimum_travel_heading: 0.5    # Increase from 0.5
-    scan_buffer_size: 1           # Minimize buffer (was 10)
+    minimum_travel_distance: 0.1   # Increase from 0.5
+    minimum_travel_heading: 0.1    # Increase from 0.5
+    scan_buffer_size: 5           # Minimize buffer (was 10)
     scan_buffer_maximum_scan_distance: 1.0  # Reduce from 10.0
     link_match_minimum_response_fine: 0.3   # Increase threshold
     link_scan_maximum_distance: 1.5
     loop_search_maximum_distance: 3.0
     
     # KEY CHANGE: Disable loop closing
-    do_loop_closing: false        # Disable (was true)
+    do_loop_closing: true #false
     loop_match_minimum_chain_size: 10
     loop_match_maximum_variance_coarse: 3.0
     loop_match_minimum_response_coarse: 0.35
