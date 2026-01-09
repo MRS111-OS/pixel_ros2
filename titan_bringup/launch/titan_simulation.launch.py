@@ -18,7 +18,7 @@ def generate_launch_description():
     state_launch_path = os.path.join(pkg_share, 'launch', 'titan_state_publisher.launch.py')
 
     # URDF/Xacro path
-    urdf_file = os.path.join(desc_share, 'urdf', 'turtlebot3_burger.urdf')
+    urdf_file = os.path.join(desc_share, 'urdf', 'titan.urdf')
 
     # Load URDF content
     with open(urdf_file, 'r') as file:
