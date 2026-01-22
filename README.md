@@ -1,6 +1,6 @@
-# 🤖 Titan Robot
+# 🤖 Pixel Robot
 
-This repository contains the ROS 2 packages and configurations for the Titan Robot, including robot bringup, SLAM-based mapping, and localization using slam_toolbox and nav2.
+This repository contains the ROS 2 packages and configurations for the Pixel Robot, including robot bringup, SLAM-based mapping, and localization using slam_toolbox and nav2.
 
 ---
 
@@ -29,18 +29,18 @@ sudo apt install -y \
 
 1. **Create the ROS 2 workspace and source folder:**
     ```bash
-    mkdir -p ~/titan_ws/src
-    cd ~/titan_ws/src
+    mkdir -p ~/pixel_ws/src
+    cd ~/pixel_ws/src
     ```
 
-2. **Clone the Titan Robot repository:**
+2. **Clone the Pixel Robot repository:**
     ```bash
-    git clone https://github.com/MRS111-OS/titan_robot.git
+    git clone https://github.com/MRS111-OS/pixel_ros2.git
     ```
 
 3. **Build the workspace:**
     ```bash
-    cd ~/titan_ws
+    cd ~/pixel_ws
     colcon build
     ```
 
@@ -55,7 +55,7 @@ sudo apt install -y \
 
 To start the robot with all required nodes:
 ```bash
-ros2 launch titan_bringup titan_bringup.launch.py
+ros2 launch pixel_bringup pixel_bringup.launch.py
 ```
 
 This will launch:
@@ -97,7 +97,7 @@ This will launch:
 
 2. **Edit the SLAM config for localization:**
     ```bash
-    cd ~/titan_ws/src/titan_robot/slam_toolbox/config
+    cd ~/pixel_ws/src/pixel_robot/slam_toolbox/config
     ```
 
 3. **Modify `mapper_params_online_async.yaml`:**
