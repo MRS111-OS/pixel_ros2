@@ -54,10 +54,11 @@ To install ROS 2 Humble with a single command on a Raspberry Pi 4 (about 30 minu
 wget -O $HOME/ros2_humble_install.sh https://raw.githubusercontent.com/auromix/ros-install-one-click/main/ros2_humble_install.sh && sudo chmod +x $HOME/ros2_humble_install.sh && bash $HOME/ros2_humble_install.sh && rm $HOME/ros2_humble_install.sh
 ```
 
-After installation:
+After installation, add ROS 2 to your bashrc:
 
 ```bash
-source /opt/ros/humble/setup.bash
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+source ~/.bashrc
 printenv | grep ROS
 ```
 
