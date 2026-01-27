@@ -16,7 +16,9 @@
   <depend>angles</depend>
   <depend>diagnostic_msgs</depend>
   <depend>diagnostic_updater</depend>
-  <depend>filters</depend>
+  <build_depend>filters</build_depend>
+  <build_export_depend>filters</build_export_depend>
+  <exec_depend>filters</exec_depend>
   <depend>laser_geometry</depend>
   <depend>message_filters</depend>
   <depend>pluginlib</depend>

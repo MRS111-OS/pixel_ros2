@@ -46,6 +46,23 @@ export ROS_DOMAIN_ID=7
 
 ## 🛠️ Workspace Setup
 
+### ROS 2 Humble on Raspberry Pi 4
+
+To install ROS 2 Humble with a single command on a Raspberry Pi 4 (about 30 minutes, unattended):
+
+```bash
+wget -O $HOME/ros2_humble_install.sh https://raw.githubusercontent.com/auromix/ros-install-one-click/main/ros2_humble_install.sh && sudo chmod +x $HOME/ros2_humble_install.sh && bash $HOME/ros2_humble_install.sh && rm $HOME/ros2_humble_install.sh
+```
+
+After installation:
+
+```bash
+source /opt/ros/humble/setup.bash
+printenv | grep ROS
+```
+
+Then clone this repository and continue with the workspace steps below.
+
 1. **Create the ROS 2 workspace and source folder:**
     ```bash
     mkdir -p ~/titan_ws
