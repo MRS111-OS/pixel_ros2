@@ -1,0 +1,15 @@
+ros2 launch orbbec_camera gemini_330_series.launch.py   enable_color:=true   color_width:=640   color_height:=480   color_fps:=15   enable_depth:=true   depth_width:=640   depth_height:=400   depth_fps:=15   enable_point_cloud:=false   enable_colored_point_cloud:=false   enable_left_ir:=false   enable_right_ir:=false   enable_accel:=false   enable_gyro:=false   enable_sync_output_accel_gyro:=false   enable_frame_sync:=false   enable_heartbeat:=false   publish_tf:=false
+
+depth only:
+ros2 launch orbbec_camera gemini_330_series.launch.py \
+  enable_color:=false \
+  enable_depth:=true \
+  depth_width:=640 \
+  depth_height:=400 \
+  depth_fps:=15 \
+  enable_point_cloud:=true \
+  enable_colored_point_cloud:=false \
+  align_mode:=disable \
+  enable_frame_sync:=false \
+  enable_heartbeat:=false \
+  publish_tf:=false
