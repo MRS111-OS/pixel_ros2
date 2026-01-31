@@ -5,11 +5,11 @@ After=network.target
 Requires=network.target
 
 [Service]
-User=amr
-Group=amr
-WorkingDirectory=/home/amr
+User=titan
+Group=titan
+WorkingDirectory=/home/titan
 Environment="SHELL=/bin/bash"
-Environment="ROS_DISTRO=noetic"
+Environment="ROS_DISTRO=humble"
 
 ExecStart=/bin/bash -l -c '/home/titan/robot_bringup.sh'
 
