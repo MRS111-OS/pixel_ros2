@@ -40,7 +40,7 @@ start_slam_toolbox() {
 
 start_oled() {
   tmux send-keys -t PIXEL:launch_window.4 \
-    "echo 'export ROS_DOMAIN_ID=50' >> ~/.bashrc && source ~/.bashrc && cd /home/titan/titan_ws/src/oled_pkg && python3 oled_ip_pi4.py" C-m
+    "if [ -z \"\$ROS_DOMAIN_ID\" ]; then echo 'export ROS_DOMAIN_ID=50' >> ~/.bashrc && source ~/.bashrc; fi && cd /home/titan/titan_ws/src/oled_pkg && python3 oled_ip_pi4.py" C-m
   sleep 5
 }
 
