@@ -55,7 +55,7 @@ while True:
     try:
         cmd = "top -bn1 | grep '%Cpu(s)' | awk '{print 100 - $8}'"
         cpu_percent = subprocess.check_output(cmd, shell=True).decode("utf-8").strip()
-        cmd = "top -bn1 | grep load | awk '{printf \"CPU LOAD: %.2f\", $(NF-2)}'"
+        cmd = "top -bn1 | grep load | awk '{printf \"CPU : %.2f\", $(NF-2)}'"
         cpu_load = subprocess.check_output(cmd, shell=True).decode("utf-8").strip()
         CPU = cpu_load + " (" + cpu_percent + "%)"
     except:
