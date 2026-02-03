@@ -30,6 +30,13 @@ install(PROGRAMS
   DESTINATION lib/${PROJECT_NAME}
 )
 
+install(
+  PROGRAMS
+    script/cover_area.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME cover_area
+)
+
 ################################################################################
 # Macro for ament package
 ################################################################################
