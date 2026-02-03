@@ -34,14 +34,14 @@ start_teleop_keyboard() {
 
 start_slam_toolbox() {
   tmux send-keys -t PIXEL:launch_window.3 \
-    "ros2 run teleop_twist_keyboard teleop_twist_keyboard" 
+    "ros2 run teleop_twist_keyboard teleop_twist_keyboard" C-m
   sleep 5
 }
 
 start_oled() {
-  tmux send-keys -t PIXEL:launch_window.4 \
-    "if [ -z \"\$ROS_DOMAIN_ID\" ]; then echo 'export ROS_DOMAIN_ID=50' >> ~/.bashrc && source ~/.bashrc; fi && cd /home/titan/titan_ws/src/oled_pkg && python3 oled_ip_pi4.py" C-m
   sleep 5
+  tmux send-keys -t PIXEL:launch_window.4 \
+    "cd /home/titan/titan_ws/src/oled_pkg && python3 oled_ip_pi4.py" C-m
 }
 
 ############################
@@ -52,6 +52,10 @@ echo "Starting ROS 2 PIXEL bringup..."
 
 source /opt/ros/humble/setup.bash
 source ~/titan_ws/install/setup.bash
+
+# Kill any existing PIXEL session to ensure fresh start with updated script
+tmux kill-session -t PIXEL 2>/dev/null || true
+sleep 1
 
 # Create tmux session
 tmux new-session -d -s PIXEL -n launch_window
