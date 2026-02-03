@@ -29,7 +29,7 @@ def generate_launch_description():
 
     
     params_file = os.path.join(get_package_share_directory(package_name), 'param', 'coverage.yaml')
-    map_file = os.path.join(get_package_share_directory(package_name), 'maps', 'office_map.yaml')        
+    map_file = os.path.join(get_package_share_directory(package_name), 'map', 'map2.yaml')        
 
     lifecycle_nodes = ['controller_server',
                        'bt_navigator',
@@ -122,7 +122,6 @@ def generate_launch_description():
     )
 
     ld = LaunchDescription()
-    ld.add_action(rviz_cmd)
     ld.add_action(stdout_linebuf_envvar)
     ld.add_action(create_container)
     ld.add_action(load_composable_nodes)
