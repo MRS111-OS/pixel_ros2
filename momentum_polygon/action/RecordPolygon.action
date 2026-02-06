@@ -1,0 +1,7 @@
+string polygon_name
+---
+bool success
+string message
+geometry_msgs/Point[] polygon_points
+---
+int32 points_recorded
