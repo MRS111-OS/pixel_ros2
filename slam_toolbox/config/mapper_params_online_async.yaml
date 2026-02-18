@@ -27,7 +27,7 @@ slam_toolbox:
     
     # KEY CHANGES: Minimize map updates
     map_update_interval: 1.0     # Very high interval (was 5.0)
-    resolution: 0.05
+    resolution: 0.03
     min_laser_range: 0.0
     max_laser_range: 20.0
     minimum_time_interval: 2.0    # Increase from 0.5
@@ -48,7 +48,7 @@ slam_toolbox:
     loop_search_maximum_distance: 3.0
     
     # KEY CHANGE: Disable loop closing
-    do_loop_closing: false        # Disable (was true)
+    do_loop_closing: true        # Disable (was true)
     loop_match_minimum_chain_size: 10
     loop_match_maximum_variance_coarse: 3.0
     loop_match_minimum_response_coarse: 0.35
