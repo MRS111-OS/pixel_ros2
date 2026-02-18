@@ -1,78 +1,132 @@
+#!/usr/bin/env python3
+
 import time
 import subprocess
-import Adafruit_GPIO.SPI as SPI
 import Adafruit_SSD1306
 from PIL import Image, ImageDraw, ImageFont
 
-#pin configuration:
-RST = None  # For I2C, RST is not used
-
-# Initialize display (128x32 OLED via I2C)
+# -------------------------------------------------
+# OLED Setup
+# -------------------------------------------------
+RST = None
 disp = Adafruit_SSD1306.SSD1306_128_32(rst=RST)
+
 disp.begin()
 disp.clear()
 disp.display()
 
-# Image buffer
 width = disp.width
 height = disp.height
+
 image = Image.new('1', (width, height))
 draw = ImageDraw.Draw(image)
 
-# Font and layout
 font = ImageFont.load_default()
 padding = -2
 top = padding
 x = 0
 
+
+# -------------------------------------------------
+# Helper Functions
+# -------------------------------------------------
+
+def get_wifi_ssid():
+    try:
+        ssid = subprocess.check_output(
+            "iwgetid -r",
+            shell=True
+        ).decode().strip()
+        return "WIFI: " + (ssid.upper() if ssid else "NO NETWORK")
+    except:
+        return "WIFI: NO NETWORK"
+
+
+def get_ip():
+    try:
+        ip = subprocess.check_output(
+            "ip -4 addr show wlan0 | awk '/inet / {print $2}' | cut -d/ -f1",
+            shell=True
+        ).decode().strip()
+        return "IP: " + (ip if ip else "NO IP")
+    except:
+        return "IP: NO IP"
+
+
+def get_memory():
+    """Read memory directly from /proc/meminfo (faster than free -m)"""
+    try:
+        meminfo = {}
+        with open("/proc/meminfo") as f:
+            for line in f:
+                key, value = line.split(":")
+                meminfo[key] = int(value.split()[0])
+
+        total = meminfo["MemTotal"] // 1024
+        available = meminfo["MemAvailable"] // 1024
+        used = total - available
+        percent = (used / total) * 100
+
+        return f"MEM:{used}/{total}MB {percent:.0f}%"
+    except:
+        return "MEM:N/A"
+
+
+# ---------- CPU Monitoring using /proc/stat ----------
+
+def read_cpu_times():
+    with open("/proc/stat", "r") as f:
+        values = list(map(int, f.readline().split()[1:]))
+
+    idle = values[3]
+    total = sum(values)
+    return idle, total
+
+
+def get_cpu_usage(prev_idle, prev_total):
+    idle, total = read_cpu_times()
+
+    idle_delta = idle - prev_idle
+    total_delta = total - prev_total
+
+    if total_delta == 0:
+        usage = 0.0
+    else:
+        usage = 100 * (1 - idle_delta / total_delta)
+
+    # Load average (1 minute)
+    with open("/proc/loadavg", "r") as f:
+        load = f.read().split()[0]
+
+    cpu_text = f"CPU:{usage:.0f}% L:{load}"
+    return cpu_text, idle, total
+
+
+# -------------------------------------------------
+# Main Loop
+# -------------------------------------------------
+
+prev_idle, prev_total = read_cpu_times()
+
 while True:
-    # Clear image
+
+    # Clear display
     draw.rectangle((0, 0, width, height), outline=0, fill=0)
 
-    # Get Wi-Fi SSID
-    try:
-        cmd = "iwgetid -r"
-        WifiSSID = subprocess.check_output(cmd, shell=True).decode("utf-8").strip().upper()
-        if not WifiSSID:
-            WifiSSID = "NO NETWORK"
-        Network = "WIFI: " + WifiSSID
-    except:
-        Network = "WIFI: NO NETWORK"
+    # Gather info
+    network = get_wifi_ssid()
+    ip = get_ip()
+    mem = get_memory()
+    cpu, prev_idle, prev_total = get_cpu_usage(prev_idle, prev_total)
 
-    # Get IP address
-    try:
-        cmd = "hostname -I | cut -d' ' -f1"
-        ip_raw = subprocess.check_output(cmd, shell=True).decode("utf-8").strip()
-        IP = "IP: " + (ip_raw.upper() if ip_raw else "NO IP")
-    except:
-        IP = "IP: NO IP"
+    # Draw text
+    draw.text((x, top),      network, font=font, fill=255)
+    draw.text((x, top + 8),  ip,      font=font, fill=255)
+    draw.text((x, top + 16), mem,     font=font, fill=255)
+    draw.text((x, top + 25), cpu,     font=font, fill=255)
 
-    # Get memory usage
-    cmd = "free -m | awk 'NR==2{printf \"MEM: %s/%sMB %.2f%%\", $3,$2,$3*100/$2 }'"
-    MemUsage = subprocess.check_output(cmd, shell=True).decode("utf-8").strip().upper()
-
-    # Get CPU load + % usage
-    try:
-        cmd = "top -bn1 | grep '%Cpu(s)' | awk '{print 100 - $8}'"
-        cpu_percent = subprocess.check_output(cmd, shell=True).decode("utf-8").strip()
-        cmd = "top -bn1 | grep load | awk '{printf \"CPU : %.2f\", $(NF-2)}'"
-        cpu_load = subprocess.check_output(cmd, shell=True).decode("utf-8").strip()
-        CPU = cpu_load + " (" + cpu_percent + "%)"
-    except:
-        CPU = "CPU LOAD: N/A"
-
-    # Get disk usage (optional)
-    # cmd = "df -h | awk '$NF==\"/\"{printf \"DISK: %d/%dGB %s\", $3,$2,$5}'"
-    # Disk = subprocess.check_output(cmd, shell=True).decode("utf-8").strip().upper()
-
-    # Draw system info
-    draw.text((x, top),         Network,   font=font, fill=255)
-    draw.text((x, top + 8),     IP,        font=font, fill=255)
-    draw.text((x, top + 16),    MemUsage,  font=font, fill=255)
-    draw.text((x, top + 25),    CPU,       font=font, fill=255)
-    # draw.text((x, top + 25),    Disk,     font=font, fill=255)  # Uncomment to show disk space
-
-    # Display image
+    # Show on OLED
     disp.image(image)
     disp.display()
+
     time.sleep(1)
