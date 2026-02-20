@@ -28,12 +28,11 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    TURTLEBOT3_MODEL = os.environ['TURTLEBOT3_MODEL']
-
+    
     namespace = LaunchConfiguration('namespace')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
-    urdf_file_name = 'turtlebot3_' + TURTLEBOT3_MODEL + '.urdf'
+    urdf_file_name = 'turtlebot3_burger.urdf'
 
     print('urdf_file_name : {}'.format(urdf_file_name))
 
