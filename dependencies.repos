@@ -18,6 +18,12 @@ repositories:
     url: https://github.com/MRS111-OS/momentum_shell_scripts.git
     version: main
 
+  # Micro-Ros Agent 
+  micro-ROS-Agent:
+    type: git
+    url: https://github.com/micro-ROS/micro-ROS-Agent.git
+    version: humble
+
 # Guidelines : 
 # To install this repository, 'vcstool' is required. To install it, use the following command : sudo apt install python3-vcstool
 # To clone the above repositories, use the following command : vcs import < dependencies.repos
