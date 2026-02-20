@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<robot name="titan">
+
+ <!-- Init colour -->
+  <material name="black">
+      <color rgba="0.0 0.0 0.0 1.0"/>
+  </material>
+
+  <material name="dark">
+    <color rgba="0.3 0.3 0.3 1.0"/>
+  </material>
+
+  <material name="light_black">
+    <color rgba="0.4 0.4 0.4 1.0"/>
+  </material>
+
+  <material name="blue">
+    <color rgba="0.0 0.0 0.8 1.0"/>
+  </material>
+
+  <material name="green">
+    <color rgba="0.0 0.8 0.0 1.0"/>
+  </material>
+
+  <material name="grey">
+    <color rgba="0.5 0.5 0.5 1.0"/>
+  </material>
+
+  <material name="orange">
+    <color rgba="1.0 0.4235 0.0392 1.0"/>
+  </material>
+
+  <material name="brown">
+    <color rgba="0.8706 0.8118 0.7647 1.0"/>
+  </material>
+
+  <material name="red">
+    <color rgba="0.8 0.0 0.0 1.0"/>
+  </material>
+
+  <material name="white">
+    <color rgba="1.0 1.0 1.0 1.0"/>
+  </material>
+
+
+  <link name="base_footprint"/>
+
+  <joint name="base_link_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 3.14159265"/>
+  </joint>
+
+  <link name="base_link">
+
+    <inertial>
+      <origin xyz="-0.00346341261510518 0.000431167248793353 0.0900728026786845" rpy="0 0 0"/>
+      <mass value="2.920547254934799"/>
+      <inertia ixx="0.00396950657190701" ixy="3.24338418795685E-06" ixz="1.91406169796034E-05"
+               iyy="0.00366159045993355" iyz="-1.43363832997866E-06" izz="0.00731329773396938"/>
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://titan_description/meshes/titan_meshes/base_link.STL"/>
+      </geometry>
+      <material name="light_black"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://titan_description/meshes/titan_meshes/base_link.STL"/>
+      </geometry>
+    </collision>
+
+  </link>
+
+  <link name="Left_Wheel_Link">
+
+    <inertial>
+      <origin xyz="1.8457E-10 0.0002899 3.6055E-10" rpy="0 0 0"/>
+      <mass value="0.035175"/>
+      <inertia ixx="1.5237E-05" ixy="-1.9322E-13" ixz="-4.4739E-10"
+               iyy="2.5786E-05" iyz="-5.0197E-14" izz="1.5237E-05"/>
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 1.57 1.57"/>
+      <geometry>
+        <!-- <mesh filename="package://titan_description/meshes/titan_meshes/Left_Wheel_Link.STL"/> -->
+        <cylinder radius="0.034843" length="0.02"/>
+      </geometry>
+      <material name="dark"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 1.57 1.57"/>
+      <geometry>
+        <!-- <mesh filename="package://titan_description/meshes/titan_meshes/Left_Wheel_Link.STL"/> -->
+        <cylinder radius="0.034843" length="0.02"/>
+      </geometry>
+    </collision>
+
+  </link>
+ 
+  <joint name="Left_Wheel_Joint" type="continuous">
+    <origin xyz="-0.0001 -0.09075 0.022" rpy="0 0 3.14159265"/>
+    <parent link="base_link"/>
+    <child link="Left_Wheel_Link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="2.5" velocity="22"/>
+  </joint>
+
+  <link name="Right_Wheel_Link">
+
+    <inertial>
+      <origin xyz="-4.6789E-09 -3.9895E-05 4.607E-09" rpy="0 0 0"/>
+      <mass value="0.035175"/>
+      <inertia ixx="1.5237E-05" ixy="-1.4328E-12" ixz="-4.4388E-10"
+               iyy="2.5786E-05" iyz="1.1122E-12" izz="1.5237E-05"/>
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 1.57 1.57"/>
+      <geometry>
+        <!-- <mesh filename="package://titan_description/meshes/titan_meshes/Right_Wheel_Link.STL"/> -->
+        <cylinder radius="0.034843" length="0.02"/>
+      </geometry>
+      <material name="dark"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 1.57 1.57"/>
+      <geometry>
+        <!-- <mesh filename="package://titan_description/meshes/titan_meshes/Right_Wheel_Link.STL"/> -->
+        <cylinder radius="0.034843" length="0.02"/>
+      </geometry>
+    </collision>
+
+  </link>
+
+  <joint name="Right_Wheel_Joint" type="continuous">
+    <origin xyz="-0.0001 0.0905 0.022" rpy="0 0 3.14159265"/>
+    <parent link="base_link"/>
+    <child link="Right_Wheel_Link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="2.5" velocity="22"/>
+  </joint>
+
+  <link name="RGB_Camera_Link">
+
+    <inertial>
+      <origin xyz="-0.0078063 -3.8623E-06 -0.0010259" rpy="0 0 0"/>
+      <mass value="0.01352"/>
+      <inertia ixx="2.5544E-06" ixy="-3.5783E-12" ixz="1.7676E-07"
+               iyy="1.5924E-06" iyz="1.8649E-10" izz="1.2081E-06"/>
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <!-- <mesh filename="package://titan_description/meshes/titan_meshes/RGB_Camera_Link.STL"/> -->
+          <box size="0.01 0.01 0.01"/>
+      </geometry>
+      <material name="dark"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <!-- <mesh filename="package://titan_description/meshes/titan_meshes/RGB_Camera_Link.STL"/> -->
+          <box size="0.01 0.01 0.01"/>
+      </geometry>
+    </collision>
+
+  </link>
+ 
+
+  <joint name="RGB_Camera_Joint" type="fixed">
+    <origin xyz="-0.13025 0 0.088971" rpy="0 0 3.14159265"/>
+    <parent link="base_link"/>
+    <child link="RGB_Camera_Link"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+
+  <link name="Depth_Camera_Link">
+
+    <inertial>
+      <origin xyz="-0.010806 4.7404E-05 -0.00030365" rpy="0 0 0"/>
+      <mass value="0.081395"/>
+      <inertia ixx="6.286E-05" ixy="-1.3972E-08" ixz="6.8703E-08"
+               iyy="5.5976E-06" iyz="2.1844E-08" izz="6.1887E-05"/>
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://titan_description/meshes/titan_meshes/Depth_Camera_Link.STL"/>
+      </geometry>
+      <material name="dark"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://titan_description/meshes/titan_meshes/Depth_Camera_Link.STL"/>
+      </geometry>
+    </collision>
+
+  </link>
+
+  <joint name="Depth_Camera_Joint" type="fixed">
+    <origin xyz="-0.063825 0.00022394 0.20111" rpy="0 0 3.14159265"/>
+    <parent link="base_link"/>
+    <child link="Depth_Camera_Link"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+
+  <link name="Front_Caster_Link">
+
+    <inertial>
+      <origin xyz="0.00020286 -1.2503E-05 0.0041777" rpy="0 0 0"/>
+      <mass value="0.0024002"/>
+      <inertia ixx="8.6259E-08" ixy="-2.1714E-12" ixz="6.7243E-13"
+               iyy="8.7002E-08" iyz="1.0021E-10" izz="1.0084E-07"/>
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://titan_description/meshes/titan_meshes/Front_Caster_Link.STL"/>
+      </geometry>
+      <material name="dark"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://titan_description/meshes/titan_meshes/Front_Caster_Link.STL"/>
+      </geometry>
+    </collision>
+
+  </link>
+
+  <joint name="Front_Caster_Joint" type="fixed">
+    <origin xyz="-0.099797 0 -0.005" rpy="0 0 3.14159265"/>
+    <parent link="base_link"/>
+    <child link="Front_Caster_Link"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+
+  <link name="Rear_Caster_Link">
+
+    <inertial>
+      <origin xyz="-8.2468E-08 -0.00021544 0.0041777" rpy="0 0 0"/>
+      <mass value="0.0024002"/>
+      <inertia ixx="8.6259E-08" ixy="-2.1714E-12" ixz="6.7243E-13"
+               iyy="8.7002E-08" iyz="1.0021E-10" izz="1.0084E-07"/>
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://titan_description/meshes/titan_meshes/Rear_Caster_Link.STL"/>
+      </geometry>
+      <material name="dark"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://titan_description/meshes/titan_meshes/Rear_Caster_Link.STL"/>
+      </geometry>
+    </collision>
+
+  </link>
+ 
+  <joint name="Rear_Caster_Joint" type="fixed">
+    <origin xyz="0.1 -0.00020294 -0.005" rpy="0 0 3.14159265"/>
+    <parent link="base_link"/>
+    <child link="Rear_Caster_Link"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+
+  <link name="Lidar_Link">
+
+    <inertial>
+      <origin xyz="-0.00056498 -1.4613E-05 -0.011701" rpy="0 0 0"/>
+      <mass value="0.16538"/>
+      <inertia ixx="7.8865E-05" ixy="4.8468E-08" ixz="2.1847E-06"
+               iyy="7.519E-05" iyz="2.8859E-08" izz="0.00010995"/>
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://titan_description/meshes/titan_meshes/Lidar_Link.STL"/>
+      </geometry>
+      <material name="dark"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://titan_description/meshes/titan_meshes/Lidar_Link.STL"/>
+      </geometry>
+    </collision>
+
+  </link>
+
+  <joint name="Lidar_Joint" type="fixed">
+    <origin xyz="-0.065 0 0.15166" rpy="0 0 3.14159265"/>
+    <parent link="base_link"/>
+    <child link="Lidar_Link"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="0.1" velocity="65"/>
+  </joint>
+
+</robot>
