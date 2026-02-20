@@ -1,0 +1,27 @@
+repositories:
+
+  # Coverage planning (Fields2Cover)
+  Fields2Cover:
+    type: git
+    url: https://github.com/Fields2Cover/Fields2Cover.git
+    version: v1.2.1
+
+  # Open Navigation Coverage 
+  opennav_coverage:
+    type: git
+    url: https://github.com/open-navigation/opennav_coverage.git
+    version: humble
+
+  # Shell Scripts
+  momentum_shell_scripts:
+    type: git
+    url: https://github.com/MRS111-OS/momentum_shell_scripts.git
+    version: main
+
+# Guidelines : 
+# To install this repository, 'vcstool' is required. To install it, use the following command : sudo apt install python3-vcstool
+# To clone the above repositories, use the following command : vcs import < dependencies.repos
+# To install all dependencies, use the following command : rosdep install --from-paths src --ignore-src -r -y
+# Then use colcon to build the workspace : colcon build --symlink-install
+
+# Note to developer : Split the dependencies.repos file into multiple files if the number of repositories exceeds 5 for better readability and maintenance.
