@@ -32,7 +32,7 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
-    urdf_file_name = 'turtlebot3_burger.urdf'
+    urdf_file_name = 'titan.urdf'
 
     print('urdf_file_name : {}'.format(urdf_file_name))
 
