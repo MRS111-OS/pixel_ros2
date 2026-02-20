@@ -36,7 +36,7 @@ def generate_launch_description():
 
 
     # GUI for joint states
-    joint_state_publisher_gui_node = Node(
+    joint_state_publisher_node = Node(
         package='joint_state_publisher',
         executable='joint_state_publisher',
         name='joint_state_publisher',
@@ -72,7 +72,7 @@ def generate_launch_description():
     )
 
     return launch.LaunchDescription([
-#       joint_state_publisher_gui_node,
+        joint_state_publisher_node,
 #        rviz_launch,
         turtlebot_state_launch,
         #odom_to_base_node,
