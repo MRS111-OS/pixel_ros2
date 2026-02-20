@@ -4,7 +4,7 @@ scan_to_scan_filter_chain:
       name: box_filter
       type: laser_filters/LaserScanBoxFilter
       params:
-        box_frame: laser
+        box_frame: Lidar_Link
         max_x: 0.1
         max_y: 0.15
         max_z: 0.5

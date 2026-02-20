@@ -285,7 +285,7 @@
     <axis xyz="0 0 0"/>
   </joint>
 
-  <link name="laser">
+  <link name="Lidar_Link">
 
     <inertial>
       <origin xyz="-0.00056498 -1.4613E-05 -0.011701" rpy="0 0 0"/>
@@ -311,10 +311,10 @@
 
   </link>
 
-  <joint name="scan_joint" type="fixed">
+  <joint name="Lidar_Joint" type="fixed">
     <origin xyz="-0.065 0 0.15166" rpy="0 0 3.14159265"/>
     <parent link="base_link"/>
-    <child link="laser"/>
+    <child link="Lidar_Link"/>
     <axis xyz="0 0 1"/>
     <limit effort="0.1" velocity="65"/>
   </joint>
