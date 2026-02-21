@@ -311,7 +311,7 @@
 
   </link>
 
-  <joint name="Lidar_Joint" type="fixed">
+  <joint name="Lidar_Joint" type="fixed"> 
     <origin xyz="-0.065 0 0.15166" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="Lidar_Link"/>
