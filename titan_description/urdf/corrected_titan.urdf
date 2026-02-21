@@ -3,21 +3,21 @@
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
-  name="TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM">
+  name="corrected titan urdf">
   <link
     name="base_link">
     <inertial>
       <origin
-        xyz="0.00346341261385451 -0.000431167248533664 0.0900728026787325"
+        xyz="0.00346341261385403 -0.000431167248533336 0.0900728026787331"
         rpy="0 0 0" />
       <mass
-        value="0.920547254934808" />
+        value="0.9205472549348" />
       <inertia
         ixx="0.00396950657190754"
-        ixy="3.24338418788141E-06"
-        ixz="-1.91406170260588E-05"
+        ixy="3.24338418788168E-06"
+        ixz="-1.91406170260589E-05"
         iyy="0.00366159045993356"
-        iyz="1.43363834056464E-06"
+        iyz="1.43363834056473E-06"
         izz="0.00731329773396883" />
     </inertial>
     <visual>
@@ -26,7 +26,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM/meshes/base_link.STL" />
+          filename="package://corrected titan urdf/meshes/base_link.STL" />
       </geometry>
       <material
         name="">
@@ -40,7 +40,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM/meshes/base_link.STL" />
+          filename="package://corrected titan urdf/meshes/base_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -48,17 +48,17 @@
     name="Left_Wheel_Link">
     <inertial>
       <origin
-        xyz="1.84573057182623E-10 0.000289903778743966 3.6054853547185E-10"
+        xyz="-1.84573368036938E-10 -0.000289903778743869 3.6054889976378E-10"
         rpy="0 0 0" />
       <mass
-        value="0.0351745701969681" />
+        value="0.03517457019697" />
       <inertia
         ixx="1.52368425678937E-05"
-        ixy="-1.93220957729087E-13"
-        ixz="-4.47391616442003E-10"
-        iyy="2.57856997643886E-05"
-        iyz="-5.01967147402338E-14"
-        izz="1.52372277516094E-05" />
+        ixy="-1.93220984158401E-13"
+        ixz="4.47391616489505E-10"
+        iyy="2.57856997643884E-05"
+        iyz="5.01662518973067E-14"
+        izz="1.52372277516092E-05" />
     </inertial>
     <visual>
       <origin
@@ -66,7 +66,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM/meshes/Left_Wheel_Link.STL" />
+          filename="package://corrected titan urdf/meshes/Left_Wheel_Link.STL" />
       </geometry>
       <material
         name="">
@@ -80,7 +80,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM/meshes/Left_Wheel_Link.STL" />
+          filename="package://corrected titan urdf/meshes/Left_Wheel_Link.STL" />
       </geometry>
     </collision>
   </link>
@@ -88,14 +88,14 @@
     name="Left_Wheel_Joint"
     type="continuous">
     <origin
-      xyz="0.0001 0.09075 0.022"
-      rpy="0 0 3.1416" />
+      xyz="9.9999806285E-05 0.09075 0.022"
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
       link="Left_Wheel_Link" />
     <axis
-      xyz="0 1 0" />
+      xyz="0 -1 0" />
     <limit
       effort="0.5"
       velocity="6.67" />
@@ -104,17 +104,17 @@
     name="Right_Wheel_Link">
     <inertial>
       <origin
-        xyz="-4.67890970090004E-09 -3.98947476232953E-05 4.60699116355823E-09"
+        xyz="4.5038568647276E-09 3.98947476442091E-05 4.60698916168734E-09"
         rpy="0 0 0" />
       <mass
-        value="0.0351745248993485" />
+        value="0.0351745248993403" />
       <inertia
-        ixx="1.52368272804261E-05"
-        ixy="-1.43280576436386E-12"
-        ixz="-4.43878611210801E-10"
-        iyy="2.57856661849818E-05"
-        iyz="1.1122286304042E-12"
-        izz="1.5237202527044E-05" />
+        ixx="1.52368272806408E-05"
+        ixy="-4.77196000454709E-11"
+        ixz="4.43878616252111E-10"
+        iyy="2.57856661847652E-05"
+        iyz="-1.11031159483215E-12"
+        izz="1.52372025270438E-05" />
     </inertial>
     <visual>
       <origin
@@ -122,7 +122,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM/meshes/Right_Wheel_Link.STL" />
+          filename="package://corrected titan urdf/meshes/Right_Wheel_Link.STL" />
       </geometry>
       <material
         name="">
@@ -136,7 +136,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM/meshes/Right_Wheel_Link.STL" />
+          filename="package://corrected titan urdf/meshes/Right_Wheel_Link.STL" />
       </geometry>
     </collision>
   </link>
@@ -144,14 +144,14 @@
     name="Right_Wheel_Joint"
     type="continuous">
     <origin
-      xyz="0.0001 -0.0905 0.022"
-      rpy="0 0 3.1416" />
+      xyz="9.9999806285E-05 -0.090499999999896 0.022"
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
       link="Right_Wheel_Link" />
     <axis
-      xyz="0 1 0" />
+      xyz="0 -0.999999999990373 0" />
     <limit
       effort="0.5"
       velocity="6.67" />
@@ -160,16 +160,16 @@
     name="Front_Caster_Link">
     <inertial>
       <origin
-        xyz="0.000202858762101424 -1.25027969564656E-05 0.00417771992393256"
+        xyz="0.000202858762101438 -1.25027969564656E-05 0.00417771992393256"
         rpy="0 0 0" />
       <mass
         value="0.00240017059084868" />
       <inertia
         ixx="8.62585863022634E-08"
-        ixy="-2.17137199378608E-12"
-        ixz="6.72427355946021E-13"
+        ixy="-2.17137199378588E-12"
+        ixz="6.72427355946122E-13"
         iyy="8.70020657218784E-08"
-        iyz="1.00206637258209E-10"
+        iyz="1.00206637258211E-10"
         izz="1.00839773458583E-07" />
     </inertial>
     <visual>
@@ -178,7 +178,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM/meshes/Front_Caster_Link.STL" />
+          filename="package://corrected titan urdf/meshes/Front_Caster_Link.STL" />
       </geometry>
       <material
         name="">
@@ -192,7 +192,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM/meshes/Front_Caster_Link.STL" />
+          filename="package://corrected titan urdf/meshes/Front_Caster_Link.STL" />
       </geometry>
     </collision>
   </link>
@@ -200,7 +200,7 @@
     name="Front_Caster_Joint"
     type="fixed">
     <origin
-      xyz="0.099797 0 -0.005"
+      xyz="0.0997970587698719 0 -0.0050000002459"
       rpy="0 0 0" />
     <parent
       link="base_link" />
@@ -221,9 +221,9 @@
       <mass
         value="0.00240017059084867" />
       <inertia
-        ixx="8.62585863022633E-08"
+        ixx="8.62585863022632E-08"
         ixy="-2.17137199238169E-12"
-        ixz="6.72427558481535E-13"
+        ixz="6.72427558480792E-13"
         iyy="8.70020657218778E-08"
         iyz="1.002066372183E-10"
         izz="1.00839773458583E-07" />
@@ -234,7 +234,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM/meshes/Rear_Caster_Link.STL" />
+          filename="package://corrected titan urdf/meshes/Rear_Caster_Link.STL" />
       </geometry>
       <material
         name="">
@@ -248,7 +248,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM/meshes/Rear_Caster_Link.STL" />
+          filename="package://corrected titan urdf/meshes/Rear_Caster_Link.STL" />
       </geometry>
     </collision>
   </link>
@@ -256,7 +256,7 @@
     name="Rear_Caster_Joint"
     type="fixed">
     <origin
-      xyz="-0.1 0.00020294 -0.005"
+      xyz="-0.1 0.000202941230128117 -0.0050000002459"
       rpy="0 0 0" />
     <parent
       link="base_link" />
@@ -269,16 +269,16 @@
     name="Lidar_Link">
     <inertial>
       <origin
-        xyz="-0.000564983809988068 -1.46128257595866E-05 -0.0117013905912169"
+        xyz="-0.000564983809988068 -1.46128257596004E-05 -0.011701390591217"
         rpy="0 0 0" />
       <mass
         value="0.165383107203662" />
       <inertia
-        ixx="7.88651939711732E-05"
-        ixy="4.84683790415124E-08"
+        ixx="7.88651939711733E-05"
+        ixy="4.84683790415122E-08"
         ixz="2.18471539294079E-06"
         iyy="7.51903598783223E-05"
-        iyz="2.88594611593558E-08"
+        iyz="2.88594611593792E-08"
         izz="0.000109946791417529" />
     </inertial>
     <visual>
@@ -287,7 +287,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM/meshes/Lidar_Link.STL" />
+          filename="package://corrected titan urdf/meshes/Lidar_Link.STL" />
       </geometry>
       <material
         name="">
@@ -301,15 +301,15 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM/meshes/Lidar_Link.STL" />
+          filename="package://corrected titan urdf/meshes/Lidar_Link.STL" />
       </geometry>
     </collision>
   </link>
   <joint
     name="Lidar_Joint"
-    type="fixed">
+    type="continuous">
     <origin
-      xyz="0.065 0 0.15166"
+      xyz="0.065 0 0.15165774394"
       rpy="0 0 0" />
     <parent
       link="base_link" />
@@ -328,10 +328,10 @@
         value="0.081394545807951" />
       <inertia
         ixx="6.28598789186319E-05"
-        ixy="-1.39715209480314E-08"
-        ixz="6.87028435282885E-08"
+        ixy="-1.39715209480315E-08"
+        ixz="6.87028435282886E-08"
         iyy="5.59756075039505E-06"
-        iyz="2.18441269945034E-08"
+        iyz="2.18441269945041E-08"
         izz="6.18868260849713E-05" />
     </inertial>
     <visual>
@@ -340,7 +340,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM/meshes/Depth_Camera_Link.STL" />
+          filename="package://corrected titan urdf/meshes/Depth_Camera_Link.STL" />
       </geometry>
       <material
         name="">
@@ -354,7 +354,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM/meshes/Depth_Camera_Link.STL" />
+          filename="package://corrected titan urdf/meshes/Depth_Camera_Link.STL" />
       </geometry>
     </collision>
   </link>
@@ -362,7 +362,7 @@
     name="Depth_Camera_Joint"
     type="fixed">
     <origin
-      xyz="0.063825 -0.00022394 0.20111"
+      xyz="0.06382528434402 -0.000223937751711724 0.20110747354824"
       rpy="0 0 0" />
     <parent
       link="base_link" />
@@ -375,17 +375,17 @@
     name="camera_link">
     <inertial>
       <origin
-        xyz="-0.00780629628729419 -3.86226961931172E-06 -0.00102594893291387"
+        xyz="-0.00780629628729426 -3.86226961930622E-06 -0.00102594893291395"
         rpy="0 0 0" />
       <mass
         value="0.0135199355034992" />
       <inertia
         ixx="2.55439314287458E-06"
-        ixy="-3.57832008503597E-12"
+        ixy="-3.57832008534572E-12"
         ixz="1.76756041302447E-07"
-        iyy="1.59240005826388E-06"
-        iyz="1.86486628035727E-10"
-        izz="1.20808224334628E-06" />
+        iyy="1.59240005826386E-06"
+        iyz="1.86486628036718E-10"
+        izz="1.20808224334626E-06" />
     </inertial>
     <visual>
       <origin
@@ -393,7 +393,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM/meshes/camera_link.STL" />
+          filename="package://corrected titan urdf/meshes/camera_link.STL" />
       </geometry>
       <material
         name="">
@@ -407,7 +407,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://TITAN_V2_TURTLEBOT_FINAL_ASSLY_UPDATED (1).SLDASM/meshes/camera_link.STL" />
+          filename="package://corrected titan urdf/meshes/camera_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -415,7 +415,7 @@
     name="camera_joint"
     type="fixed">
     <origin
-      xyz="0.13025 0 0.088971"
+      xyz="0.130254250725601 0 0.0889713517135"
       rpy="0 0 0" />
     <parent
       link="base_link" />
