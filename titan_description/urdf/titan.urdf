@@ -49,13 +49,13 @@
   <joint name="base_link_joint" type="fixed">
     <parent link="base_footprint"/>
     <child link="base_link"/>
-    <origin xyz="0 0 0" rpy="0 0 3.14159265"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 
   <link name="base_link">
 
     <inertial>
-      <origin xyz="-0.00346341261510518 0.000431167248793353 0.0900728026786845" rpy="0 0 0"/>
+      <origin xyz="0.00346341261510518 -0.000431167248793353 0.0900728026786845" rpy="0 0 0"/>
       <mass value="2.920547254934799"/>
       <inertia ixx="0.00396950657190701" ixy="3.24338418795685E-06" ixz="1.91406169796034E-05"
                iyy="0.00366159045993355" iyz="-1.43363832997866E-06" izz="0.00731329773396938"/>
@@ -107,7 +107,7 @@
   </link>
  
   <joint name="Left_Wheel_Joint" type="continuous">
-    <origin xyz="-0.0001 -0.09075 0.022" rpy="0 0 3.14159265"/>
+    <origin xyz="-0.0001 -0.09075 0.022" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="Left_Wheel_Link"/>
     <axis xyz="0 1 0"/>
@@ -143,7 +143,7 @@
   </link>
 
   <joint name="Right_Wheel_Joint" type="continuous">
-    <origin xyz="-0.0001 0.0905 0.022" rpy="0 0 3.14159265"/>
+    <origin xyz="-0.0001 0.0905 0.022" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="Right_Wheel_Link"/>
     <axis xyz="0 1 0"/>
@@ -180,7 +180,7 @@
  
 
   <joint name="RGB_Camera_Joint" type="fixed">
-    <origin xyz="-0.13025 0 0.088971" rpy="0 0 3.14159265"/>
+    <origin xyz="-0.13025 0 0.088971" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="RGB_Camera_Link"/>
     <axis xyz="0 0 0"/>
@@ -213,7 +213,7 @@
   </link>
 
   <joint name="Depth_Camera_Joint" type="fixed">
-    <origin xyz="-0.063825 0.00022394 0.20111" rpy="0 0 3.14159265"/>
+    <origin xyz="-0.063825 0.00022394 0.20111" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="Depth_Camera_Link"/>
     <axis xyz="0 0 0"/>
@@ -246,7 +246,7 @@
   </link>
 
   <joint name="Front_Caster_Joint" type="fixed">
-    <origin xyz="-0.099797 0 -0.005" rpy="0 0 3.14159265"/>
+    <origin xyz="-0.099797 0 -0.005" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="Front_Caster_Link"/>
     <axis xyz="0 0 0"/>
@@ -279,7 +279,7 @@
   </link>
  
   <joint name="Rear_Caster_Joint" type="fixed">
-    <origin xyz="0.1 -0.00020294 -0.005" rpy="0 0 3.14159265"/>
+    <origin xyz="0.1 -0.00020294 -0.005" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="Rear_Caster_Link"/>
     <axis xyz="0 0 0"/>
