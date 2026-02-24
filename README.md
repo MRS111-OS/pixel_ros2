@@ -35,7 +35,7 @@ sudo apt install -y \
 
 2. **Clone the Titan Robot repository:**
     ```bash
-    git clone https://github.com/MRS111-OS/titan_robot.git
+    git clone --recurse-submodules https://github.com/MRS111-OS/pixel_ros2.git
     ```
 
 3. **Build the workspace:**
