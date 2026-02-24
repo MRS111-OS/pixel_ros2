@@ -4,3 +4,11 @@
 [submodule "opennav_coverage"]
 	path = opennav_coverage
 	url = https://github.com/open-navigation/opennav_coverage.git
+[submodule "micro-ROS-Agent"]
+	path = micro-ROS-Agent
+	url = https://github.com/micro-ROS/micro-ROS-Agent.git
+	branch = humble
+[submodule "momentum_shell_scripts"]
+	path = momentum_shell_scripts
+	url = https://github.com/MRS111-OS/momentum_shell_scripts.git
+	branch = main
