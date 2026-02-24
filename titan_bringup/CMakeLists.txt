@@ -21,20 +21,13 @@ find_package(ament_cmake REQUIRED)
 # Install
 ################################################################################
 install(
-  DIRECTORY launch param script map
+  DIRECTORY launch param script
   DESTINATION share/${PROJECT_NAME}
 )
 
 install(PROGRAMS
   script/odom_to_base.py
   DESTINATION lib/${PROJECT_NAME}
-)
-
-install(
-  PROGRAMS
-    script/cover_area.py
-  DESTINATION lib/${PROJECT_NAME}
-  RENAME cover_area
 )
 
 ################################################################################
