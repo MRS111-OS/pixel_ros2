@@ -78,11 +78,10 @@
     </inertial>
   </link>
 
-  <joint name="${namespace}wheel_left_joint" type="continuous">
+  <joint name="${namespace}wheel_left_joint" type="fixed">
     <parent link="${namespace}base_link"/>
     <child link="${namespace}wheel_left_link"/>
-    <origin xyz="0.0 0.08 0.023" rpy="-1.57 0 0"/>
-    <axis xyz="0 0 1"/>
+    <origin xyz="0.0 0.08 0.023" rpy="-1.57 0 3.1416"/>
   </joint>
 
   <link name="${namespace}wheel_left_link">
@@ -108,11 +107,10 @@
     </inertial>
   </link>
 
-  <joint name="${namespace}wheel_right_joint" type="continuous">
+  <joint name="${namespace}wheel_right_joint" type="fixed">
     <parent link="${namespace}base_link"/>
     <child link="${namespace}wheel_right_link"/>
-    <origin xyz="0.0 -0.080 0.023" rpy="-1.57 0 0"/>
-    <axis xyz="0 0 1"/>
+    <origin xyz="0.0 -0.080 0.023" rpy="-1.57 0 3.1416"/>
   </joint>
 
   <link name="${namespace}wheel_right_link">
@@ -141,7 +139,7 @@
   <joint name="${namespace}caster_back_joint" type="fixed">
     <parent link="${namespace}base_link"/>
     <child link="${namespace}caster_back_link"/>
-    <origin xyz="-0.081 0 -0.004" rpy="-1.57 0 0"/>
+    <origin xyz="-0.081 0 -0.004" rpy="-1.57 0 3.1416"/>
   </joint>
 
   <link name="${namespace}caster_back_link">
@@ -159,23 +157,23 @@
     </inertial>
   </link>
 
-  <joint name="${namespace}imu_joint" type="fixed">
+  <!--joint name="${namespace}imu_joint" type="fixed">
     <parent link="${namespace}base_link"/>
     <child link="${namespace}imu_link"/>
     <origin xyz="-0.032 0 0.068" rpy="0 0 0"/>
   </joint>
 
-  <link name="${namespace}imu_link"/>
+  <link name="${namespace}imu_link"/-->
 
   <joint name="${namespace}scan_joint" type="fixed">
     <parent link="${namespace}base_link"/>
     <child link="${namespace}laser"/>
-    <origin xyz="-0.072 0 0.172" rpy="0 0 0"/>
+    <origin xyz="0.072 0 0.172" rpy="0 0 3.14159"/>
   </joint>
 
   <link name="${namespace}laser">
     <visual>
-      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <origin xyz="0 0 0.0" rpy="0 0 3.1416"/>
       <geometry>
         <mesh filename="package://turtlebot3_description/meshes/sensors/lds.stl" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -183,7 +181,7 @@
     </visual>
 
     <collision>
-      <origin xyz="0.015 0 -0.0065" rpy="0 0 0"/>
+      <origin xyz="-0.015 0 -0.0065" rpy="0 0 0"/>
       <geometry>
         <cylinder length="0.0315" radius="0.055"/>
       </geometry>

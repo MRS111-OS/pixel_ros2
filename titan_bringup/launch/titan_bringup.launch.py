@@ -6,6 +6,8 @@ from launch_ros.substitutions import FindPackageShare
 from launch.actions import IncludeLaunchDescription, ExecuteProcess, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
+from launch.actions import TimerAction
+
 
 package_name = 'titan_bringup'
 desc_pkg = 'titan_description'
@@ -15,14 +17,16 @@ def generate_launch_description():
     desc_share = FindPackageShare(package=desc_pkg).find(desc_pkg)
     esp_share = FindPackageShare(package='ros_esp_bridge').find('ros_esp_bridge')
     lidar_share = FindPackageShare(package='sllidar_ros2').find('sllidar_ros2')
+    lidar_filter_share = FindPackageShare(package='laser_filters').find('laser_filters')
 
     rviz_launch_path = os.path.join(pkg_share, 'launch', 'rviz2.launch.py')
     state_launch_path = os.path.join(pkg_share, 'launch', 'titan_state_publisher.launch.py')
     esp_launch_path = os.path.join(esp_share, 'launch', 'esp_serial.launch.py')
     lidar_launch_path = os.path.join(lidar_share, 'launch', 'sllidar_c1_launch.py')
+    laser_filter_launch_path = os.path.join(lidar_filter_share, 'examples', 'box_filter_example.launch.py')
 
     # URDF/Xacro path
-    urdf_file = os.path.join(desc_share, 'urdf', 'turtlebot3_burger.urdf')
+    urdf_file = os.path.join(desc_share, 'urdf', 'titan.urdf')
 
     # Load URDF content
     with open(urdf_file, 'r') as file:
@@ -32,10 +36,18 @@ def generate_launch_description():
 
 
     # GUI for joint states
-    joint_state_publisher_gui_node = Node(
-        package='joint_state_publisher_gui',
-        executable='joint_state_publisher_gui',
-        name='joint_state_publisher_gui',
+    joint_state_publisher_node = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
+        output='screen'
+    )
+
+
+    odom_to_base_node = Node(
+        package='titan_bringup',
+        executable='odom_to_base.py',
+        name='odom_to_tf_broadcaster',
         output='screen'
     )
 
@@ -55,10 +67,22 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(lidar_launch_path)
     )
 
+    laser_filter_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(laser_filter_launch_path)
+    )
+
     return launch.LaunchDescription([
-        joint_state_publisher_gui_node,
-        rviz_launch,
+        joint_state_publisher_node,
+#       rviz_launch,
         turtlebot_state_launch,
+        #odom_to_base_node,
         esp_launch,
-        lidar_launch
+        TimerAction(
+            period=5.0,  # 5 seconds delay after esp_launch before lidar_launch
+            actions=[lidar_launch]
+        ),
+        TimerAction(
+            period=8.0,  # Total delay 5 + 3 seconds after esp_launch before laser_filter_launch
+            actions=[laser_filter_launch]
+        ),
     ])
