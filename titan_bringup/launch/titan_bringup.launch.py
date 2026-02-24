@@ -26,7 +26,7 @@ def generate_launch_description():
     laser_filter_launch_path = os.path.join(lidar_filter_share, 'examples', 'box_filter_example.launch.py')
 
     # URDF/Xacro path
-    urdf_file = os.path.join(desc_share, 'urdf', 'turtlebot3_burger.urdf')
+    urdf_file = os.path.join(desc_share, 'urdf', 'titan.urdf')
 
     # Load URDF content
     with open(urdf_file, 'r') as file:
@@ -36,12 +36,13 @@ def generate_launch_description():
 
 
     # GUI for joint states
-    joint_state_publisher_gui_node = Node(
-        package='joint_state_publisher_gui',
-        executable='joint_state_publisher_gui',
-        name='joint_state_publisher_gui',
+    joint_state_publisher_node = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
         output='screen'
     )
+
 
     odom_to_base_node = Node(
         package='titan_bringup',
@@ -71,8 +72,8 @@ def generate_launch_description():
     )
 
     return launch.LaunchDescription([
-#       joint_state_publisher_gui_node,
-#        rviz_launch,
+        joint_state_publisher_node,
+#       rviz_launch,
         turtlebot_state_launch,
         #odom_to_base_node,
         esp_launch,
