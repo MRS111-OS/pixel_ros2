@@ -75,6 +75,22 @@ export ROS_DOMAIN_ID=7
     source install/setup.bash
     ```
 
+## Git submodules
+
+Dependencies are managed as submodules. See [.gitmodules](.gitmodules) and [README_SUBMODULES.md](README_SUBMODULES.md) for full details.
+
+**Clone with submodules:**
+```bash
+git clone --recurse-submodules <repo-url>
+```
+
+**Existing clone — init, sync, and update to branch tips:**
+```bash
+git submodule update --init --recursive
+git submodule sync
+git submodule update --remote --recursive
+```
+
 ---
 
 ## 🚀 Robot Bringup
