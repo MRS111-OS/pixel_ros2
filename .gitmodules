@@ -10,3 +10,7 @@
 	path = mqtt_agent_ros2
 	url = https://github.com/MRS111-OS/mqtt_agent_ros2.git
 	branch = feature/vda5050-integration
+[submodule "ros_amr_interop"]
+	path = ros_amr_interop
+	url = https://github.com/inorbit-ai/ros_amr_interop.git
+	branch = humble-devel
