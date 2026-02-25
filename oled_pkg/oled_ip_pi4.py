@@ -54,7 +54,7 @@ def get_ip():
 
 
 def get_memory():
-    """Read memory directly from /proc/meminfo (faster than free -m)"""
+    """Read memory directly from /proc/meminfo"""
     try:
         meminfo = {}
         with open("/proc/meminfo") as f:
@@ -72,7 +72,7 @@ def get_memory():
         return "MEM:N/A"
 
 
-# ---------- CPU Monitoring using /proc/stat ----------
+# ---------- CPU Monitoring ----------
 
 def read_cpu_times():
     with open("/proc/stat", "r") as f:
@@ -94,12 +94,25 @@ def get_cpu_usage(prev_idle, prev_total):
     else:
         usage = 100 * (1 - idle_delta / total_delta)
 
-    # Load average (1 minute)
+    # Load average
     with open("/proc/loadavg", "r") as f:
         load = f.read().split()[0]
 
     cpu_text = f"CPU:{usage:.0f}% L:{load}"
     return cpu_text, idle, total
+
+
+# ---------- CPU Temperature ----------
+
+def get_temperature():
+    try:
+        with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+            temp_raw = int(f.read().strip())
+
+        temp_c = temp_raw / 1000.0
+        return f"T:{temp_c:.1f}C"
+    except:
+        return "T:N/A"
 
 
 # -------------------------------------------------
@@ -110,22 +123,21 @@ prev_idle, prev_total = read_cpu_times()
 
 while True:
 
-    # Clear display
     draw.rectangle((0, 0, width, height), outline=0, fill=0)
 
-    # Gather info
     network = get_wifi_ssid()
     ip = get_ip()
     mem = get_memory()
     cpu, prev_idle, prev_total = get_cpu_usage(prev_idle, prev_total)
+    temp = get_temperature()
 
-    # Draw text
     draw.text((x, top),      network, font=font, fill=255)
     draw.text((x, top + 8),  ip,      font=font, fill=255)
     draw.text((x, top + 16), mem,     font=font, fill=255)
-    draw.text((x, top + 25), cpu,     font=font, fill=255)
 
-    # Show on OLED
+    # CPU + Temperature on same line
+    draw.text((x, top + 25), cpu + " " + temp, font=font, fill=255)
+
     disp.image(image)
     disp.display()
 
