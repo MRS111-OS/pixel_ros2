@@ -6,3 +6,10 @@
 	path = momentum_shell_scripts
 	url = https://github.com/MRS111-OS/momentum_shell_scripts.git
 	branch = main
+[submodule "opennav_coverage"]
+	path = opennav_coverage
+	url = https://github.com/open-navigation/opennav_coverage.git
+	branch = humble
+[submodule "Fields2Cover"]
+	path = Fields2Cover
+	url = https://github.com/Fields2Cover/Fields2Cover.git
