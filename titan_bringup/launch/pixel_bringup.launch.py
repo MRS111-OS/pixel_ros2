@@ -77,7 +77,7 @@ def generate_launch_description():
     return launch.LaunchDescription([
 
         # Start micro-ROS agent
-        micro_ros_agent_node,
+        # micro_ros_agent_node,
 
         # Robot state publisher
         turtlebot_state_launch,
