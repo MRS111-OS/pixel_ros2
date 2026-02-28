@@ -94,11 +94,7 @@ def get_cpu_usage(prev_idle, prev_total):
     else:
         usage = 100 * (1 - idle_delta / total_delta)
 
-    # Load average
-    with open("/proc/loadavg", "r") as f:
-        load = f.read().split()[0]
-
-    cpu_text = f"CPU:{usage:.0f}% L:{load}"
+    cpu_text = f"CPU:{usage:.0f}%"
     return cpu_text, idle, total
 
 
