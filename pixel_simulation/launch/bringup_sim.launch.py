@@ -2,13 +2,10 @@
 
 from os.path import join
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, SetEnvironmentVariable, AppendEnvironmentVariable
 from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
-
-
-from launch.actions import SetEnvironmentVariable
 
 
 def generate_launch_description():
@@ -34,6 +31,15 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+
+        AppendEnvironmentVariable(
+        name='IGN_GAZEBO_RESOURCE_PATH',
+        value=join(titan_bot_path, "worlds")),
+
+        AppendEnvironmentVariable(
+        name='IGN_GAZEBO_RESOURCE_PATH',
+        value=join(titan_bot_path, "models")),
+
         DeclareLaunchArgument(
             "world_file",
             default_value=join(titan_bot_path, "worlds", "small_warehouse.world"),

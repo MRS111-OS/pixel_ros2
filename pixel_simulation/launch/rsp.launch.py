@@ -29,6 +29,7 @@ def get_xacro_to_doc(xacro_file_path, mappings):
 def generate_launch_description():
    
     pixel_desc = get_package_share_directory("titan_description")
+    pixel_bot_path = get_package_share_directory("pixel_simulation")
     position_x = LaunchConfiguration("position_x")
     position_y = LaunchConfiguration("position_y")
     orientation_yaw = LaunchConfiguration("orientation_yaw")
@@ -81,11 +82,16 @@ def generate_launch_description():
             ('/world/default/model/pixel_simulation/link/base_footprint/sensor/lidar/scan', '/scan'),
         ]
     )
-
+    rviz_node = Node(
+        package="rviz2",
+        executable="rviz2",
+        arguments=["-d", join(pixel_bot_path, "config", "sim.rviz")],
+    )
    
 
 
     return LaunchDescription([
+        rviz_node,
         DeclareLaunchArgument("position_x", default_value="0.0"),
         DeclareLaunchArgument("position_y", default_value="0.0"),
         DeclareLaunchArgument("orientation_yaw", default_value="0.0"),
