@@ -26,7 +26,7 @@ def generate_launch_description():
 
     spawn_titan_bot_node = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            join(titan_bot_path, "launch", "rsp.launch.py")
+            join(titan_bot_path, "launch", "robot_state_publisher.launch.py")
         )
     )
 
