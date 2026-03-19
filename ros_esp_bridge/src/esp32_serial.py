@@ -50,7 +50,7 @@ class SerialBridgeNode(Node):
         self.get_logger().info(f"Serial bridge node started on {port} at {baud} baud")
         self.odom_transform = TransformStamped()
         self.odom_transform.header.frame_id = "odom"
-        self.odom_transform.child_frame_id = "base_footprint"
+        self.odom_transform.child_frame_id = "base_link"
         self.odom_transform.transform.translation.x = 0.0
         self.odom_transform.transform.translation.y = 0.0
         self.odom_transform.transform.translation.z = 0.0
@@ -143,6 +143,7 @@ class SerialBridgeNode(Node):
                                 self.odom_msg.pose.covariance[35] = 0.01
 
                                 self.odom_transform.header.stamp = self.odom_msg.header.stamp
+                                self.odom_transform.child_frame_id = self.odom_msg.child_frame_id
                                 self.odom_transform.transform.translation.x = x
                                 self.odom_transform.transform.translation.y = y
                                 self.odom_transform.transform.rotation = q
