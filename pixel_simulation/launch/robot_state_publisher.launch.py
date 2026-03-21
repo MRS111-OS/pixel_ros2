@@ -18,7 +18,7 @@ titan_desc_share = get_package_share_directory("titan_description")
 
 set_gazebo_path = SetEnvironmentVariable(
     name="IGN_GAZEBO_RESOURCE_PATH",
-    value="home/gagasaga/pixel_ws/install"
+    value="home/titan/titan_ws/install" #needs to be changed if user name and worksace name differs 
 )
 
 def get_xacro_to_doc(xacro_file_path, mappings):
@@ -72,10 +72,10 @@ def generate_launch_description():
             "/kinect_camera@sensor_msgs/msg/Image[ignition.msgs.Image",
             "/kinect_camera/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo",
             "/kinect_camera/points@sensor_msgs/msg/PointCloud2[ignition.msgs.PointCloudPacked",
-            "/stereo_camera/left/image_raw@sensor_msgs/msg/Image[ignition.msgs.Image",
-            "/stereo_camera/right/image_raw@sensor_msgs/msg/Image[ignition.msgs.Image",
-            "/stereo_camera/left/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo",
-            "/stereo_camera/right/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo",
+            # "/stereo_camera/left/image_raw@sensor_msgs/msg/Image[ignition.msgs.Image",
+            "/camera/color/image_raw@sensor_msgs/msg/Image[ignition.msgs.Image",
+            # "/stereo_camera/left/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo",
+            "/camera/color/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo",
         ],
         remappings=[
             ('/world/default/model/pixel_simulation/joint_state', '/joint_states'),
@@ -83,10 +83,11 @@ def generate_launch_description():
         ]
     )
     rviz_node = Node(
-        package="rviz2",
-        executable="rviz2",
-        arguments=["-d", join(pixel_bot_path, "config", "sim.rviz")],
-    )
+    package="rviz2",
+    executable="rviz2",
+    parameters=[{"use_sim_time": True}],
+    arguments=["-d", join(pixel_bot_path, "config", "sim.rviz")],
+)
    
 
 
