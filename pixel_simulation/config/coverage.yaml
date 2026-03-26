@@ -30,17 +30,17 @@ bt_navigator:
     global_frame: map
     robot_base_frame: base_footprint
     odom_topic: /odom
+    bt_loop_duration: 10
+    default_server_timeout: 20
 
-    navigators: ['navigate_to_pose', 'navigate_complete_coverage']
-
-    navigate_to_pose:
-      plugin: "nav2_bt_navigator/NavigateToPoseNavigator"
+    navigators: ['navigate_complete_coverage']
 
     navigate_complete_coverage:
       plugin: "opennav_coverage_navigator/CoverageNavigator"
 
+    error_code_names: ["compute_path_error_code", "follow_path_error_code", "compute_coverage_error_code"]
+
     plugin_lib_names:
-      - nav2_compute_path_to_pose_action_bt_node
       - nav2_follow_path_action_bt_node
       - nav2_rate_controller_bt_node
       - nav2_recovery_node_bt_node

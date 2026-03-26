@@ -1,0 +1,20 @@
+<!--
+  Coverage BT for small manually clicked polygons.
+  Disables headland generation to avoid collapsing small fields to empty plans.
+-->
+<root main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <RateController hz="0.0000001">
+      <Sequence name="NavigateWithoutReplanning">
+        <ComputeCoveragePath
+          nav_path="{path}"
+          polygons="{field_polygon}"
+          polygons_frame_id="{polygon_frame_id}"
+          generate_headland="false"
+          generate_route="true"
+          generate_path="true"/>
+        <FollowPath path="{path}" controller_id="FollowPath"/>
+      </Sequence>
+    </RateController>
+  </BehaviorTree>
+</root>

@@ -16,6 +16,9 @@
   <depend>nav2_msgs</depend>
   <depend>rclcpp_action</depend>
   <depend>sensor_msgs</depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
 
 <exec_depend>opennav_coverage_msgs</exec_depend>
 <exec_depend>geometry_msgs</exec_depend>
