@@ -20,6 +20,7 @@
 #include <vector>
 
 #include "geometry_msgs/msg/pose_stamped.hpp"
+#include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
 #include "nav2_behavior_tree/behavior_tree_engine.hpp"
 #include "nav2_behavior_tree/ros_topic_logger.hpp"
 #include "nav2_util/lifecycle_node.hpp"
@@ -225,6 +226,8 @@ protected:
 
   // To publish BT logs
   std::unique_ptr<RosTopicLogger> topic_logger_;
+  std::unique_ptr<BT::PublisherZMQ> groot_monitor_;
+  std::unique_ptr<BT::PublisherZMQ> groot_monitor_fallback_;
 
   // Duration for each iteration of BT execution
   std::chrono::milliseconds bt_loop_duration_;
@@ -237,6 +240,12 @@ protected:
 
   // should the BT be reloaded even if the same xml filename is requested?
   bool always_reload_bt_xml_ = false;
+  bool enable_groot_monitoring_ = false;
+  int groot_server_port_ = 1667;
+  int groot_publisher_port_ = 1666;
+  bool enable_groot_monitoring_fallback_ = false;
+  int groot_fallback_server_port_ = 1669;
+  int groot_fallback_publisher_port_ = 1670;
 
   // User-provided callbacks
   OnGoalReceivedCallback on_goal_received_callback_;

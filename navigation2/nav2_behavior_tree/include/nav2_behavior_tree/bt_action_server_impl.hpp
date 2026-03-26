@@ -66,6 +66,30 @@ BtActionServer<ActionT>::BtActionServer(
   if (!node->has_parameter("wait_for_service_timeout")) {
     node->declare_parameter("wait_for_service_timeout", 1000);
   }
+  if (!node->has_parameter("enable_groot_monitoring")) {
+    node->declare_parameter("enable_groot_monitoring", false);
+  }
+  if (!node->has_parameter("groot_server_port")) {
+    node->declare_parameter("groot_server_port", 1667);
+  }
+  if (!node->has_parameter("groot_publisher_port")) {
+    node->declare_parameter("groot_publisher_port", 1666);
+  }
+  if (!node->has_parameter("groot_zmq_server_port")) {
+    node->declare_parameter("groot_zmq_server_port", 1667);
+  }
+  if (!node->has_parameter("groot_zmq_publisher_port")) {
+    node->declare_parameter("groot_zmq_publisher_port", 1666);
+  }
+  if (!node->has_parameter("enable_groot_monitoring_fallback")) {
+    node->declare_parameter("enable_groot_monitoring_fallback", false);
+  }
+  if (!node->has_parameter("groot_fallback_server_port")) {
+    node->declare_parameter("groot_fallback_server_port", 1669);
+  }
+  if (!node->has_parameter("groot_fallback_publisher_port")) {
+    node->declare_parameter("groot_fallback_publisher_port", 1670);
+  }
 }
 
 template<class ActionT>
@@ -122,6 +146,19 @@ bool BtActionServer<ActionT>::on_configure()
   node->get_parameter("wait_for_service_timeout", wait_for_service_timeout);
   wait_for_service_timeout_ = std::chrono::milliseconds(wait_for_service_timeout);
   node->get_parameter("always_reload_bt_xml", always_reload_bt_xml_);
+  node->get_parameter("enable_groot_monitoring", enable_groot_monitoring_);
+  node->get_parameter("groot_server_port", groot_server_port_);
+  node->get_parameter("groot_publisher_port", groot_publisher_port_);
+
+  int legacy_groot_server_port = groot_server_port_;
+  int legacy_groot_publisher_port = groot_publisher_port_;
+  node->get_parameter("groot_zmq_server_port", legacy_groot_server_port);
+  node->get_parameter("groot_zmq_publisher_port", legacy_groot_publisher_port);
+  groot_server_port_ = legacy_groot_server_port;
+  groot_publisher_port_ = legacy_groot_publisher_port;
+  node->get_parameter("enable_groot_monitoring_fallback", enable_groot_monitoring_fallback_);
+  node->get_parameter("groot_fallback_server_port", groot_fallback_server_port_);
+  node->get_parameter("groot_fallback_publisher_port", groot_fallback_publisher_port_);
 
   // Create the class that registers our custom nodes and executes the BT
   bt_ = std::make_unique<nav2_behavior_tree::BehaviorTreeEngine>(plugin_lib_names_);
@@ -164,6 +201,8 @@ bool BtActionServer<ActionT>::on_cleanup()
   client_node_.reset();
   action_server_.reset();
   topic_logger_.reset();
+  groot_monitor_.reset();
+  groot_monitor_fallback_.reset();
   plugin_lib_names_.clear();
   current_bt_xml_filename_.clear();
   blackboard_.reset();
@@ -213,6 +252,32 @@ bool BtActionServer<ActionT>::loadBehaviorTree(const std::string & bt_xml_filena
   }
 
   topic_logger_ = std::make_unique<RosTopicLogger>(client_node_, tree_);
+
+  groot_monitor_.reset();
+  groot_monitor_fallback_.reset();
+  if (enable_groot_monitoring_) {
+    try {
+      groot_monitor_ = std::make_unique<BT::PublisherZMQ>(
+        tree_, 25, groot_publisher_port_, groot_server_port_);
+      RCLCPP_INFO(
+        logger_, "Groot monitoring enabled on publisher port %d and server port %d",
+        groot_publisher_port_, groot_server_port_);
+    } catch (const std::exception & e) {
+      RCLCPP_WARN(logger_, "Failed to enable Groot monitoring: %s", e.what());
+    }
+  }
+
+  if (enable_groot_monitoring_fallback_) {
+    try {
+      groot_monitor_fallback_ = std::make_unique<BT::PublisherZMQ>(
+        tree_, 25, groot_fallback_publisher_port_, groot_fallback_server_port_);
+      RCLCPP_INFO(
+        logger_, "Fallback Groot monitoring enabled on publisher port %d and server port %d",
+        groot_fallback_publisher_port_, groot_fallback_server_port_);
+    } catch (const std::exception & e) {
+      RCLCPP_WARN(logger_, "Failed to enable fallback Groot monitoring: %s", e.what());
+    }
+  }
 
   current_bt_xml_filename_ = filename;
   return true;
