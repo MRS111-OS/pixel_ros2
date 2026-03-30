@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<robot name="titan" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="titan_simulation">
+
+    <gazebo>
+      <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+        <render_engine>ogre2</render_engine>
+      </plugin>
+
+      <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+      </plugin>
+
+      <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+        <left_joint>Left_Wheel_Joint</left_joint>
+        <right_joint>Right_Wheel_Joint</right_joint>
+        <wheel_separation>0.18</wheel_separation>
+        <wheel_radius>0.034843</wheel_radius>
+        <odom_publish_frequency>30</odom_publish_frequency>
+        <topic>/cmd_vel</topic>
+        <odom_topic>/odom</odom_topic>
+      </plugin>
+    </gazebo>
+
+    <gazebo>
+      <plugin filename="libignition-gazebo6-odometry-publisher-system"
+              name="ignition::gazebo::systems::OdometryPublisher">
+
+        <odom_frame>odom</odom_frame>
+        <robot_base_frame>base_footprint</robot_base_frame>
+
+        <odom_topic>/odom</odom_topic>
+        <tf_topic>/tf</tf_topic>
+
+        <dimensions>2</dimensions>
+        <odom_publish_frequency>30</odom_publish_frequency>
+
+      </plugin>
+    </gazebo>
+
+    <gazebo reference="Lidar_Link">
+      <sensor name="lidar" type="gpu_lidar">
+
+        <update_rate>5</update_rate>
+        <visualize>true</visualize>
+
+        <ignition_frame_id>Lidar_Link</ignition_frame_id>
+
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>720</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.14159</min_angle>
+              <max_angle>3.14159</max_angle>
+            </horizontal>
+          </scan>
+
+          <range>
+            <min>0.3</min>
+            <max>15.0</max>
+            <resolution>0.015</resolution>
+          </range>
+
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.001</stddev>
+          </noise>
+        </lidar>
+
+      </sensor>
+    </gazebo>
+
+    <gazebo reference="Depth_Camera_Link">
+      <sensor type="depth_camera" name="kinect_camera">
+        <update_rate>30.0</update_rate>
+        <topic>kinect_camera</topic>
+        <ignition_frame_id>kinect_camera</ignition_frame_id>
+        <camera_info_topic>kinect_camera/camera_info</camera_info_topic>
+        <camera>
+          <horizontal_fov>1.57</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.05</near>
+            <far>8.0</far>
+          </clip>
+        </camera>
+      </sensor>
+    </gazebo>
+
+    <gazebo reference="RGB_Camera_Link">
+      <sensor type="camera" name="right">
+        <update_rate>10.0</update_rate>
+        <always_on>true</always_on>
+        <ignition_frame_id>stereo_camera_optical</ignition_frame_id>
+        <pose>0 -0.12 0 0 0 0</pose>
+        <topic>stereo_camera/right/image_raw</topic>
+        <camera_info_topic>stereo_camera/right/camera_info</camera_info_topic>
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>1024</width>
+          <height>1024</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.3</near>
+          <far>20</far>
+        </clip>
+      </sensor>
+
+      <sensor type="camera" name="left">
+        <topic>stereo_camera/left/image_raw</topic>
+        <update_rate>10.0</update_rate>
+        <always_on>true</always_on>
+        <ignition_frame_id>stereo_camera_optical</ignition_frame_id>
+        <camera_info_topic>stereo_camera/left/camera_info</camera_info_topic>
+        <pose>0 0 0 0 0 0</pose>
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>1024</width>
+          <height>1024</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.3</near>
+          <far>20</far>
+        </clip>
+      </sensor>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>

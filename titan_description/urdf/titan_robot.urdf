@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<robot name="titan" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="titan_base.urdf"/>
+  <xacro:include filename="titan_simulation.urdf"/>
+
+  <xacro:titan_base/>
+  <xacro:titan_simulation/>
+
+</robot>
