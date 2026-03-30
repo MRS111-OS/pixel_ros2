@@ -1,0 +1,37 @@
+<Sequence>
+
+  <ComputeCoveragePath
+    generate_headland="true"
+    generate_route="true"
+    generate_path="true"
+    polygons="{polygons}"
+    polygons_frame_id="{polygons_frame_id}"
+    coverage_path="{coverage_path}"
+    nav_path="{nav_path}"/>
+
+  <ExtractFirstPose
+    coverage_path="{coverage_path}"
+    first_pose="{first_pose}"/>
+
+  <!-- 🔧 FIXED NAVIGATION STEP -->
+  <ComputePathToPose
+      goal="{first_pose}"
+      path="{path}"
+      planner_id="GridBased"/>
+
+  <FollowPath
+      path="{path}"
+      controller_id="FollowPath"/>
+
+  <Wait wait_duration="0.5"/>
+
+  <!-- OPTIONAL (only if you implement it) -->
+  <TrimPathToRobot
+      input_path="{nav_path}"
+      output_path="{trimmed_path}" />
+
+  <FollowPath
+      path="{trimmed_path}"
+      controller_id="FollowPath"/>
+
+</Sequence>

@@ -33,7 +33,10 @@ bt_navigator:
     bt_loop_duration: 10
     default_server_timeout: 20
 
-    navigators: ['navigate_complete_coverage']
+    navigators: ['navigate_to_pose', 'navigate_complete_coverage']
+
+    navigate_to_pose:
+      plugin: "nav2_bt_navigator/NavigateToPoseNavigator"
 
     navigate_complete_coverage:
       plugin: "opennav_coverage_navigator/CoverageNavigator"

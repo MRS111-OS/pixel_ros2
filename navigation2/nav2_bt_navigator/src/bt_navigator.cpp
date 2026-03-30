@@ -1,17 +1,3 @@
-// Copyright (c) 2018 Intel Corporation
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 #include "nav2_bt_navigator/bt_navigator.hpp"
 
 #include <memory>
@@ -96,12 +82,10 @@ BtNavigator::BtNavigator(rclcpp::NodeOptions options)
     this, "odom_topic", rclcpp::ParameterValue(std::string("odom")));
 }
 
-BtNavigator::~BtNavigator()
-{
-}
+BtNavigator::~BtNavigator() {}
 
 nav2_util::CallbackReturn
-BtNavigator::on_configure(const rclcpp_lifecycle::State & /*state*/)
+BtNavigator::on_configure(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(get_logger(), "Configuring");
 
@@ -117,11 +101,11 @@ BtNavigator::on_configure(const rclcpp_lifecycle::State & /*state*/)
   transform_tolerance_ = get_parameter("transform_tolerance").as_double();
   odom_topic_ = get_parameter("odom_topic").as_string();
 
-  // Libraries to pull plugins (BT Nodes) from
   auto plugin_lib_names = get_parameter("plugin_lib_names").as_string_array();
 
-  pose_navigator_ = std::make_unique<nav2_bt_navigator::NavigateToPoseNavigator>();
-  poses_navigator_ = std::make_unique<nav2_bt_navigator::NavigateThroughPosesNavigator>();
+  pose_navigator_ = std::make_unique<NavigateToPoseNavigator>();
+  poses_navigator_ = std::make_unique<NavigateThroughPosesNavigator>();
+  coverage_navigator_ = std::make_unique<CoverageNavigator>();
 
   nav2_bt_navigator::FeedbackUtils feedback_utils;
   feedback_utils.tf = tf_;
@@ -129,16 +113,14 @@ BtNavigator::on_configure(const rclcpp_lifecycle::State & /*state*/)
   feedback_utils.robot_frame = robot_frame_;
   feedback_utils.transform_tolerance = transform_tolerance_;
 
-  // Odometry smoother object for getting current speed
-  odom_smoother_ = std::make_shared<nav2_util::OdomSmoother>(shared_from_this(), 0.3, odom_topic_);
+  odom_smoother_ = std::make_shared<nav2_util::OdomSmoother>(
+    shared_from_this(), 0.3, odom_topic_);
 
   if (!pose_navigator_->on_configure(
-      shared_from_this(), plugin_lib_names, feedback_utils, &plugin_muxer_, odom_smoother_))
-  {
-    return nav2_util::CallbackReturn::FAILURE;
-  }
-
-  if (!poses_navigator_->on_configure(
+      shared_from_this(), plugin_lib_names, feedback_utils, &plugin_muxer_, odom_smoother_) ||
+      !poses_navigator_->on_configure(
+      shared_from_this(), plugin_lib_names, feedback_utils, &plugin_muxer_, odom_smoother_) ||
+      !coverage_navigator_->on_configure(
       shared_from_this(), plugin_lib_names, feedback_utils, &plugin_muxer_, odom_smoother_))
   {
     return nav2_util::CallbackReturn::FAILURE;
@@ -148,57 +130,64 @@ BtNavigator::on_configure(const rclcpp_lifecycle::State & /*state*/)
 }
 
 nav2_util::CallbackReturn
-BtNavigator::on_activate(const rclcpp_lifecycle::State & /*state*/)
+BtNavigator::on_activate(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(get_logger(), "Activating");
 
-  if (!poses_navigator_->on_activate() || !pose_navigator_->on_activate()) {
+  if (!poses_navigator_->on_activate() ||
+      !pose_navigator_->on_activate() ||
+      !coverage_navigator_->on_activate()) {
     return nav2_util::CallbackReturn::FAILURE;
   }
 
-  // create bond connection
   createBond();
-
   return nav2_util::CallbackReturn::SUCCESS;
 }
 
 nav2_util::CallbackReturn
-BtNavigator::on_deactivate(const rclcpp_lifecycle::State & /*state*/)
+BtNavigator::on_deactivate(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(get_logger(), "Deactivating");
 
-  if (!poses_navigator_->on_deactivate() || !pose_navigator_->on_deactivate()) {
+  if (!poses_navigator_->on_deactivate() ||
+      !pose_navigator_->on_deactivate() ||
+      !coverage_navigator_->on_deactivate()) {
     return nav2_util::CallbackReturn::FAILURE;
   }
 
-  // destroy bond connection
   destroyBond();
-
   return nav2_util::CallbackReturn::SUCCESS;
 }
 
 nav2_util::CallbackReturn
-BtNavigator::on_cleanup(const rclcpp_lifecycle::State & /*state*/)
+BtNavigator::on_cleanup(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(get_logger(), "Cleaning up");
 
-  // Reset the listener before the buffer
   tf_listener_.reset();
   tf_.reset();
 
-  if (!poses_navigator_->on_cleanup() || !pose_navigator_->on_cleanup()) {
-    return nav2_util::CallbackReturn::FAILURE;
+  if (poses_navigator_) {
+    poses_navigator_->on_cleanup();
+    poses_navigator_.reset();
   }
 
-  poses_navigator_.reset();
-  pose_navigator_.reset();
+  if (pose_navigator_) {
+    pose_navigator_->on_cleanup();
+    pose_navigator_.reset();
+  }
+
+  if (coverage_navigator_) {
+    coverage_navigator_->on_cleanup();
+    coverage_navigator_.reset();
+  }
 
   RCLCPP_INFO(get_logger(), "Completed Cleaning up");
   return nav2_util::CallbackReturn::SUCCESS;
 }
 
 nav2_util::CallbackReturn
-BtNavigator::on_shutdown(const rclcpp_lifecycle::State & /*state*/)
+BtNavigator::on_shutdown(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(get_logger(), "Shutting down");
   return nav2_util::CallbackReturn::SUCCESS;
@@ -207,8 +196,4 @@ BtNavigator::on_shutdown(const rclcpp_lifecycle::State & /*state*/)
 }  // namespace nav2_bt_navigator
 
 #include "rclcpp_components/register_node_macro.hpp"
-
-// Register the component with class_loader.
-// This acts as a sort of entry point, allowing the component to be discoverable when its library
-// is being loaded into a running process.
 RCLCPP_COMPONENTS_REGISTER_NODE(nav2_bt_navigator::BtNavigator)
