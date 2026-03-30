@@ -72,7 +72,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://titan_description/meshes/titan_meshes/base_link.STL"/>
+          <mesh filename="file://$(find titan_description)/meshes/titan_meshes/base_link.STL"/>
         </geometry>
         <material name="light_black"/>
       </visual>
@@ -80,7 +80,7 @@
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://titan_description/meshes/titan_meshes/base_link.STL"/>
+          <mesh filename="file://$(find titan_description)/meshes/titan_meshes/base_link.STL"/>
         </geometry>
       </collision>
 
@@ -215,7 +215,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://titan_description/meshes/titan_meshes/Depth_Camera_Link.STL"/>
+          <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Depth_Camera_Link.STL"/>
         </geometry>
         <material name="dark"/>
       </visual>
@@ -223,7 +223,7 @@
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://titan_description/meshes/titan_meshes/Depth_Camera_Link.STL"/>
+          <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Depth_Camera_Link.STL"/>
         </geometry>
       </collision>
     </link>
@@ -251,7 +251,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://titan_description/meshes/titan_meshes/Front_Caster_Link.STL"/>
+          <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Front_Caster_Link.STL"/>
         </geometry>
         <material name="dark"/>
       </visual>
@@ -259,7 +259,7 @@
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://titan_description/meshes/titan_meshes/Front_Caster_Link.STL"/>
+          <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Front_Caster_Link.STL"/>
         </geometry>
       </collision>
     </link>
@@ -287,7 +287,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://titan_description/meshes/titan_meshes/Rear_Caster_Link.STL"/>
+          <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Rear_Caster_Link.STL"/>
         </geometry>
         <material name="dark"/>
       </visual>
@@ -295,7 +295,7 @@
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://titan_description/meshes/titan_meshes/Rear_Caster_Link.STL"/>
+          <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Rear_Caster_Link.STL"/>
         </geometry>
       </collision>
     </link>
@@ -323,7 +323,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://titan_description/meshes/titan_meshes/Lidar_Link.STL"/>
+          <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Lidar_Link.STL"/>
         </geometry>
         <material name="dark"/>
       </visual>
@@ -331,7 +331,7 @@
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://titan_description/meshes/titan_meshes/Lidar_Link.STL"/>
+          <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Lidar_Link.STL"/>
         </geometry>
       </collision>
     </link>

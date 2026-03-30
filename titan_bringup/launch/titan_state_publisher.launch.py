@@ -18,7 +18,7 @@
 
 import os
 
-from ament_index_python.packages import get_package_share_directory
+from ament_index_python.packages import get_package_share_dicdrectory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import Command
@@ -32,7 +32,7 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
-    urdf_file_name = 'titan_base.urdf'
+    urdf_file_name = 'titan_robot.urdf'
 
     print('urdf_file_name : {}'.format(urdf_file_name))
 
