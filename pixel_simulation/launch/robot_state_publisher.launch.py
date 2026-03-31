@@ -18,7 +18,7 @@ titan_desc_share = get_package_share_directory("titan_description")
 
 set_gazebo_path = SetEnvironmentVariable(
     name="IGN_GAZEBO_RESOURCE_PATH",
-    value="home/titan/titan_ws/install" #needs to be changed if user name and worksace name differs 
+    value="home/titan/titan_ws/install"
 )
 
 def get_xacro_to_doc(xacro_file_path, mappings):
