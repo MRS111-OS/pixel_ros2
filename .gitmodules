@@ -14,3 +14,7 @@
 	path = ros_amr_interop
 	url = https://github.com/inorbit-ai/ros_amr_interop.git
 	branch = humble-devel
+[submodule "robot_firmware_interface"]
+	path = robot_firmware_interface
+	url = https://github.com/MRS111-OS/robot_firmware_interface.git
+	branch = main

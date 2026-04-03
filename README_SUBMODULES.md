@@ -23,9 +23,19 @@ git submodule update --remote --recursive
 - **`sync`** — Update submodule URLs and branch config from `.gitmodules`.
 - **`update --remote --recursive`** — In each submodule, fetch and check out the **branch** listed in `.gitmodules` and update to the latest commit on that branch.
 
+## Submodule inventory
+
+| Path | Repository | Branch | Description |
+|---|---|---|---|
+| `momentum_shell_scripts` | [MRS111-OS/momentum_shell_scripts](https://github.com/MRS111-OS/momentum_shell_scripts) | `main` | Shell scripts for robot startup, environment and WiFi config |
+| `micro-ROS-Agent` | [micro-ROS/micro-ROS-Agent](https://github.com/micro-ROS/micro-ROS-Agent) | `humble` | micro-ROS agent bridging ESP32 firmware to ROS 2 |
+| `mqtt_agent_ros2` | [MRS111-OS/mqtt_agent_ros2](https://github.com/MRS111-OS/mqtt_agent_ros2) | `feature/vda5050-integration` | MQTT bridge for VDA 5050 fleet management |
+| `ros_amr_interop` | [inorbit-ai/ros_amr_interop](https://github.com/inorbit-ai/ros_amr_interop) | `humble-devel` | AMR interoperability (InOrbit integration) |
+| `robot_firmware_interface` | [MRS111-OS/robot_firmware_interface](https://github.com/MRS111-OS/robot_firmware_interface) | `main` | Custom ROS 2 msgs/srvs for ESP32 firmware peripherals (LCD, battery, buzzer, LEDs, GPIO, IMU) |
+
 ## Submodule branches
 
-Branches are set in `.gitmodules`. To use the latest commit on each submodule’s branch:
+Branches are set in `.gitmodules`. To use the latest commit on each submodule's branch:
 
 ```bash
 git submodule sync

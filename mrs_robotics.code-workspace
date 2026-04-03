@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../cyborg_ros2"
+		}
+	],
+	"settings": {}
+}

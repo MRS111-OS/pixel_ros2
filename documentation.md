@@ -84,7 +84,26 @@ Titan Robot is a differential-drive mobile robot built around a Raspberry Pi 4B 
 - **LIDAR Node:** Publishes laser scans.
 - **Navigation Stack:** Subscribes to odometry and scan, publishes velocity commands.
 
-### 3. Teleoperation
+### 3. Robot Firmware Interface (`robot_firmware_interface`)
+- **Role:** ROS 2 interface package providing custom message and service definitions for communication between the ESP32 firmware (micro-ROS) and higher-level ROS 2 nodes.
+- **Peripherals managed:**
+  - LCD screen (20×4) — field-based updates and full-screen writes
+  - Battery monitor — voltage, current, SoC, temperature, fault flags
+  - System alerts — severity-leveled alerts with active/cleared state
+  - Buzzer — built-in patterns and custom tones
+  - LED strip (RGBW) — per-LED colour, brightness, and effects
+  - Input interrupt switch — press/release/long-press events
+  - IMU — raw acceleration, angular velocity, and orientation
+  - GPIO outputs — hazard and indicator lights
+- **Key topics:** `/firmware/battery_status`, `/firmware/lcd_field_update`, `/firmware/system_alert`, `/firmware/led_strip`, `/firmware/mission_status`, `/firmware/navigation_goal_status`
+- **Key services:** `/firmware/set_buzzer`, `/firmware/set_led_strip`, `/firmware/set_gpio_output`, `/firmware/set_lcd_display`
+- **Build:**
+  ```bash
+  colcon build --packages-select robot_firmware_interface
+  ```
+- **More info:** See [robot_firmware_interface/README.md](robot_firmware_interface/README.md).
+
+### 4. Teleoperation
 - **Keyboard Teleop:** Control robot via `teleop_twist_keyboard`.
 - **RViz2:** Visualize robot, map, and navigation goals.
 
