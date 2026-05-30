@@ -33,24 +33,52 @@ bt_navigator:
     bt_loop_duration: 10
     default_server_timeout: 20
 
-    navigators: ['navigate_to_pose', 'navigate_complete_coverage']
+    navigators: ['navigate_complete_coverage', 'navigate_to_pose']
 
     navigate_to_pose:
-      plugin: "nav2_bt_navigator/NavigateToPoseNavigator"
+      plugin: "backported_bt_navigator/NavigateToPoseNavigator"
 
     navigate_complete_coverage:
       plugin: "opennav_coverage_navigator/CoverageNavigator"
 
-    error_code_names: ["compute_path_error_code", "follow_path_error_code", "compute_coverage_error_code"]
+    default_nav_to_pose_bt_xml: "/home/user/pixel_ws/src/pixel_simulation/config/simple_nav_to_pose.xml"
+
+    error_code_names:
+      - compute_path_error_code
+      - follow_path_error_code
+      - compute_coverage_error_code
 
     plugin_lib_names:
+      # Coverage BT nodes
+      - opennav_compute_complete_coverage_action_bt_node
+      - opennav_cancel_complete_coverage_action_bt_node
+
+      # Core Nav2 action nodes
+      - nav2_compute_path_to_pose_action_bt_node
       - nav2_follow_path_action_bt_node
+      - nav2_back_up_action_bt_node
+      - nav2_spin_action_bt_node
+      - nav2_wait_action_bt_node
+      - nav2_clear_costmap_service_bt_node
+
+      # Conditions
+      - nav2_goal_reached_condition_bt_node
+      - nav2_goal_updated_condition_bt_node
+      - nav2_globally_updated_goal_condition_bt_node
+      - nav2_is_path_valid_condition_bt_node
+      - nav2_initial_pose_received_condition_bt_node
+      - nav2_is_stuck_condition_bt_node
+      - nav2_transform_available_condition_bt_node
+
+      # Control flow
       - nav2_rate_controller_bt_node
       - nav2_recovery_node_bt_node
       - nav2_pipeline_sequence_bt_node
       - nav2_round_robin_node_bt_node
-      - opennav_compute_complete_coverage_action_bt_node
-      - opennav_cancel_complete_coverage_action_bt_node
+
+      # Recovery helpers
+      - nav2_goal_updated_controller_bt_node
+      
 
 # -------------------------
 # PLANNER SERVER (ADDED)
