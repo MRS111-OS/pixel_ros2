@@ -3,10 +3,13 @@
 import math
 import time
 
+from action_msgs.msg import GoalStatus
 from ament_index_python.packages import get_package_share_directory
-from geometry_msgs.msg import Point, Point32, PointStamped, Polygon
+from geometry_msgs.msg import Point, Point32, PointStamped, PoseStamped, Polygon
 from lifecycle_msgs.srv import GetState
-from opennav_coverage_msgs.action import NavigateCompleteCoverage
+from opennav_coverage_msgs.action import ComputeCoveragePath
+from opennav_coverage_msgs.msg import Coordinate, Coordinates
+from nav2_msgs.action import NavigateToPose, FollowPath
 import rclpy
 from rclpy.action import ActionClient
 from rclpy.node import Node
@@ -23,6 +26,7 @@ class ClickedPointsCoverageNode(Node):
         self.min_polygon_area = 0.25
         self.clicked_points = []
         self.goal_sent = False
+        self.coverage_nav_path = None  # Store computed path
 
         self.clicked_point_sub = self.create_subscription(
             PointStamped,
@@ -32,15 +36,24 @@ class ClickedPointsCoverageNode(Node):
         )
 
         self.marker_pub = self.create_publisher(Marker, '/clicked_polygon_marker', 10)
-        self.coverage_client = ActionClient(
+
+        # Action clients for the new workflow
+        self.compute_coverage_client = ActionClient(
             self,
-            NavigateCompleteCoverage,
-            'navigate_complete_coverage',
+            ComputeCoveragePath,
+            'compute_coverage_path',
         )
 
-        self.bt_xml = (
-            get_package_share_directory('pixel_simulation')
-            + '/config/clicked_complete_coverage.xml'
+        self.navigate_to_pose_client = ActionClient(
+            self,
+            NavigateToPose,
+            'navigate_to_pose',
+        )
+
+        self.follow_path_client = ActionClient(
+            self,
+            FollowPath,
+            'follow_path',
         )
 
         self.create_timer(0.2, self.publish_markers)
@@ -82,7 +95,7 @@ class ClickedPointsCoverageNode(Node):
         )
 
         if len(self.clicked_points) == self.required_points:
-            self.send_coverage_goal()
+            self.compute_coverage_path_goal()
 
     def publish_markers(self):
         self.publish_points_marker()
@@ -134,9 +147,10 @@ class ClickedPointsCoverageNode(Node):
 
         self.marker_pub.publish(marker)
 
-    def send_coverage_goal(self):
-        if not self.coverage_client.wait_for_server(timeout_sec=5.0):
-            self.get_logger().error('navigate_complete_coverage action server not available.')
+    def compute_coverage_path_goal(self):
+        """Step 1: Send ComputeCoveragePath action to generate the coverage path."""
+        if not self.compute_coverage_client.wait_for_server(timeout_sec=5.0):
+            self.get_logger().error('compute_coverage_path action server not available.')
             return
 
         ordered_points = self.order_polygon_points(self.clicked_points)
@@ -148,51 +162,223 @@ class ClickedPointsCoverageNode(Node):
             self.reset_points()
             return
 
+        # Build Coordinates message for the polygon
+        coords = Coordinates()
+
         closed_points = list(ordered_points)
+
+        # Repeat first point at the end
         if closed_points[0] != closed_points[-1]:
             closed_points.append(closed_points[0])
 
-        polygon = Polygon()
         for x, y in closed_points:
-            pt = Point32()
-            pt.x = x
-            pt.y = y
-            pt.z = 0.0
-            polygon.points.append(pt)
+            c = Coordinate()
+            c.axis1 = float(x)
+            c.axis2 = float(y)
+            coords.coordinates.append(c)
 
-        goal = NavigateCompleteCoverage.Goal()
+            self.get_logger().info(
+                f"Sending {len(coords.coordinates)} coordinates"
+            )
+
+            for c in coords.coordinates:
+                self.get_logger().info(
+                    f"({c.axis1:.3f}, {c.axis2:.3f})"
+                )
+
+        # Build ComputeCoveragePath goal
+        goal = ComputeCoveragePath.Goal()
         goal.frame_id = self.frame_id
-        goal.polygons.append(polygon)
-        goal.behavior_tree = self.bt_xml
+        goal.polygons.append(coords)
+        goal.generate_headland = False
+        goal.generate_route = True
+        goal.generate_path = True
 
-        self.get_logger().info('Sending 4-point polygon to navigate_complete_coverage...')
-        send_goal_future = self.coverage_client.send_goal_async(goal)
-        send_goal_future.add_done_callback(self.goal_response_callback)
+        self.get_logger().info('Sending 4-point polygon to compute_coverage_path...')
+        send_goal_future = self.compute_coverage_client.send_goal_async(goal)
+        send_goal_future.add_done_callback(self.compute_goal_response)
         self.goal_sent = True
 
-    def goal_response_callback(self, future):
+    def compute_goal_response(self, future):
+        """Handle ComputeCoveragePath goal acceptance."""
         goal_handle = future.result()
         if not goal_handle or not goal_handle.accepted:
-            self.get_logger().error('Coverage goal was rejected.')
+            self.get_logger().error('Compute coverage goal was rejected.')
             self.goal_sent = False
             return
 
-        self.get_logger().info('Coverage goal accepted.')
+        self.get_logger().info('Compute coverage goal accepted.')
         result_future = goal_handle.get_result_async()
-        result_future.add_done_callback(self.goal_result_callback)
+        result_future.add_done_callback(self.compute_result_callback)
 
-    def goal_result_callback(self, future):
-        result = future.result()
-        if result is None:
-            self.get_logger().error('Coverage goal result failed.')
+    def compute_result_callback(self, future):
+
+        result_msg = future.result()
+
+        if result_msg is None:
+            self.get_logger().error(
+                'Compute coverage result failed.'
+            )
             self.goal_sent = False
             return
-        self.get_logger().info(f'Coverage finished with status code: {result.status}')
+
+        result = result_msg.result
+
+        self.get_logger().info(
+            f'error_code={result.error_code}'
+        )
+
+        self.get_logger().info(
+            f'poses={len(result.nav_path.poses)}'
+        )
+
+        self.get_logger().info(
+            f'Coverage path computed with {len(result.nav_path.poses)} poses.'
+        )
+
+        self.coverage_nav_path = result.nav_path
+
+        if len(self.coverage_nav_path.poses) == 0:
+            self.get_logger().error('Coverage path is empty.')
+            self.goal_sent = False
+            return
+        
+        start_pose = self.coverage_nav_path.poses[0]
+        start_pose.header.frame_id = self.frame_id
+        start_pose.header.stamp = self.get_clock().now().to_msg()
+        
+
+        if not start_pose.header.frame_id:
+            start_pose.header.frame_id = self.frame_id
+
+        start_pose.header.stamp = self.get_clock().now().to_msg()
+
+        self.get_logger().info(
+            f"Coverage start frame={start_pose.header.frame_id}"
+        )
+
+        self.get_logger().info(
+            f"Coverage start x={start_pose.pose.position.x:.3f}, "
+            f"y={start_pose.pose.position.y:.3f}"
+        )
+
+        self.send_navigate_to_pose(start_pose)
+
+    def send_navigate_to_pose(self, target_pose):
+        """Step 3: Navigate to the start of the coverage path."""
+        if not self.navigate_to_pose_client.wait_for_server(timeout_sec=5.0):
+            self.get_logger().error('navigate_to_pose action server not available.')
+            self.goal_sent = False
+            return
+
+        self.get_logger().info(
+            f'NavigateToPose target frame={target_pose.header.frame_id}'
+        )
+
+        self.get_logger().info(
+            f'NavigateToPose target x={target_pose.pose.position.x:.3f}, '
+            f'y={target_pose.pose.position.y:.3f}'
+        )
+
+        goal = NavigateToPose.Goal()
+        goal.pose = target_pose
+
+        self.get_logger().info(
+            f'Sending NavigateToPose goal to ({target_pose.pose.position.x:.3f}, '
+            f'{target_pose.pose.position.y:.3f})'
+        )
+        send_goal_future = self.navigate_to_pose_client.send_goal_async(goal)
+        send_goal_future.add_done_callback(self.navigate_goal_response)
+
+    def navigate_goal_response(self, future):
+        """Handle NavigateToPose goal acceptance."""
+        goal_handle = future.result()
+        if not goal_handle or not goal_handle.accepted:
+            self.get_logger().error('Navigate to pose goal was rejected.')
+            self.goal_sent = False
+            return
+
+        self.get_logger().info('Navigate to pose goal accepted.')
+        result_future = goal_handle.get_result_async()
+        result_future.add_done_callback(self.navigate_result_callback)
+
+    def navigate_result_callback(self, future):
+        """
+        Step 4: After reaching the start pose, send FollowPath along the coverage path.
+        """
+        result_msg = future.result()
+
+        self.get_logger().info(
+            f'NavigateToPose status = {result_msg.status}'
+        )
+
+        if result_msg.status != GoalStatus.STATUS_SUCCEEDED:
+            self.get_logger().error(
+                f'NavigateToPose failed with status {result_msg.status}'
+            )
+            self.goal_sent = False
+            return
+
+        self.get_logger().info('✓ Robot reached first point! Starting coverage path following.')
+
+        # Send FollowPath goal with the computed coverage path
+        self.send_follow_path()
+
+    def send_follow_path(self):
+        """Step 5: Follow the computed coverage path."""
+        if not self.follow_path_client.wait_for_server(timeout_sec=5.0):
+            self.get_logger().error('follow_path action server not available.')
+            self.goal_sent = False
+            return
+
+        if self.coverage_nav_path is None:
+            self.get_logger().error('No coverage path available.')
+            self.goal_sent = False
+            return
+
+        goal = FollowPath.Goal()
+        goal.path = self.coverage_nav_path
+        goal.controller_id = 'FollowPath'
+        goal.goal_checker_id = ''
+
+        self.get_logger().info('Sending FollowPath goal for coverage traversal.')
+        send_goal_future = self.follow_path_client.send_goal_async(goal)
+        send_goal_future.add_done_callback(self.follow_goal_response)
+
+    def follow_goal_response(self, future):
+        """Handle FollowPath goal acceptance."""
+        goal_handle = future.result()
+        if not goal_handle or not goal_handle.accepted:
+            self.get_logger().error('Follow path goal was rejected.')
+            self.goal_sent = False
+            return
+
+        self.get_logger().info('Follow path goal accepted.')
+        result_future = goal_handle.get_result_async()
+        result_future.add_done_callback(self.follow_result_callback)
+
+    def follow_result_callback(self, future):
+        """Handle FollowPath completion."""
+        result_msg = future.result()
+
+        self.get_logger().info(
+            f'FollowPath status = {result_msg.status}'
+        )
+
+        if result_msg.status != GoalStatus.STATUS_SUCCEEDED:
+            self.get_logger().error(
+                f'FollowPath failed with status {result_msg.status}'
+            )
+        else:
+            self.get_logger().info('✓ Coverage path traversal complete!')
+
         self.goal_sent = False
+        self.reset_points()
 
     def reset_points(self):
         self.clicked_points = []
         self.goal_sent = False
+        self.coverage_nav_path = None
 
     @staticmethod
     def order_polygon_points(points):

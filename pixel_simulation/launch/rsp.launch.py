@@ -85,7 +85,7 @@ def generate_launch_description():
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
-        arguments=["-d", join(pixel_bot_path, "config", "sim.rviz")],
+        arguments=["-d", join(pixel_bot_path, "config", "bringup_sim.rviz")],
     )
    
 
