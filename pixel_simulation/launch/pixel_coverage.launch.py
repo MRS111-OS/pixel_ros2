@@ -50,6 +50,13 @@ def generate_launch_description():
         'warehouse_map.yaml'
     )
 
+    # Behavior tree XML file path
+    nav_to_pose_bt_xml = os.path.join(
+        get_package_share_directory(package_name),
+        'config',
+        'simple_nav_to_pose.xml'
+    )
+
     # -------------------------
     # Lifecycle Nodes
     # -------------------------
@@ -76,7 +83,8 @@ def generate_launch_description():
     # -------------------------
     param_substitutions = {
         'use_sim_time': use_sim_time,
-        'autostart': autostart
+        'autostart': autostart,
+        'default_nav_to_pose_bt_xml': nav_to_pose_bt_xml
     }
 
     configured_params = ParameterFile(

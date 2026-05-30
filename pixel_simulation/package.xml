@@ -16,14 +16,15 @@
   <depend>nav2_msgs</depend>
   <depend>rclcpp_action</depend>
   <depend>sensor_msgs</depend>
+  <depend>polygon_interfaces</depend>
   <exec_depend>ament_index_python</exec_depend>
   <exec_depend>rclpy</exec_depend>
   <exec_depend>visualization_msgs</exec_depend>
-
-<exec_depend>opennav_coverage_msgs</exec_depend>
-<exec_depend>geometry_msgs</exec_depend>
-<exec_depend>action_msgs</exec_depend>
-<exec_depend>lifecycle_msgs</exec_depend>
+  <exec_depend>opennav_coverage_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>action_msgs</exec_depend>
+  <exec_depend>lifecycle_msgs</exec_depend>
+  <exec_depend>PyYAML</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

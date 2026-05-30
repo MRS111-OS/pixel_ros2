@@ -24,6 +24,9 @@ install(
 install(
   PROGRAMS
     src/points.py
+    src/polygon_manager_node.py
+    src/polygon_recorder_server.py
+    src/execute_polygon
   DESTINATION lib/${PROJECT_NAME}
 )
 

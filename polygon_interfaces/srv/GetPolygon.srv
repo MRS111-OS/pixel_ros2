@@ -1,0 +1,4 @@
+string polygon_name
+---
+bool found
+geometry_msgs/Point[] polygon

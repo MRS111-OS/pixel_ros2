@@ -1,4 +1,54 @@
 #!/usr/bin/env python3
+"""
+ClickedPointsCoverageNode - Interactive Polygon Coverage Execution
+
+DESCRIPTION:
+───────────────────────────────────────────────────────────────────
+Reference implementation for executing coverage on an ad-hoc polygon
+defined by clicking points in RViz.
+
+This node demonstrates the complete coverage pipeline:
+
+  1. User clicks 4 points in RViz 3D view
+  2. Points ordered counter-clockwise from centroid
+  3. Coverage path generated (zig-zag) via ComputeCoveragePath
+  4. Robot navigates to first coverage point via NavigateToPose
+  5. Robot executes full coverage path via FollowPath
+
+ARCHITECTURE:
+───────────────────────────────────────────────────────────────────
+Event-driven with mixed sync/async patterns:
+  - Synchronous subscription callback: Point recording
+  - Asynchronous action callbacks: Goal execution
+  - Blocking wait loop for bt_navigator activation
+
+USAGE:
+───────────────────────────────────────────────────────────────────
+  1. Start simulator: ros2 launch pixel_simulation bringup_sim.launch.py
+  2. Start navigation: ros2 launch pixel_simulation pixel_coverage.launch.py
+  3. Start this node: ros2 run pixel_simulation points.py
+  4. In RViz: Use "Publish Point" tool to click 4 points
+  5. Coverage executes automatically after 4 clicks
+
+WORKFLOW:
+───────────────────────────────────────────────────────────────────
+  Click point 1 ─┐
+  Click point 2 ─┼─ Accumulate points
+  Click point 3 ─┤
+  Click point 4 ─┘
+       ↓
+   Order points (angular sort from centroid)
+       ↓
+   Close polygon (repeat first point at end)
+       ↓
+   Generate coverage path (ComputeCoveragePath action)
+       ↓
+   Navigate to first point (NavigateToPose action)
+       ↓
+   Execute coverage path (FollowPath action)
+       ↓
+   COMPLETE - Ready for next 4 clicks
+"""
 
 import math
 import time

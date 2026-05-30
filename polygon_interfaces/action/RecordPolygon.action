@@ -1,0 +1,12 @@
+# Goal
+string polygon_name
+
+---
+# Result
+bool success
+string message
+geometry_msgs/Point[] polygon_points
+
+---
+# Feedback
+int32 points_recorded
