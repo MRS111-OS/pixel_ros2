@@ -72,7 +72,7 @@
       <geometry>
         <mesh filename="file://$(find titan_description)/meshes/titan_meshes/base_link.STL"/>
       </geometry>
-      <material name="light_black"/>
+      <material name="blue"/>
     </visual>
 
     <collision>
@@ -103,7 +103,7 @@
       <geometry>
         <cylinder radius="0.034843" length="0.02"/>
       </geometry>
-      <material name="dark"/>
+      <material name="black"/>
     </visual>
 
     <collision>
@@ -141,7 +141,7 @@
       <geometry>
         <cylinder radius="0.034843" length="0.02"/>
       </geometry>
-      <material name="dark"/>
+      <material name="black"/>
     </visual>
 
     <collision>
@@ -179,7 +179,7 @@
       <geometry>
         <box size="0.01 0.01 0.01"/>
       </geometry>
-      <material name="dark"/>
+      <material name="red"/>
     </visual>
 
     <collision>
@@ -191,7 +191,7 @@
   </link>
 
   <joint name="RGB_Camera_Joint" type="fixed">
-    <origin xyz="0.13025 0 0.088971" rpy="0 0 0"/>
+    <origin xyz="0.10 0 0.12" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="RGB_Camera_Link"/>
   </joint>
@@ -215,7 +215,7 @@
       <geometry>
         <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Depth_Camera_Link.STL"/>
       </geometry>
-      <material name="dark"/>
+      <material name="green"/>
     </visual>
 
     <collision>
@@ -323,7 +323,7 @@
       <geometry>
         <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Lidar_Link.STL"/>
       </geometry>
-      <material name="dark"/>
+      <material name="orange"/>
     </visual>
 
     <collision>
@@ -437,7 +437,7 @@
                 <update_rate>10.0</update_rate>
                 <always_on>true</always_on>
                 <ignition_frame_id>stereo_camera_optical</ignition_frame_id>
-                <pose>0 -0.12 0 0 0 0</pose>
+                <pose>0 0 0 0 0 0</pose>
                 <topic>camera/color/image_raw</topic>
                 <camera_info_topic>camera/color/camera_info</camera_info_topic>
                 <horizontal_fov>1.3962634</horizontal_fov>
@@ -472,14 +472,12 @@
             </sensor> -->
   </gazebo>
 
-<!-- ================= Drive Wheels (same dark tire shade) =================
-
 <gazebo reference="Right_Wheel_Link">
   <visual>
     <material>
-      <ambient>0.10 0.10 0.10 1</ambient>
-      <diffuse>0.10 0.10 0.10 1</diffuse>
-      <specular>0.03 0.03 0.03 1</specular>
+      <ambient>0.02 0.02 0.02 1</ambient>
+      <diffuse>0.02 0.02 0.02 1</diffuse>
+      <specular>0.05 0.05 0.05 1</specular>
     </material>
   </visual>
 </gazebo>
@@ -487,9 +485,9 @@
 <gazebo reference="Left_Wheel_Link">
   <visual>
     <material>
-      <ambient>0.10 0.10 0.10 1</ambient>
-      <diffuse>0.10 0.10 0.10 1</diffuse>
-      <specular>0.03 0.03 0.03 1</specular>
+      <ambient>0.02 0.02 0.02 1</ambient>
+      <diffuse>0.02 0.02 0.02 1</diffuse>
+      <specular>0.05 0.05 0.05 1</specular>
     </material>
   </visual>
 </gazebo>
@@ -497,9 +495,9 @@
 <gazebo reference="base_link">
   <visual>
     <material>
-      <ambient>0.18 0.18 0.18 1</ambient>
-      <diffuse>0.18 0.18 0.18 1</diffuse>
-      <specular>0.06 0.06 0.06 1</specular>
+      <ambient>0.0 0.0 0.4 1</ambient>
+      <diffuse>0.0 0.0 0.8 1</diffuse>
+      <specular>0.1 0.1 0.2 1</specular>
     </material>
   </visual>
 </gazebo>
@@ -547,9 +545,9 @@
 <gazebo reference="Depth_Camera_Link">
   <visual>
     <material>
-      <ambient>0.30 0.30 0.30 1</ambient>
-      <diffuse>0.30 0.30 0.30 1</diffuse>
-      <specular>0.10 0.10 0.10 1</specular>
+      <ambient>0.0 0.4 0.0 1</ambient>
+      <diffuse>0.0 0.8 0.0 1</diffuse>
+      <specular>0.1 0.2 0.1 1</specular>
     </material>
   </visual>
 </gazebo>
@@ -557,9 +555,9 @@
 <gazebo reference="RGB_Camera_Link">
   <visual>
     <material>
-      <ambient>0.32 0.32 0.32 1</ambient>
-      <diffuse>0.32 0.32 0.32 1</diffuse>
-      <specular>0.12 0.12 0.12 1</specular>
+      <ambient>0.4 0.0 0.0 1</ambient>
+      <diffuse>0.8 0.0 0.0 1</diffuse>
+      <specular>0.2 0.1 0.1 1</specular>
     </material>
   </visual>
 </gazebo>
@@ -567,12 +565,11 @@
 <gazebo reference="Lidar_Link">
   <visual>
     <material>
-      <ambient>0.08 0.08 0.08 1</ambient>
-      <diffuse>0.08 0.08 0.08 1</diffuse>
-      <specular>0.02 0.02 0.02 1</specular>
+      <ambient>0.5 0.21175 0.0196 1</ambient>
+      <diffuse>1.0 0.4235 0.0392 1</diffuse>
+      <specular>0.2 0.1 0.02 1</specular>
     </material>
   </visual>
 </gazebo>
- -->
 
 </robot>

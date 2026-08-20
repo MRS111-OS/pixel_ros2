@@ -39,7 +39,7 @@ def generate_launch_description():
     robot_description = ParameterValue(
     Command([
     'xacro ',
-    join(pixel_desc, 'urdf', 'cyborg_sim.urdf'),
+    join(pixel_desc, 'urdf', 'titan_sim.urdf'),
     ' sim_ign:=true'
     ]),
     value_type=str
@@ -95,7 +95,7 @@ def generate_launch_description():
     package="rviz2",
     executable="rviz2",
     parameters=[{"use_sim_time": True}],
-    arguments=["-d", join(pixel_bot_path, "config", "sim.rviz")],
+    arguments=["-d", join(pixel_bot_path, "config", "nav2_camera_view.rviz")],
 )
    
 
