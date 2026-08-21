@@ -43,6 +43,22 @@
     <color rgba="1.0 1.0 1.0 1.0"/>
   </material>
 
+  <material name="chassis_black">
+    <color rgba="0.145 0.145 0.169 1.0"/>
+  </material>
+
+  <material name="tire_black">
+    <color rgba="0.039 0.039 0.039 1.0"/>
+  </material>
+
+  <material name="sensor_black">
+    <color rgba="0.067 0.067 0.078 1.0"/>
+  </material>
+
+  <material name="caster_nylon">
+    <color rgba="0.91 0.90 0.85 1.0"/>
+  </material>
+
   <!-- ================= BASE ================= -->
 
   <link name="base_footprint"/>
@@ -72,7 +88,7 @@
       <geometry>
         <mesh filename="file://$(find titan_description)/meshes/titan_meshes/base_link.STL"/>
       </geometry>
-      <material name="blue"/>
+      <material name="chassis_black"/>
     </visual>
 
     <collision>
@@ -103,7 +119,7 @@
       <geometry>
         <cylinder radius="0.034843" length="0.02"/>
       </geometry>
-      <material name="black"/>
+      <material name="tire_black"/>
     </visual>
 
     <collision>
@@ -141,7 +157,7 @@
       <geometry>
         <cylinder radius="0.034843" length="0.02"/>
       </geometry>
-      <material name="black"/>
+      <material name="tire_black"/>
     </visual>
 
     <collision>
@@ -179,7 +195,7 @@
       <geometry>
         <box size="0.01 0.01 0.01"/>
       </geometry>
-      <material name="red"/>
+      <material name="sensor_black"/>
     </visual>
 
     <collision>
@@ -215,7 +231,7 @@
       <geometry>
         <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Depth_Camera_Link.STL"/>
       </geometry>
-      <material name="green"/>
+      <material name="sensor_black"/>
     </visual>
 
     <collision>
@@ -251,7 +267,7 @@
       <geometry>
         <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Front_Caster_Link.STL"/>
       </geometry>
-      <material name="dark"/>
+      <material name="caster_nylon"/>
     </visual>
 
     <collision>
@@ -287,7 +303,7 @@
       <geometry>
         <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Rear_Caster_Link.STL"/>
       </geometry>
-      <material name="dark"/>
+      <material name="caster_nylon"/>
     </visual>
 
     <collision>
@@ -323,7 +339,7 @@
       <geometry>
         <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Lidar_Link.STL"/>
       </geometry>
-      <material name="orange"/>
+      <material name="sensor_black"/>
     </visual>
 
     <collision>
@@ -475,7 +491,7 @@
 <gazebo reference="Right_Wheel_Link">
   <visual>
     <material>
-      <ambient>0.02 0.02 0.02 1</ambient>
+      <ambient>0.01 0.01 0.01 1</ambient>
       <diffuse>0.02 0.02 0.02 1</diffuse>
       <specular>0.05 0.05 0.05 1</specular>
     </material>
@@ -485,7 +501,7 @@
 <gazebo reference="Left_Wheel_Link">
   <visual>
     <material>
-      <ambient>0.02 0.02 0.02 1</ambient>
+      <ambient>0.01 0.01 0.01 1</ambient>
       <diffuse>0.02 0.02 0.02 1</diffuse>
       <specular>0.05 0.05 0.05 1</specular>
     </material>
@@ -495,9 +511,9 @@
 <gazebo reference="base_link">
   <visual>
     <material>
-      <ambient>0.0 0.0 0.4 1</ambient>
-      <diffuse>0.0 0.0 0.8 1</diffuse>
-      <specular>0.1 0.1 0.2 1</specular>
+      <ambient>0.04 0.04 0.05 1</ambient>
+      <diffuse>0.07 0.07 0.08 1</diffuse>
+      <specular>0.08 0.08 0.09 1</specular>
     </material>
   </visual>
 </gazebo>
@@ -505,9 +521,9 @@
 <gazebo reference="Front_Caster_Link">
   <visual>
     <material>
-      <ambient>0.22 0.22 0.22 1</ambient>
-      <diffuse>0.22 0.22 0.22 1</diffuse>
-      <specular>0.07 0.07 0.07 1</specular>
+      <ambient>0.45 0.45 0.42 1</ambient>
+      <diffuse>0.91 0.90 0.85 1</diffuse>
+      <specular>0.12 0.12 0.10 1</specular>
     </material>
   </visual>
   <collision>
@@ -525,9 +541,9 @@
 <gazebo reference="Rear_Caster_Link">
   <visual>
     <material>
-      <ambient>0.22 0.22 0.22 1</ambient>
-      <diffuse>0.22 0.22 0.22 1</diffuse>
-      <specular>0.07 0.07 0.07 1</specular>
+      <ambient>0.45 0.45 0.42 1</ambient>
+      <diffuse>0.91 0.90 0.85 1</diffuse>
+      <specular>0.12 0.12 0.10 1</specular>
     </material>
   </visual>
   <collision>
@@ -545,9 +561,9 @@
 <gazebo reference="Depth_Camera_Link">
   <visual>
     <material>
-      <ambient>0.0 0.4 0.0 1</ambient>
-      <diffuse>0.0 0.8 0.0 1</diffuse>
-      <specular>0.1 0.2 0.1 1</specular>
+      <ambient>0.02 0.02 0.02 1</ambient>
+      <diffuse>0.03 0.03 0.04 1</diffuse>
+      <specular>0.08 0.08 0.09 1</specular>
     </material>
   </visual>
 </gazebo>
@@ -555,9 +571,9 @@
 <gazebo reference="RGB_Camera_Link">
   <visual>
     <material>
-      <ambient>0.4 0.0 0.0 1</ambient>
-      <diffuse>0.8 0.0 0.0 1</diffuse>
-      <specular>0.2 0.1 0.1 1</specular>
+      <ambient>0.02 0.02 0.02 1</ambient>
+      <diffuse>0.03 0.03 0.04 1</diffuse>
+      <specular>0.08 0.08 0.09 1</specular>
     </material>
   </visual>
 </gazebo>
@@ -565,9 +581,9 @@
 <gazebo reference="Lidar_Link">
   <visual>
     <material>
-      <ambient>0.5 0.21175 0.0196 1</ambient>
-      <diffuse>1.0 0.4235 0.0392 1</diffuse>
-      <specular>0.2 0.1 0.02 1</specular>
+      <ambient>0.02 0.02 0.02 1</ambient>
+      <diffuse>0.03 0.03 0.04 1</diffuse>
+      <specular>0.08 0.08 0.09 1</specular>
     </material>
   </visual>
 </gazebo>
