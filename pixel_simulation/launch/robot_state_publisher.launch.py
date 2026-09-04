@@ -14,6 +14,8 @@ from ament_index_python.packages import get_package_share_directory
 
 from launch.actions import SetEnvironmentVariable
 
+from launch_ros.parameter_descriptions import ParameterValue
+
 titan_desc_share = get_package_share_directory("titan_description")
 
 set_gazebo_path = SetEnvironmentVariable(
@@ -34,15 +36,22 @@ def generate_launch_description():
     position_y = LaunchConfiguration("position_y")
     orientation_yaw = LaunchConfiguration("orientation_yaw")
 
+    robot_description = ParameterValue(
+    Command([
+    'xacro ',
+    join(pixel_desc, 'urdf', 'cyborg_sim.urdf'),
+    ' sim_ign:=true'
+    ]),
+    value_type=str
+    )
+
     robot_state_publisher = Node(
-        package="robot_state_publisher",
-        executable="robot_state_publisher",
-        name="robot_state_publisher",\
-        parameters=[
-                    {'robot_description': Command( \
-                    ['xacro ', join(pixel_desc, 'urdf/titan_sim.urdf'),
-                    ' sim_ign:=', "true"
-                    ])}],
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_state_publisher',
+        parameters=[{
+            'robot_description': robot_description
+        }]
     )
 
     gz_spawn_entity = Node(

@@ -1,0 +1,7 @@
+<library path="get_start_pose_bt_node">
+  <class
+    name="GetStartPoseFromPath"
+    type="GetStartPoseFromPath"
+    base_class_type="BT::TreeNode">
+  </class>
+</library>
