@@ -2,30 +2,68 @@
 
 import time
 import subprocess
-import Adafruit_SSD1306
+import signal
+import sys
+
+from luma.core.interface.serial import i2c
+from luma.oled.device import sh1106
+
 from PIL import Image, ImageDraw, ImageFont
 
 # -------------------------------------------------
 # OLED Setup
 # -------------------------------------------------
-RST = None
-disp = Adafruit_SSD1306.SSD1306_128_32(rst=RST)
 
-disp.begin()
-disp.clear()
-disp.display()
+# Change address to 0x3D if required
+serial = i2c(port=1, address=0x3C)
 
-width = disp.width
-height = disp.height
+# SH1106 128x64 OLED
+device = sh1106(serial)
 
-image = Image.new('1', (width, height))
+width = device.width
+height = device.height
+
+# Create image buffer
+image = Image.new("1", (width, height))
 draw = ImageDraw.Draw(image)
 
-font = ImageFont.load_default()
-padding = -2
-top = padding
-x = 0
+# -------------------------------------------------
+# Font Setup (~10% smaller)
+# -------------------------------------------------
 
+try:
+    font = ImageFont.truetype(
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        9
+    )
+except:
+    font = ImageFont.load_default()
+
+# -------------------------------------------------
+# Layout
+# -------------------------------------------------
+
+left_margin = 2
+top_margin = 3
+line_spacing = 15
+
+# -------------------------------------------------
+# Graceful Shutdown
+# -------------------------------------------------
+
+running = True
+
+def signal_handler(sig, frame):
+    global running
+
+    print("\nStopping OLED updater...")
+    print("Leaving last frame on OLED.")
+
+    running = False
+
+
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
 
 # -------------------------------------------------
 # Helper Functions
@@ -37,9 +75,13 @@ def get_wifi_ssid():
             "iwgetid -r",
             shell=True
         ).decode().strip()
-        return "WIFI: " + (ssid.upper() if ssid else "NO NETWORK")
+
+        return "  WIFI: " + (
+            ssid.upper() if ssid else "NO NETWORK"
+        )
+
     except:
-        return "WIFI: NO NETWORK"
+        return "  WIFI: ERROR"
 
 
 def get_ip():
@@ -48,15 +90,20 @@ def get_ip():
             "ip -4 addr show wlan0 | awk '/inet / {print $2}' | cut -d/ -f1",
             shell=True
         ).decode().strip()
-        return "IP: " + (ip if ip else "NO IP")
+
+        return "  IP: " + (
+            ip if ip else "NO IP"
+        )
+
     except:
-        return "IP: NO IP"
+        return "  IP: ERROR"
 
 
 def get_memory():
-    """Read memory directly from /proc/meminfo"""
+
     try:
         meminfo = {}
+
         with open("/proc/meminfo") as f:
             for line in f:
                 key, value = line.split(":")
@@ -64,26 +111,33 @@ def get_memory():
 
         total = meminfo["MemTotal"] // 1024
         available = meminfo["MemAvailable"] // 1024
+
         used = total - available
         percent = (used / total) * 100
 
-        return f"MEM:{used}/{total}MB {percent:.0f}%"
+        return f"  MEM:{used}/{total}MB {percent:.0f}%"
+
     except:
-        return "MEM:N/A"
+        return "  MEM: ERROR"
 
 
-# ---------- CPU Monitoring ----------
+# -------------------------------------------------
+# CPU Usage
+# -------------------------------------------------
 
 def read_cpu_times():
+
     with open("/proc/stat", "r") as f:
         values = list(map(int, f.readline().split()[1:]))
 
     idle = values[3]
     total = sum(values)
+
     return idle, total
 
 
 def get_cpu_usage(prev_idle, prev_total):
+
     idle, total = read_cpu_times()
 
     idle_delta = idle - prev_idle
@@ -92,23 +146,33 @@ def get_cpu_usage(prev_idle, prev_total):
     if total_delta == 0:
         usage = 0.0
     else:
-        usage = 100 * (1 - idle_delta / total_delta)
+        usage = 100 * (
+            1 - idle_delta / total_delta
+        )
 
-    cpu_text = f"CPU:{usage:.0f}%"
-    return cpu_text, idle, total
+    return f"CPU:{usage:.0f}%", idle, total
 
 
-# ---------- CPU Temperature ----------
+# -------------------------------------------------
+# Temperature
+# -------------------------------------------------
 
 def get_temperature():
+
     try:
-        with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+        with open(
+            "/sys/class/thermal/thermal_zone0/temp",
+            "r"
+        ) as f:
+
             temp_raw = int(f.read().strip())
 
         temp_c = temp_raw / 1000.0
+
         return f"T:{temp_c:.1f}C"
+
     except:
-        return "T:N/A"
+        return "T:ERR"
 
 
 # -------------------------------------------------
@@ -117,24 +181,69 @@ def get_temperature():
 
 prev_idle, prev_total = read_cpu_times()
 
-while True:
+while running:
 
-    draw.rectangle((0, 0, width, height), outline=0, fill=0)
+    # Clear framebuffer
+    draw.rectangle(
+        (0, 0, width, height),
+        outline=0,
+        fill=0
+    )
 
+    # Read system data
     network = get_wifi_ssid()
     ip = get_ip()
     mem = get_memory()
-    cpu, prev_idle, prev_total = get_cpu_usage(prev_idle, prev_total)
+
+    cpu, prev_idle, prev_total = get_cpu_usage(
+        prev_idle,
+        prev_total
+    )
+
     temp = get_temperature()
 
-    draw.text((x, top),      network, font=font, fill=255)
-    draw.text((x, top + 8),  ip,      font=font, fill=255)
-    draw.text((x, top + 16), mem,     font=font, fill=255)
+    # Draw lines
+    draw.text(
+        (left_margin, top_margin),
+        network,
+        font=font,
+        fill=255
+    )
 
-    # CPU + Temperature on same line
-    draw.text((x, top + 25), cpu + " " + temp, font=font, fill=255)
+    draw.text(
+        (left_margin, top_margin + line_spacing),
+        ip,
+        font=font,
+        fill=255
+    )
 
-    disp.image(image)
-    disp.display()
+    draw.text(
+        (left_margin, top_margin + line_spacing * 2),
+        mem,
+        font=font,
+        fill=255
+    )
+
+    draw.text(
+        (left_margin, top_margin + line_spacing * 3),
+        "  " + cpu + " " + temp,
+        font=font,
+        fill=255
+    )
+
+    # Update OLED
+    device.display(image)
 
     time.sleep(1)
+
+# -------------------------------------------------
+# Final Exit
+# -------------------------------------------------
+
+# Send final frame one last time
+device.display(image)
+
+print("OLED stopped. Last frame preserved.")
+
+# EXIT NORMALLY
+sys.exit(0)

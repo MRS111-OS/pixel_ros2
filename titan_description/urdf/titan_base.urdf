@@ -198,6 +198,14 @@
       <child link="RGB_Camera_Link"/>
     </joint>
 
+    <link name="RGB_Camera_Optical_Link"/>
+
+    <joint name="RGB_Camera_Optical_Joint" type="fixed">
+      <parent link="RGB_Camera_Link"/>
+      <child link="RGB_Camera_Optical_Link"/>
+      <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
+   </joint>
+
     <!-- ================= DEPTH CAMERA ================= -->
 
     <link name="Depth_Camera_Link">
