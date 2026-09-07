@@ -32,7 +32,11 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+<<<<<<< HEAD
+    urdf_file_name = 'titan_robot.urdf'
+=======
     urdf_file_name = 'titan.urdf'
+>>>>>>> origin/main
 
     print('urdf_file_name : {}'.format(urdf_file_name))
 

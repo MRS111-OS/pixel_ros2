@@ -56,6 +56,16 @@ def generate_launch_description():
         ]
     )
 
+<<<<<<< HEAD
+    joint_state_publisher_node = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
+        output='screen'
+    )
+
+=======
+>>>>>>> origin/main
     # -------------------------------------------------
     # Included launches
     # -------------------------------------------------
@@ -77,10 +87,18 @@ def generate_launch_description():
     return launch.LaunchDescription([
 
         # Start micro-ROS agent
+<<<<<<< HEAD
+        # micro_ros_agent_node,
+
+        # Robot state publisher
+        turtlebot_state_launch,
+        joint_state_publisher_node,
+=======
         micro_ros_agent_node,
 
         # Robot state publisher
         turtlebot_state_launch,
+>>>>>>> origin/main
 
         # Delay lidar startup
         TimerAction(
