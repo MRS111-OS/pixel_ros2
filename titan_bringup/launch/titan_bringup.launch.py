@@ -26,7 +26,11 @@ def generate_launch_description():
     laser_filter_launch_path = os.path.join(lidar_filter_share, 'examples', 'box_filter_example.launch.py')
 
     # URDF/Xacro path
+<<<<<<< HEAD
     urdf_file = os.path.join(desc_share, 'urdf', 'titan_robot.urdf')
+=======
+    urdf_file = os.path.join(desc_share, 'urdf', 'titan.urdf')
+>>>>>>> origin/main
 
     # Load URDF content
     with open(urdf_file, 'r') as file:

@@ -54,15 +54,15 @@ export ROS_DOMAIN_ID=7
 
 2. **Clone the Titan Robot repository:**
     ```bash
-    git clone -b v2 https://github.com/MRS111-OS/titan_robot.git
-    mv titan_robot/ src
+    git clone --recurse-submodules https://github.com/MRS111-OS/pixel_ros2.git
     ```
+
 3. **Install Dependencies:**
     ```bash
     sudo rosdep init
     rosdep update
     rosdep install --from-paths src --ignore-src -y
-    ```
+
 
 4. **Build the workspace:**
     ```bash
