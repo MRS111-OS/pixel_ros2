@@ -1,6 +1,6 @@
 # nav2_bringup
 
-The `nav2_bringup` package is an example bringup system for Nav2 applications.
+The `nav2_bringup` package is an example bringup system for Nav2 applications."NAV2"
 
 This is a very flexible example for nav2 bringup that can be modified for different maps/robots/hardware/worlds/etc. It is our expectation for an application specific robot system that you're mirroring `nav2_bringup` package and modifying it for your specific maps/robots/bringup needs. This is an applied and working demonstration for the default system bringup with many options that can be easily modified.
 
