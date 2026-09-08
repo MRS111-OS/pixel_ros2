@@ -91,11 +91,12 @@ def generate_launch_description():
             ('/world/default/model/pixel_simulation/link/base_footprint/sensor/lidar/scan', '/scan'),
         ]
     )
+    nav2_bringup_path = get_package_share_directory("nav2_bringup")
     rviz_node = Node(
     package="rviz2",
     executable="rviz2",
     parameters=[{"use_sim_time": True}],
-    arguments=["-d", join(pixel_bot_path, "config", "nav2_camera_view.rviz")],
+    arguments=["-d", join(nav2_bringup_path, "rviz", "nav2_default_view.rviz")],
 )
    
 
