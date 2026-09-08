@@ -17,7 +17,6 @@ from launch.substitutions import LaunchConfiguration
 SENSOR_CONFIGS = {
     "lidar_only": "sensors_lidar_only.yaml",
     "lidar_depth": "sensors_lidar_depth.yaml",
-    "lidar_camera": "sensors_lidar_depth.yaml",
 }
 
 
