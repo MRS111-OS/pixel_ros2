@@ -49,12 +49,11 @@ def launch_nav2(context):
     merge_parameters(parameters, load_parameters(os.path.join(parameter_dir, "costmap_common.yaml")))
     merge_parameters(parameters, load_parameters(os.path.join(parameter_dir, sensor_file)))
 
-    with tempfile.NamedTemporaryFile(
-        mode="w", prefix="pixel_nav2_", suffix=".yaml", delete=False, encoding="utf-8"
-    ) as merged_file:
+    merged_parameters = os.path.join(
+        tempfile.gettempdir(), f"pixel_nav2_{sensor_config}.yaml"
+    )
+    with open(merged_parameters, "w", encoding="utf-8") as merged_file:
         yaml.safe_dump(parameters, merged_file, sort_keys=False)
-        merged_parameters = merged_file.name
-
     nav2_bringup_share = get_package_share_directory("nav2_bringup")
     return [
         IncludeLaunchDescription(
