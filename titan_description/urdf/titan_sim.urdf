@@ -43,6 +43,22 @@
     <color rgba="1.0 1.0 1.0 1.0"/>
   </material>
 
+  <material name="chassis_black">
+    <color rgba="0.145 0.145 0.169 1.0"/>
+  </material>
+
+  <material name="tire_black">
+    <color rgba="0.039 0.039 0.039 1.0"/>
+  </material>
+
+  <material name="sensor_black">
+    <color rgba="0.067 0.067 0.078 1.0"/>
+  </material>
+
+  <material name="caster_nylon">
+    <color rgba="0.91 0.90 0.85 1.0"/>
+  </material>
+
   <!-- ================= BASE ================= -->
 
   <link name="base_footprint"/>
@@ -72,7 +88,7 @@
       <geometry>
         <mesh filename="file://$(find titan_description)/meshes/titan_meshes/base_link.STL"/>
       </geometry>
-      <material name="light_black"/>
+      <material name="chassis_black"/>
     </visual>
 
     <collision>
@@ -103,7 +119,7 @@
       <geometry>
         <cylinder radius="0.034843" length="0.02"/>
       </geometry>
-      <material name="dark"/>
+      <material name="tire_black"/>
     </visual>
 
     <collision>
@@ -141,7 +157,7 @@
       <geometry>
         <cylinder radius="0.034843" length="0.02"/>
       </geometry>
-      <material name="dark"/>
+      <material name="tire_black"/>
     </visual>
 
     <collision>
@@ -179,7 +195,7 @@
       <geometry>
         <box size="0.01 0.01 0.01"/>
       </geometry>
-      <material name="dark"/>
+      <material name="sensor_black"/>
     </visual>
 
     <collision>
@@ -191,7 +207,7 @@
   </link>
 
   <joint name="RGB_Camera_Joint" type="fixed">
-    <origin xyz="0.13025 0 0.088971" rpy="0 0 0"/>
+    <origin xyz="0.10 0 0.12" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="RGB_Camera_Link"/>
   </joint>
@@ -215,7 +231,7 @@
       <geometry>
         <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Depth_Camera_Link.STL"/>
       </geometry>
-      <material name="dark"/>
+      <material name="sensor_black"/>
     </visual>
 
     <collision>
@@ -251,7 +267,7 @@
       <geometry>
         <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Front_Caster_Link.STL"/>
       </geometry>
-      <material name="dark"/>
+      <material name="caster_nylon"/>
     </visual>
 
     <collision>
@@ -287,7 +303,7 @@
       <geometry>
         <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Rear_Caster_Link.STL"/>
       </geometry>
-      <material name="dark"/>
+      <material name="caster_nylon"/>
     </visual>
 
     <collision>
@@ -323,7 +339,7 @@
       <geometry>
         <mesh filename="file://$(find titan_description)/meshes/titan_meshes/Lidar_Link.STL"/>
       </geometry>
-      <material name="dark"/>
+      <material name="sensor_black"/>
     </visual>
 
     <collision>
@@ -437,7 +453,7 @@
                 <update_rate>10.0</update_rate>
                 <always_on>true</always_on>
                 <ignition_frame_id>stereo_camera_optical</ignition_frame_id>
-                <pose>0 -0.12 0 0 0 0</pose>
+                <pose>0 0 0 0 0 0</pose>
                 <topic>camera/color/image_raw</topic>
                 <camera_info_topic>camera/color/camera_info</camera_info_topic>
                 <horizontal_fov>1.3962634</horizontal_fov>
@@ -472,14 +488,12 @@
             </sensor> -->
   </gazebo>
 
-<!-- ================= Drive Wheels (same dark tire shade) =================
-
 <gazebo reference="Right_Wheel_Link">
   <visual>
     <material>
-      <ambient>0.10 0.10 0.10 1</ambient>
-      <diffuse>0.10 0.10 0.10 1</diffuse>
-      <specular>0.03 0.03 0.03 1</specular>
+      <ambient>0.01 0.01 0.01 1</ambient>
+      <diffuse>0.02 0.02 0.02 1</diffuse>
+      <specular>0.05 0.05 0.05 1</specular>
     </material>
   </visual>
 </gazebo>
@@ -487,9 +501,9 @@
 <gazebo reference="Left_Wheel_Link">
   <visual>
     <material>
-      <ambient>0.10 0.10 0.10 1</ambient>
-      <diffuse>0.10 0.10 0.10 1</diffuse>
-      <specular>0.03 0.03 0.03 1</specular>
+      <ambient>0.01 0.01 0.01 1</ambient>
+      <diffuse>0.02 0.02 0.02 1</diffuse>
+      <specular>0.05 0.05 0.05 1</specular>
     </material>
   </visual>
 </gazebo>
@@ -497,9 +511,9 @@
 <gazebo reference="base_link">
   <visual>
     <material>
-      <ambient>0.18 0.18 0.18 1</ambient>
-      <diffuse>0.18 0.18 0.18 1</diffuse>
-      <specular>0.06 0.06 0.06 1</specular>
+      <ambient>0.04 0.04 0.05 1</ambient>
+      <diffuse>0.07 0.07 0.08 1</diffuse>
+      <specular>0.08 0.08 0.09 1</specular>
     </material>
   </visual>
 </gazebo>
@@ -507,9 +521,9 @@
 <gazebo reference="Front_Caster_Link">
   <visual>
     <material>
-      <ambient>0.22 0.22 0.22 1</ambient>
-      <diffuse>0.22 0.22 0.22 1</diffuse>
-      <specular>0.07 0.07 0.07 1</specular>
+      <ambient>0.45 0.45 0.42 1</ambient>
+      <diffuse>0.91 0.90 0.85 1</diffuse>
+      <specular>0.12 0.12 0.10 1</specular>
     </material>
   </visual>
   <collision>
@@ -527,9 +541,9 @@
 <gazebo reference="Rear_Caster_Link">
   <visual>
     <material>
-      <ambient>0.22 0.22 0.22 1</ambient>
-      <diffuse>0.22 0.22 0.22 1</diffuse>
-      <specular>0.07 0.07 0.07 1</specular>
+      <ambient>0.45 0.45 0.42 1</ambient>
+      <diffuse>0.91 0.90 0.85 1</diffuse>
+      <specular>0.12 0.12 0.10 1</specular>
     </material>
   </visual>
   <collision>
@@ -547,9 +561,9 @@
 <gazebo reference="Depth_Camera_Link">
   <visual>
     <material>
-      <ambient>0.30 0.30 0.30 1</ambient>
-      <diffuse>0.30 0.30 0.30 1</diffuse>
-      <specular>0.10 0.10 0.10 1</specular>
+      <ambient>0.02 0.02 0.02 1</ambient>
+      <diffuse>0.03 0.03 0.04 1</diffuse>
+      <specular>0.08 0.08 0.09 1</specular>
     </material>
   </visual>
 </gazebo>
@@ -557,9 +571,9 @@
 <gazebo reference="RGB_Camera_Link">
   <visual>
     <material>
-      <ambient>0.32 0.32 0.32 1</ambient>
-      <diffuse>0.32 0.32 0.32 1</diffuse>
-      <specular>0.12 0.12 0.12 1</specular>
+      <ambient>0.02 0.02 0.02 1</ambient>
+      <diffuse>0.03 0.03 0.04 1</diffuse>
+      <specular>0.08 0.08 0.09 1</specular>
     </material>
   </visual>
 </gazebo>
@@ -567,12 +581,11 @@
 <gazebo reference="Lidar_Link">
   <visual>
     <material>
-      <ambient>0.08 0.08 0.08 1</ambient>
-      <diffuse>0.08 0.08 0.08 1</diffuse>
-      <specular>0.02 0.02 0.02 1</specular>
+      <ambient>0.02 0.02 0.02 1</ambient>
+      <diffuse>0.03 0.03 0.04 1</diffuse>
+      <specular>0.08 0.08 0.09 1</specular>
     </material>
   </visual>
 </gazebo>
- -->
 
 </robot>
