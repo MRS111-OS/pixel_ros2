@@ -14,8 +14,6 @@
 
   <!-- These packages are used by launch files, not by titan_nav's C++ targets. -->
   <exec_depend>robot_state_publisher</exec_depend>
-  <exec_depend>ros_gz_sim</exec_depend>
-  <exec_depend>ros_gz_bridge</exec_depend>
   <exec_depend>joy</exec_depend>
   <exec_depend>teleop_twist_joy</exec_depend>
 
