@@ -23,7 +23,7 @@ local_costmap:
           raytrace_max_range: 3.0
           raytrace_min_range: 0.0
         pointcloud:
-          topic: /kinect_camera/points
+          topic: /camera/depth/points
           data_type: PointCloud2
           marking: true
           clearing: true

@@ -1,7 +1,5 @@
-# This overlay is activated for the lidar_depth variant. The PointCloud2 source
-# is verified in simulation only: /kinect_camera/points, frame kinect_camera.
-# modes/real.yaml restores the upstream scan-only local costmap because a real
-# depth topic has not been verified for this robot.
+# This overlay is activated for the lidar_depth variant. The physical Orbbec
+# ROS 2 wrapper publishes its depth PointCloud2 stream on this topic.
 local_costmap:
   local_costmap:
     ros__parameters:
@@ -27,7 +25,7 @@ local_costmap:
           raytrace_max_range: 3.0
           raytrace_min_range: 0.0
         pointcloud:
-          topic: /kinect_camera/points
+          topic: /camera/depth/points
           data_type: "PointCloud2"
           marking: true
           clearing: true
