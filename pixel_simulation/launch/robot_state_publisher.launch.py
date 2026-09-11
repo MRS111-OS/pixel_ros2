@@ -89,6 +89,7 @@ def generate_launch_description():
         remappings=[
             ('/world/default/model/pixel_simulation/joint_state', '/joint_states'),
             ('/world/default/model/pixel_simulation/link/base_footprint/sensor/lidar/scan', '/scan'),
+            ('/kinect_camera/points', '/camera/depth/points'),
         ]
     )
     nav2_bringup_path = get_package_share_directory("nav2_bringup")

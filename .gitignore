@@ -3,3 +3,4 @@
 # Python bytecode and interpreter cache directories
 __pycache__/
 *.py[cod]
+log/
