@@ -1,0 +1,5 @@
+# The wrapper forwards this value to upstream Nav2, which rewrites use_sim_time
+# for every Nav2 node in the merged baseline.
+/**:
+  ros__parameters:
+    use_sim_time: true

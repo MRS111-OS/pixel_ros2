@@ -8,12 +8,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(robot_state_publisher REQUIRED)
-find_package(ros_gz_sim REQUIRED)
-find_package(joy REQUIRED)
-find_package(teleop_twist_joy REQUIRED)
 find_package(nav_msgs REQUIRED)
-find_package(visualization_msgs REQUIRED)
 
 
 install(
