@@ -6,19 +6,25 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
-from launch_ros.actions import Node
 
 
 def generate_launch_description():
 
+    # Locate the simulation package and the shared navigation package.
     pixel_bot_path = get_package_share_directory("pixel_simulation")
-    pixel_desc = get_package_share_directory("titan_description")
-    nav2_bringup_dir = get_package_share_directory("nav2_bringup")
+    titan_nav_path = get_package_share_directory("titan_nav")
 
+    # Keep the simulation map configurable from the command line.
     declare_map_arg = DeclareLaunchArgument(
         "map",
         default_value=join(pixel_bot_path, "maps", "warehouse_map.yaml"),
         description="Full path to map file"
+    )
+
+    declare_variant_arg = DeclareLaunchArgument(
+        "variant",
+        default_value="lidar_only",
+        description="Sensor setup used by the shared Titan navigation config",
     )
 
     pixel_simulation = IncludeLaunchDescription(
@@ -27,14 +33,16 @@ def generate_launch_description():
         )
     )
 
-    nav2_launch = IncludeLaunchDescription(
+    # Use the same Nav2 configuration for simulation and the real robot.
+    # The shared launcher selects simulation settings with mode:=sim.
+    navigation_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            join(nav2_bringup_dir, "launch", "bringup_launch.py")
+            join(titan_nav_path, "launch", "navigation.launch.py")
         ),
         launch_arguments={
             "map": LaunchConfiguration("map"),
-            "use_sim_time": "true",
-            "rviz": "false"
+            "mode": "sim",
+            "variant": LaunchConfiguration("variant"),
         }.items()
     )
 
@@ -42,7 +50,8 @@ def generate_launch_description():
 
     return LaunchDescription([
         declare_map_arg,
+        declare_variant_arg,
         pixel_simulation,
-        nav2_launch,
+        navigation_launch,
         
     ])
