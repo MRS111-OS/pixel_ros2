@@ -3,4 +3,8 @@
 # Python bytecode and interpreter cache directories
 __pycache__/
 *.py[cod]
+
+# Colcon build artifacts
 log/
+build/
+install/
