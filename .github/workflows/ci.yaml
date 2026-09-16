@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build (Humble)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    container: ros:humble-ros-base
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # The ROS container normally deletes downloaded .deb files, which would
+      # otherwise make this cache ineffective.
+      - name: Stop apt from deleting downloaded packages
+        run: rm -f /etc/apt/apt.conf.d/docker-clean
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: apt-humble-${{ hashFiles('ci/custom_packages.txt', 'titan_bringup/package.xml', 'titan_description/package.xml', 'titan_nav/package.xml', 'pixel_simulation/package.xml') }}
+          restore-keys: |
+            apt-humble-
+
+      - name: Prepare rosdep
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq python3-rosdep
+          if [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then
+            rosdep init
+          fi
+
+      - name: Build selected packages
+        env:
+          ROS_DISTRO: humble
+        run: ./ci/build.sh
+
+  lint:
+    name: Lint (advisory)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    container: ros:humble-ros-base
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install linters
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq \
+            ros-humble-ament-cpplint \
+            ros-humble-ament-uncrustify \
+            ros-humble-ament-flake8 \
+            ros-humble-ament-xmllint
+
+      # Lint remains non-blocking until the existing style backlog is cleared.
+      - name: Lint selected packages
+        env:
+          ROS_DISTRO: humble
+        run: ./ci/lint.sh

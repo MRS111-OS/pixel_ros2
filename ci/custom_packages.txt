@@ -1,0 +1,6 @@
+# One Stage 1 package directory per line. Third-party and vendored sources
+# deliberately do not appear in this list.
+titan_bringup
+titan_description
+titan_nav
+pixel_simulation
