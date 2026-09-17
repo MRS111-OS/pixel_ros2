@@ -7,7 +7,7 @@ from launch.conditions import IfCondition
 from launch.launch_description import LaunchDescription
 from launch.substitutions import LaunchConfiguration
 
-from launch_ros.actions import ComposableNodeContainer
+from launch_ros.actions import ComposableNodeContainer, Node
 from launch_ros.descriptions import ComposableNode
 
 
@@ -96,6 +96,9 @@ def generate_launch_description() -> LaunchDescription:
                 # Camera selection
                 'camera': camera_param,
 
+                # Invert camera feed (0, 90, 180, 270)
+                'orientation': 180,
+
                 # Resolution
                 'width': width_param,
                 'height': height_param,
@@ -109,24 +112,6 @@ def generate_launch_description() -> LaunchDescription:
                 # Reduce latency
                 'buffer_queue_size': 1,
 
-            }],
-            extra_arguments=[{
-                'use_intra_process_comms': True
-            }],
-        ),
-
-        # COMPRESSED IMAGE TRANSPORT
-        ComposableNode(
-            package='image_transport',
-            plugin='image_transport::RepublishNode',
-            name='image_compressor',
-            remappings=[
-                ('in', '/camera/image_raw'),
-                ('out/compressed', '/camera/image_raw/compressed'),
-            ],
-            parameters=[{
-                'in_transport': 'raw',
-                'out_transport': 'compressed',
             }],
             extra_arguments=[{
                 'use_intra_process_comms': True
@@ -168,6 +153,19 @@ def generate_launch_description() -> LaunchDescription:
         output='screen',
     )
 
+    # ================= COMPRESSED IMAGE TRANSPORT =================
+    republish_node = Node(
+        package='image_transport',
+        executable='republish',
+        name='image_compressor',
+        arguments=['raw', 'compressed'],
+        remappings=[
+            ('in', '/camera/image_raw'),
+            ('out/compressed', '/camera/image_raw/compressed'),
+        ],
+        output='screen',
+    )
+
     return LaunchDescription([
 
         camera_launch_arg,
@@ -179,4 +177,5 @@ def generate_launch_description() -> LaunchDescription:
         use_image_view_launch_arg,
 
         container,
+        republish_node,
     ])
