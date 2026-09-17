@@ -23,15 +23,23 @@ class FlipImageNode(Node):
 
         self.bridge = CvBridge()
 
-        # Best Effort + depth=1: always process the latest frame, drop stale ones
-        qos = QoSProfile(
+        # Subscriber QoS: Best Effort + depth=1 accepts both Reliable and Best Effort camera feeds
+        sub_qos = QoSProfile(
             reliability=QoSReliabilityPolicy.BEST_EFFORT,
             history=QoSHistoryPolicy.KEEP_LAST,
             depth=1,
         )
 
-        self.sub = self.create_subscription(Image, 'image_in',  self.callback, qos)
-        self.pub = self.create_publisher(Image,    'image_out', qos)
+        # Publisher QoS: Reliable + depth=1 ensures RViz and downstream nodes (republish)
+        # can connect regardless of whether they expect Reliable or Best Effort, while depth=1 prevents buffering
+        pub_qos = QoSProfile(
+            reliability=QoSReliabilityPolicy.RELIABLE,
+            history=QoSHistoryPolicy.KEEP_LAST,
+            depth=1,
+        )
+
+        self.sub = self.create_subscription(Image, 'image_in',  self.callback, sub_qos)
+        self.pub = self.create_publisher(Image,    'image_out', pub_qos)
 
         self.get_logger().info('FlipImageNode started — rotating camera feed 180°')
 
