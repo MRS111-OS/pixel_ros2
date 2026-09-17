@@ -47,26 +47,28 @@ def generate_launch_description() -> LaunchDescription:
 
     # ================= RESOLUTION =================
 
+    # Lower defaults to 320x240 for low-latency WiFi streaming.
+    # Override at launch: ros2 launch titan_bringup camera.launch.py width:=640 height:=480
     width_name = 'width'
-    width_default = '640'
+    width_default = '320'
 
     width_param = LaunchConfiguration(width_name)
 
     width_launch_arg = DeclareLaunchArgument(
         width_name,
         default_value=width_default,
-        description='Image width'
+        description='Image width (lower = less lag over WiFi)'
     )
 
     height_name = 'height'
-    height_default = '480'
+    height_default = '240'
 
     height_param = LaunchConfiguration(height_name)
 
     height_launch_arg = DeclareLaunchArgument(
         height_name,
         default_value=height_default,
-        description='Image height'
+        description='Image height (lower = less lag over WiFi)'
     )
 
     # ================= IMAGE VIEW =================
@@ -83,6 +85,10 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     # ================= CAMERA NODE =================
+    # NOTE: Camera inversion (180°) is handled at hardware level via:
+    #   /boot/firmware/config.txt -> dtoverlay=ov5647,vflip=1,hflip=1
+    # The 'orientation' param in camera_ros requires libcamera >= 0.2.0
+    # which is NOT shipped on Raspberry Pi OS Humble by default.
 
     composable_nodes = [
 
@@ -96,10 +102,7 @@ def generate_launch_description() -> LaunchDescription:
                 # Camera selection
                 'camera': camera_param,
 
-                # Invert camera feed (0, 90, 180, 270)
-                'orientation': 180,
-
-                # Resolution
+                # Resolution (keep low for WiFi streaming)
                 'width': width_param,
                 'height': height_param,
 
@@ -109,13 +112,21 @@ def generate_launch_description() -> LaunchDescription:
                 # Use URDF optical frame
                 'frame_id': 'RGB_Camera_Optical_Link',
 
-                # Reduce latency
+                # Drop old frames — keep only the latest to minimise latency
                 'buffer_queue_size': 1,
+
+                # Use node clock to avoid timestamp drift causing viewer lag
+                'use_node_time': True,
 
             }],
             extra_arguments=[{
+                # Zero-copy intra-process: images never leave the container
                 'use_intra_process_comms': True
             }],
+            # Remap raw output → unflipped topic so flip_image.py can process it
+            remappings=[
+                ('image_raw', '/camera/image_raw_unflipped'),
+            ],
         ),
     ]
 
@@ -153,16 +164,41 @@ def generate_launch_description() -> LaunchDescription:
         output='screen',
     )
 
+    # ================= SOFTWARE 180° IMAGE FLIP =================
+    # Subscribes to the raw unflipped topic from camera_ros,
+    # rotates 180° using OpenCV, and republishes on /camera/image_raw.
+    # This is a software fallback because libcamera on RPi OS (Humble)
+    # is too old to support the 'orientation' parameter in camera_ros.
+    flip_node = Node(
+        package='titan_bringup',
+        executable='flip_image.py',
+        name='flip_image',
+        remappings=[
+            ('image_in',  '/camera/image_raw_unflipped'),
+            ('image_out', '/camera/image_raw'),
+        ],
+        output='screen',
+    )
+
     # ================= COMPRESSED IMAGE TRANSPORT =================
+    # Republishes /camera/image_raw -> /camera/image_raw/compressed
+    # In RViz: set Image topic Transport Hint to 'compressed' to use this.
+    # Best Effort QoS = drop stale frames instead of retransmitting them.
+    # This is the critical setting for real-time low-latency video over WiFi.
     republish_node = Node(
         package='image_transport',
         executable='republish',
         name='image_compressor',
         arguments=['raw', 'compressed'],
         remappings=[
-            ('in', '/camera/image_raw'),
+            ('in',             '/camera/image_raw'),
             ('out/compressed', '/camera/image_raw/compressed'),
         ],
+        parameters=[{
+            'reliability': 'best_effort',
+            'history':     'keep_last',
+            'depth':       1,
+        }],
         output='screen',
     )
 
@@ -177,5 +213,6 @@ def generate_launch_description() -> LaunchDescription:
         use_image_view_launch_arg,
 
         container,
+        flip_node,
         republish_node,
     ])
