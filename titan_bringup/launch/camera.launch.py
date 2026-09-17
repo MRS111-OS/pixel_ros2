@@ -124,8 +124,11 @@ def generate_launch_description() -> LaunchDescription:
                 'use_intra_process_comms': True
             }],
             # Remap raw output → unflipped topic so flip_image.py can process it
+            # Match private (~/image_raw), absolute (/camera/image_raw), and relative (image_raw)
             remappings=[
-                ('image_raw', '/camera/image_raw_unflipped'),
+                ('~/image_raw',        '/camera/image_raw_unflipped'),
+                ('/camera/image_raw',  '/camera/image_raw_unflipped'),
+                ('image_raw',          '/camera/image_raw_unflipped'),
             ],
         ),
     ]

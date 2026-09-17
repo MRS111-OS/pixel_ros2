@@ -41,15 +41,22 @@ class FlipImageNode(Node):
         self.sub = self.create_subscription(Image, 'image_in',  self.callback, sub_qos)
         self.pub = self.create_publisher(Image,    'image_out', pub_qos)
 
-        self.get_logger().info('FlipImageNode started — rotating camera feed 180°')
+        self.declare_parameter('flip_mode', -1)
+        self.flip_mode = int(self.get_parameter('flip_mode').value)
+
+        self.get_logger().info(
+            f'FlipImageNode started — flip_mode={self.flip_mode} (-1: 180° rotation, 0: vertical, 1: horizontal)'
+        )
 
     def callback(self, msg: Image) -> None:
         try:
+            self.get_logger().info('Received camera frame, flipping and publishing...', once=True)
+
             # Convert ROS Image → OpenCV
             img = self.bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
 
-            # Flip both axes: equivalent to a 180° rotation
-            flipped = cv2.flip(img, -1)
+            # Flip according to flip_mode (-1 = 180° both axes)
+            flipped = cv2.flip(img, self.flip_mode)
 
             # Convert back to ROS Image and preserve the original header
             out_msg = self.bridge.cv2_to_imgmsg(flipped, encoding=msg.encoding)
