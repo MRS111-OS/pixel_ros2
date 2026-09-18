@@ -13,7 +13,7 @@ import rclpy
 from cv_bridge import CvBridge
 from rclpy.node import Node
 from rclpy.qos import QoSHistoryPolicy, QoSProfile, QoSReliabilityPolicy
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import CompressedImage, Image
 
 
 class FlipImageNode(Node):
@@ -23,29 +23,25 @@ class FlipImageNode(Node):
 
         self.bridge = CvBridge()
 
-        # Subscriber QoS: Best Effort + depth=1 accepts both Reliable and Best Effort camera feeds
-        sub_qos = QoSProfile(
+        # Best Effort + depth=1: ensures minimal latency by dropping lost/stale packets
+        qos = QoSProfile(
             reliability=QoSReliabilityPolicy.BEST_EFFORT,
             history=QoSHistoryPolicy.KEEP_LAST,
             depth=1,
         )
 
-        # Publisher QoS: Reliable + depth=1 ensures RViz and downstream nodes (republish)
-        # can connect regardless of whether they expect Reliable or Best Effort, while depth=1 prevents buffering
-        pub_qos = QoSProfile(
-            reliability=QoSReliabilityPolicy.RELIABLE,
-            history=QoSHistoryPolicy.KEEP_LAST,
-            depth=1,
-        )
-
-        self.sub = self.create_subscription(Image, 'image_in',  self.callback, sub_qos)
-        self.pub = self.create_publisher(Image,    'image_out', pub_qos)
+        self.sub = self.create_subscription(Image, 'image_in', self.callback, qos)
+        self.pub_raw = self.create_publisher(Image, 'image_out', qos)
+        self.pub_compressed = self.create_publisher(CompressedImage, 'image_out/compressed', qos)
 
         self.declare_parameter('flip_mode', -1)
         self.flip_mode = int(self.get_parameter('flip_mode').value)
 
+        self.declare_parameter('jpeg_quality', 75)
+        self.jpeg_quality = int(self.get_parameter('jpeg_quality').value)
+
         self.get_logger().info(
-            f'FlipImageNode started — flip_mode={self.flip_mode} (-1: 180° rotation, 0: vertical, 1: horizontal)'
+            f'FlipImageNode started — flip_mode={self.flip_mode}, QoS=Best Effort, depth=1'
         )
 
     def callback(self, msg: Image) -> None:
@@ -58,14 +54,24 @@ class FlipImageNode(Node):
             # Flip according to flip_mode (-1 = 180° both axes)
             flipped = cv2.flip(img, self.flip_mode)
 
-            # Convert back to ROS Image and preserve the original header
+            # 1. Publish raw flipped image (Best Effort, depth=1)
             out_msg = self.bridge.cv2_to_imgmsg(flipped, encoding=msg.encoding)
             out_msg.header = msg.header
+            self.pub_raw.publish(out_msg)
 
-            self.pub.publish(out_msg)
+            # 2. Publish JPEG compressed flipped image (Best Effort, depth=1, ultra low latency over WiFi)
+            success, encoded_img = cv2.imencode(
+                '.jpg', flipped, [int(cv2.IMWRITE_JPEG_QUALITY), self.jpeg_quality]
+            )
+            if success:
+                comp_msg = CompressedImage()
+                comp_msg.header = msg.header
+                comp_msg.format = f'{msg.encoding}; jpeg compressed bgr8'
+                comp_msg.data = encoded_img.tobytes()
+                self.pub_compressed.publish(comp_msg)
 
         except Exception as e:  # noqa: BLE001
-            self.get_logger().error(f'Failed to flip image: {e}')
+            self.get_logger().error(f'Failed to flip/publish image: {e}')
 
 
 def main(args=None) -> None:

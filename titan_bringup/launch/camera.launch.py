@@ -167,41 +167,21 @@ def generate_launch_description() -> LaunchDescription:
         output='screen',
     )
 
-    # ================= SOFTWARE 180° IMAGE FLIP =================
+    # ================= SOFTWARE 180° IMAGE FLIP & COMPRESSION =================
     # Subscribes to the raw unflipped topic from camera_ros,
-    # rotates 180° using OpenCV, and republishes on /camera/image_raw.
-    # This is a software fallback because libcamera on RPi OS (Humble)
-    # is too old to support the 'orientation' parameter in camera_ros.
+    # rotates 180° using OpenCV, and publishes:
+    #   1. /camera/image_raw            (sensor_msgs/Image, Best Effort, depth=1)
+    #   2. /camera/image_raw/compressed (sensor_msgs/CompressedImage, Best Effort, depth=1)
+    # Both use Best Effort QoS with depth=1 to achieve real-time, low-latency streaming over WiFi.
     flip_node = Node(
         package='titan_bringup',
         executable='flip_image.py',
         name='flip_image',
         remappings=[
-            ('image_in',  '/camera/image_raw_unflipped'),
-            ('image_out', '/camera/image_raw'),
+            ('image_in',             '/camera/image_raw_unflipped'),
+            ('image_out',            '/camera/image_raw'),
+            ('image_out/compressed', '/camera/image_raw/compressed'),
         ],
-        output='screen',
-    )
-
-    # ================= COMPRESSED IMAGE TRANSPORT =================
-    # Republishes /camera/image_raw -> /camera/image_raw/compressed
-    # In RViz: set Image topic Transport Hint to 'compressed' to use this.
-    # Best Effort QoS = drop stale frames instead of retransmitting them.
-    # This is the critical setting for real-time low-latency video over WiFi.
-    republish_node = Node(
-        package='image_transport',
-        executable='republish',
-        name='image_compressor',
-        arguments=['raw', 'compressed'],
-        remappings=[
-            ('in',             '/camera/image_raw'),
-            ('out/compressed', '/camera/image_raw/compressed'),
-        ],
-        parameters=[{
-            'reliability': 'best_effort',
-            'history':     'keep_last',
-            'depth':       1,
-        }],
         output='screen',
     )
 
@@ -217,5 +197,4 @@ def generate_launch_description() -> LaunchDescription:
 
         container,
         flip_node,
-        republish_node,
     ])
