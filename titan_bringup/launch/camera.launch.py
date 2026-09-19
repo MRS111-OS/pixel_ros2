@@ -85,10 +85,9 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     # ================= CAMERA NODE =================
-    # NOTE: Camera inversion (180°) is handled at hardware level via:
-    #   /boot/firmware/config.txt -> dtoverlay=ov5647,vflip=1,hflip=1
-    # The 'orientation' param in camera_ros requires libcamera >= 0.2.0
-    # which is NOT shipped on Raspberry Pi OS Humble by default.
+    # The camera is physically mounted upside-down. camera_ros/libcamera
+    # applies the 180° orientation in the camera pipeline, avoiding a Python
+    # OpenCV flip/copy in a separate node.
 
     composable_nodes = [
 
@@ -109,6 +108,8 @@ def generate_launch_description() -> LaunchDescription:
                 # Valid ROS-compatible format
                 'format': format_param,
 
+                'orientation': 180,
+
                 # Use URDF optical frame
                 'frame_id': 'RGB_Camera_Optical_Link',
 
@@ -123,12 +124,11 @@ def generate_launch_description() -> LaunchDescription:
                 # Zero-copy intra-process: images never leave the container
                 'use_intra_process_comms': True
             }],
-            # Remap raw output → unflipped topic so flip_image.py can process it
-            # Match private (~/image_raw), absolute (/camera/image_raw), and relative (image_raw)
+            # Publish the already-oriented camera stream on the standard topic.
             remappings=[
-                ('~/image_raw',        '/camera/image_raw_unflipped'),
-                ('/camera/image_raw',  '/camera/image_raw_unflipped'),
-                ('image_raw',          '/camera/image_raw_unflipped'),
+                ('~/image_raw',        '/camera/image_raw'),
+                ('/camera/image_raw',  '/camera/image_raw'),
+                ('image_raw',          '/camera/image_raw'),
             ],
         ),
     ]
@@ -167,21 +167,6 @@ def generate_launch_description() -> LaunchDescription:
         output='screen',
     )
 
-    # ================= SOFTWARE 180° IMAGE FLIP & COMPRESSION =================
-    # Subscribes to the raw unflipped topic, rotates 180° using OpenCV, and
-    # publishes a standard flipped raw topic plus an on-demand JPEG stream.
-    flip_node = Node(
-        package='titan_bringup',
-        executable='flip_image.py',
-        name='flip_image',
-        remappings=[
-            ('image_in',             '/camera/image_raw_unflipped'),
-            ('image_out',            '/camera/image_raw'),
-            ('image_out/compressed', '/camera/image_raw/compressed'),
-        ],
-        output='screen',
-    )
-
     return LaunchDescription([
 
         camera_launch_arg,
@@ -193,5 +178,4 @@ def generate_launch_description() -> LaunchDescription:
         use_image_view_launch_arg,
 
         container,
-        flip_node,
     ])
