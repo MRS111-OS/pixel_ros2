@@ -168,15 +168,15 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     # ================= SOFTWARE 180° IMAGE FLIP & COMPRESSION =================
-    # Subscribes to the raw unflipped topic locally, rotates 180° using OpenCV,
-    # and publishes only the compressed stream for remote viewing. This avoids
-    # sending large raw image frames over WiFi.
+    # Subscribes to the raw unflipped topic, rotates 180° using OpenCV, and
+    # publishes a standard flipped raw topic plus an on-demand JPEG stream.
     flip_node = Node(
         package='titan_bringup',
         executable='flip_image.py',
         name='flip_image',
         remappings=[
             ('image_in',             '/camera/image_raw_unflipped'),
+            ('image_out',            '/camera/image_raw'),
             ('image_out/compressed', '/camera/image_raw/compressed'),
         ],
         output='screen',
