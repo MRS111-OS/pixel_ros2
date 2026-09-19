@@ -85,9 +85,9 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     # ================= CAMERA NODE =================
-    # The camera is physically mounted upside-down. camera_ros/libcamera
-    # applies the 180° orientation in the camera pipeline, avoiding a Python
-    # OpenCV flip/copy in a separate node.
+    # The camera is physically mounted upside-down. The current OV5647
+    # libcamera backend does not apply orientation reliably, so the source is
+    # kept at 0° and rotated by flip_image.py below.
 
     composable_nodes = [
 
@@ -108,7 +108,13 @@ def generate_launch_description() -> LaunchDescription:
                 # Valid ROS-compatible format
                 'format': format_param,
 
-                'orientation': 180,
+                'orientation': 0,
+
+                # Drop stale frames instead of queuing them over WiFi.
+                'qos_overrides./camera/image_raw.publisher.reliability': 'best_effort',
+                'qos_overrides./camera/image_raw.publisher.depth': 1,
+                'qos_overrides./camera/image_raw/compressed.publisher.reliability': 'best_effort',
+                'qos_overrides./camera/image_raw/compressed.publisher.depth': 1,
 
                 # Use URDF optical frame
                 'frame_id': 'RGB_Camera_Optical_Link',
@@ -124,11 +130,11 @@ def generate_launch_description() -> LaunchDescription:
                 # Zero-copy intra-process: images never leave the container
                 'use_intra_process_comms': True
             }],
-            # Publish the already-oriented camera stream on the standard topic.
+            # Publish the raw source to an internal topic for software rotation.
             remappings=[
-                ('~/image_raw',        '/camera/image_raw'),
-                ('/camera/image_raw',  '/camera/image_raw'),
-                ('image_raw',          '/camera/image_raw'),
+                ('~/image_raw',        '/camera/image_raw_unflipped'),
+                ('/camera/image_raw',  '/camera/image_raw_unflipped'),
+                ('image_raw',          '/camera/image_raw_unflipped'),
             ],
         ),
     ]
@@ -167,6 +173,20 @@ def generate_launch_description() -> LaunchDescription:
         output='screen',
     )
 
+    # Rotate the upside-down source and publish the corrected raw/compressed
+    # topics. Its own Best Effort/depth-1 QoS prevents stale frames.
+    flip_node = Node(
+        package='titan_bringup',
+        executable='flip_image.py',
+        name='flip_image',
+        remappings=[
+            ('image_in',             '/camera/image_raw_unflipped'),
+            ('image_out',            '/camera/image_raw'),
+            ('image_out/compressed', '/camera/image_raw/compressed'),
+        ],
+        output='screen',
+    )
+
     return LaunchDescription([
 
         camera_launch_arg,
@@ -178,4 +198,5 @@ def generate_launch_description() -> LaunchDescription:
         use_image_view_launch_arg,
 
         container,
+        flip_node,
     ])
