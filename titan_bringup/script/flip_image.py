@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+"""
+Flips the incoming camera image by 180 degrees (both axes).
+Used when the camera module is mounted upside-down and the hardware
+dtoverlay vflip/hflip approach is not supported by the libcamera version.
+
+Subscribes: image_in  (sensor_msgs/Image) — remapped to raw unflipped topic
+Publishes:  image_out (sensor_msgs/Image) and image_out/compressed
+"""
+
+import cv2
+import rclpy
+from cv_bridge import CvBridge
+from rclpy.node import Node
+from rclpy.qos import QoSHistoryPolicy, QoSProfile, QoSReliabilityPolicy
+from sensor_msgs.msg import CompressedImage, Image
+
+
+class FlipImageNode(Node):
+
+    def __init__(self):
+        super().__init__('flip_image')
+
+        self.bridge = CvBridge()
+
+        # Best Effort + depth=1: ensures minimal latency by dropping lost/stale packets
+        qos = QoSProfile(
+            reliability=QoSReliabilityPolicy.BEST_EFFORT,
+            history=QoSHistoryPolicy.KEEP_LAST,
+            depth=1,
+        )
+
+        self.sub = self.create_subscription(Image, 'image_in', self.callback, qos)
+        self.pub_raw = self.create_publisher(Image, 'image_out', qos)
+        self.pub_compressed = self.create_publisher(CompressedImage, 'image_out/compressed', qos)
+
+        self.declare_parameter('flip_mode', -1)
+        self.flip_mode = int(self.get_parameter('flip_mode').value)
+
+        self.declare_parameter('jpeg_quality', 75)
+        self.jpeg_quality = int(self.get_parameter('jpeg_quality').value)
+
+        self.get_logger().info(
+            f'FlipImageNode started — flip_mode={self.flip_mode}, QoS=Best Effort, depth=1'
+        )
+
+    def callback(self, msg: Image) -> None:
+        try:
+            self.get_logger().info('Received camera frame, flipping and publishing...', once=True)
+
+            # Convert ROS Image → OpenCV
+            img = self.bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
+
+            # Flip according to flip_mode (-1 = 180° both axes)
+            flipped = cv2.flip(img, self.flip_mode)
+
+            # The flipped raw topic is the standard RViz Image input.
+            out_msg = self.bridge.cv2_to_imgmsg(flipped, encoding=msg.encoding)
+            out_msg.header = msg.header
+            self.pub_raw.publish(out_msg)
+
+            # JPEG encoding is expensive on the Pi. Only do it when a viewer is
+            # actually subscribed to the compressed topic.
+            if self.pub_compressed.get_subscription_count() == 0:
+                return
+
+            success, encoded_img = cv2.imencode(
+                '.jpg', flipped, [int(cv2.IMWRITE_JPEG_QUALITY), self.jpeg_quality]
+            )
+            if success:
+                comp_msg = CompressedImage()
+                comp_msg.header = msg.header
+                comp_msg.format = f'{msg.encoding}; jpeg compressed bgr8'
+                comp_msg.data = encoded_img.tobytes()
+                self.pub_compressed.publish(comp_msg)
+
+        except Exception as e:  # noqa: BLE001
+            self.get_logger().error(f'Failed to flip/publish image: {e}')
+
+
+def main(args=None) -> None:
+    rclpy.init(args=args)
+    node = FlipImageNode()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()

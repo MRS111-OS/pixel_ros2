@@ -7,7 +7,7 @@ from launch.conditions import IfCondition
 from launch.launch_description import LaunchDescription
 from launch.substitutions import LaunchConfiguration
 
-from launch_ros.actions import ComposableNodeContainer
+from launch_ros.actions import ComposableNodeContainer, Node
 from launch_ros.descriptions import ComposableNode
 
 
@@ -47,26 +47,28 @@ def generate_launch_description() -> LaunchDescription:
 
     # ================= RESOLUTION =================
 
+    # Lower defaults to 320x240 for low-latency WiFi streaming.
+    # Override at launch: ros2 launch titan_bringup camera.launch.py width:=640 height:=480
     width_name = 'width'
-    width_default = '640'
+    width_default = '320'
 
     width_param = LaunchConfiguration(width_name)
 
     width_launch_arg = DeclareLaunchArgument(
         width_name,
         default_value=width_default,
-        description='Image width'
+        description='Image width (lower = less lag over WiFi)'
     )
 
     height_name = 'height'
-    height_default = '480'
+    height_default = '240'
 
     height_param = LaunchConfiguration(height_name)
 
     height_launch_arg = DeclareLaunchArgument(
         height_name,
         default_value=height_default,
-        description='Image height'
+        description='Image height (lower = less lag over WiFi)'
     )
 
     # ================= IMAGE VIEW =================
@@ -83,6 +85,9 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     # ================= CAMERA NODE =================
+    # The camera is physically mounted upside-down. The current OV5647
+    # libcamera backend does not apply orientation reliably, so the source is
+    # kept at 0° and rotated by flip_image.py below.
 
     composable_nodes = [
 
@@ -96,41 +101,41 @@ def generate_launch_description() -> LaunchDescription:
                 # Camera selection
                 'camera': camera_param,
 
-                # Resolution
+                # Resolution (keep low for WiFi streaming)
                 'width': width_param,
                 'height': height_param,
 
                 # Valid ROS-compatible format
                 'format': format_param,
 
+                'orientation': 0,
+
+                # Drop stale frames instead of queuing them over WiFi.
+                'qos_overrides./camera/image_raw.publisher.reliability': 'best_effort',
+                'qos_overrides./camera/image_raw.publisher.depth': 1,
+                'qos_overrides./camera/image_raw/compressed.publisher.reliability': 'best_effort',
+                'qos_overrides./camera/image_raw/compressed.publisher.depth': 1,
+
                 # Use URDF optical frame
                 'frame_id': 'RGB_Camera_Optical_Link',
 
-                # Reduce latency
+                # Drop old frames — keep only the latest to minimise latency
                 'buffer_queue_size': 1,
 
-            }],
-            extra_arguments=[{
-                'use_intra_process_comms': True
-            }],
-        ),
+                # Use node clock to avoid timestamp drift causing viewer lag
+                'use_node_time': True,
 
-        # COMPRESSED IMAGE TRANSPORT
-        ComposableNode(
-            package='image_transport',
-            plugin='image_transport::RepublishNode',
-            name='image_compressor',
-            remappings=[
-                ('in', '/camera/image_raw'),
-                ('out/compressed', '/camera/image_raw/compressed'),
-            ],
-            parameters=[{
-                'in_transport': 'raw',
-                'out_transport': 'compressed',
             }],
             extra_arguments=[{
+                # Zero-copy intra-process: images never leave the container
                 'use_intra_process_comms': True
             }],
+            # Publish the raw source to an internal topic for software rotation.
+            remappings=[
+                ('~/image_raw',        '/camera/image_raw_unflipped'),
+                ('/camera/image_raw',  '/camera/image_raw_unflipped'),
+                ('image_raw',          '/camera/image_raw_unflipped'),
+            ],
         ),
     ]
 
@@ -168,6 +173,20 @@ def generate_launch_description() -> LaunchDescription:
         output='screen',
     )
 
+    # Rotate the upside-down source and publish the corrected raw/compressed
+    # topics. Its own Best Effort/depth-1 QoS prevents stale frames.
+    flip_node = Node(
+        package='titan_bringup',
+        executable='flip_image.py',
+        name='flip_image',
+        remappings=[
+            ('image_in',             '/camera/image_raw_unflipped'),
+            ('image_out',            '/camera/image_raw'),
+            ('image_out/compressed', '/camera/image_raw/compressed'),
+        ],
+        output='screen',
+    )
+
     return LaunchDescription([
 
         camera_launch_arg,
@@ -179,4 +198,5 @@ def generate_launch_description() -> LaunchDescription:
         use_image_view_launch_arg,
 
         container,
+        flip_node,
     ])
