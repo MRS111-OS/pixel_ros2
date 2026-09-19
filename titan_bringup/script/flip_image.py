@@ -5,7 +5,7 @@ Used when the camera module is mounted upside-down and the hardware
 dtoverlay vflip/hflip approach is not supported by the libcamera version.
 
 Subscribes: image_in  (sensor_msgs/Image) — remapped to raw unflipped topic
-Publishes:  image_out (sensor_msgs/Image) — remapped to /camera/image_raw
+Publishes:  image_out/compressed (sensor_msgs/CompressedImage)
 """
 
 import cv2
@@ -31,7 +31,6 @@ class FlipImageNode(Node):
         )
 
         self.sub = self.create_subscription(Image, 'image_in', self.callback, qos)
-        self.pub_raw = self.create_publisher(Image, 'image_out', qos)
         self.pub_compressed = self.create_publisher(CompressedImage, 'image_out/compressed', qos)
 
         self.declare_parameter('flip_mode', -1)
@@ -54,12 +53,7 @@ class FlipImageNode(Node):
             # Flip according to flip_mode (-1 = 180° both axes)
             flipped = cv2.flip(img, self.flip_mode)
 
-            # 1. Publish raw flipped image (Best Effort, depth=1)
-            out_msg = self.bridge.cv2_to_imgmsg(flipped, encoding=msg.encoding)
-            out_msg.header = msg.header
-            self.pub_raw.publish(out_msg)
-
-            # 2. Publish JPEG compressed flipped image (Best Effort, depth=1, ultra low latency over WiFi)
+            # Publish JPEG only; avoid exposing a large raw image stream over WiFi.
             success, encoded_img = cv2.imencode(
                 '.jpg', flipped, [int(cv2.IMWRITE_JPEG_QUALITY), self.jpeg_quality]
             )
