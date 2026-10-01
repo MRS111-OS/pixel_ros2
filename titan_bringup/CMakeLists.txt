@@ -27,6 +27,7 @@ install(
 
 install(PROGRAMS
   script/odom_to_base.py
+  script/flip_image.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
