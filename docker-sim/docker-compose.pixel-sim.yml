@@ -1,0 +1,42 @@
+name: pixel-sim
+
+services:
+  sim:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Named second context: the pixel_ros2 checkout this directory lives
+      # in (one level up, wherever that happens to be cloned) -- separate
+      # from this directory's own cache key (Dockerfile/entrypoint/
+      # templates), so an entrypoint-only edit doesn't invalidate the
+      # ~45-70min colcon build layer, which only depends on "product"'s
+      # content.
+      additional_contexts:
+        product: ..
+    container_name: pixel-sim
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      ROS_DOMAIN_ID: "7"
+      MQTT_HOST: mosquitto
+      MQTT_PORT: "1883"
+      MQTT_USER: robots
+      ROBOT_MANUFACTURER: Momentum
+      # Underscores, not hyphens: this value becomes a ROS2 topic/service
+      # name segment internally (e.g. /vda5050/Momentum/<serial>/adapter/
+      # get_state) -- ROS2 names only allow alphanumerics, _, ~, {, } and
+      # reject "-", crashing vda5050_adapter.py and mqtt_bridge.py on start.
+      # MQTT-side (what the dashboard shows) has no such restriction, but
+      # this one value drives both, so it has to satisfy the stricter side.
+      ROBOT_SERIAL: pixel_sim_01
+      ROBOT_NAME: pixel_sim_01
+    networks:
+      - fms_net
+    # No published host ports: only needs outbound to mosquitto on the
+    # shared network. Nothing external talks to this container directly.
+
+networks:
+  fms_net:
+    external: true
+    name: mrs-fms_internal
