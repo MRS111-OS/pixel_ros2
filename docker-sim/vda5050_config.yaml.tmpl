@@ -1,0 +1,61 @@
+# Generated at container start by entrypoint.sh (envsubst) — do not edit by
+# hand, edits are overwritten on every restart. Source of truth is the
+# container's env vars (MQTT_HOST/PORT/USER/PASSWORD, ROBOT_*).
+mqtt_bridge:
+  ros__parameters:
+    mqtt_address: "${MQTT_HOST}"
+    mqtt_port: ${MQTT_PORT}
+    mqtt_username: "${MQTT_USER}"
+    mqtt_password: "${MQTT_PASSWORD}"
+    mqtt_use_tls: ${MQTT_USE_TLS}
+    manufacturer_name: "${ROBOT_MANUFACTURER}"
+    serial_number: "${ROBOT_SERIAL}"
+    interface_name: "uagv"
+    vda5050_protocol_version: "2.0.0"
+
+controller:
+  ros__parameters:
+    robot_name: "${ROBOT_NAME}"
+    manufacturer_name: "${ROBOT_MANUFACTURER}"
+    serial_number: "${ROBOT_SERIAL}"
+    interface_name: "uagv"
+    protocol_version: "2.0.0"
+    state_pub_period: 1.0
+    visualization_pub_period: 0.1
+
+vda5050_connector:
+  ros__parameters:
+    mqtt_host: "${MQTT_HOST}"
+    mqtt_port: ${MQTT_PORT}
+    mqtt_username: "${MQTT_USER}"
+    mqtt_password: "${MQTT_PASSWORD}"
+    mqtt_keepalive: 60
+    mqtt_client_id_prefix: "vda5050_connector_"
+    manufacturer: "${ROBOT_MANUFACTURER}"
+    serial_number: "${ROBOT_SERIAL}"
+    interface_name: "uagv"
+    major_version: "v2"
+    enable_module_charging: true
+    enable_module_safety: true
+    enable_module_leds: true
+    enable_module_sound: true
+    enable_module_localization: true
+
+custom_mqtt_bridge:
+  ros__parameters:
+    broker_ip: "${MQTT_HOST}"
+    broker_port: ${MQTT_PORT}
+    username: "${MQTT_USER}"
+    password: "${MQTT_PASSWORD}"
+    mqtt_use_tls: ${MQTT_USE_TLS}
+    robot_name: "${ROBOT_NAME}"
+    manufacturer: "${ROBOT_MANUFACTURER}"
+
+# Not launched (video_streamer_node is commented out in
+# vda_integrated.launch.py) -- left as upstream default.
+video_streamer:
+  ros__parameters:
+    server_url: "http://192.168.127.198:3006"
+    image_topic: "/camera/color/image_raw"
+    frame_rate: 30
+    resolution: "{\"width\": 640, \"height\": 480}"

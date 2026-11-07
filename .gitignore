@@ -1,5 +1,9 @@
 .vscode/
 
+# Real MQTT credentials for docker-sim/ -- copy docker-sim/.env.example to
+# docker-sim/.env and fill it in locally, never commit the real file.
+docker-sim/.env
+
 # Python bytecode and interpreter cache directories
 __pycache__/
 *.py[cod]

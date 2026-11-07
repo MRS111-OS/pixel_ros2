@@ -1,0 +1,10 @@
+# Generated at container start by entrypoint.sh (envsubst) — see
+# vda5050_config.yaml.tmpl's header. Fully qualified node name (namespace
+# 'vda5050') required since this is passed directly to the Node, no
+# RewrittenYaml.
+/vda5050/vda5050_adapter:
+  ros__parameters:
+    robot_name: "${ROBOT_NAME}"
+    manufacturer: "${ROBOT_MANUFACTURER}"
+    serial_number: "${ROBOT_SERIAL}"
+    nav_action_name: "/navigate_to_pose"
